@@ -185,6 +185,7 @@
         
         function initBoard() {
             const board = document.getElementById('gameBoard');
+            board.innerHTML = '';
             for (let i = 0; i < 12; i++) {
                 let box = document.createElement('div');
                 box.className = 'bet-box';
