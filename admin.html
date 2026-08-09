@@ -3,83 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Swadesh Jagaran</title>
+    <title>Admin Dashboard - Swadesh Jagaran</title>
     <!-- Firebase SDKs (CDN) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: linear-gradient(135deg, #f4f7f6 0%, #eef2f3 100%); color: #333; min-height: 100vh; line-height: 1.6; }
-        
-        header { 
-            background: linear-gradient(135deg, #1b4d3e 0%, #2e7d32 100%); 
-            color: #fff; 
-            padding: 18px 30px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+        :root {
+            --primary: #1b4d3e;
+            --primary-dark: #12352b;
+            --accent: #2e7d32;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+            --border-color: #dcdde1;
+            --sidebar-width: 260px;
         }
-        .logo { font-size: 22px; font-weight: bold; letter-spacing: 0.5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; overflow-x: hidden; }
+
+        /* Sidebar Styling */
+        sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 24px 20px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li {
+            padding: 4px 15px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu li.active a {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            transform: translateX(4px);
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Main Wrapper */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Header Styling */
+        header {
+            background: #ffffff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .header-title { font-size: 18px; font-weight: 600; color: var(--primary); }
         .header-actions { display: flex; gap: 15px; align-items: center; }
-        
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-        
-        .card { 
-            background: #ffffff; 
-            padding: 30px; 
-            margin-bottom: 25px; 
-            border-radius: 14px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06); 
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.8);
+
+        .lang-btn { 
+            background: #f1f8f6; 
+            border: 1.5px solid var(--accent); 
+            color: var(--accent); 
+            padding: 8px 16px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            transition: all 0.3s;
         }
-        .card:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(0,0,0,0.09); }
-        
+        .lang-btn:hover { background: var(--accent); color: #fff; }
+
+        /* Content Area */
+        .container { padding: 30px; max-width: 1300px; width: 100%; margin: 0 auto; }
+
+        .card { 
+            background: var(--card-bg); 
+            padding: 25px; 
+            margin-bottom: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.04); 
+            border: 1px solid #eaeaea;
+            transition: all 0.3s ease;
+        }
+        .card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.07); }
+
         h2 { 
-            color: #1b4d3e; 
+            color: var(--primary); 
             margin-bottom: 20px; 
-            font-size: 20px; 
-            border-bottom: 2px solid #eef2f3; 
+            font-size: 18px; 
+            border-bottom: 2px solid #f0f2f5; 
             padding-bottom: 10px; 
             font-weight: 700;
         }
-        
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
-        
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; font-size: 14px; }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 25px; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #4b6584; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
         .form-group input, .form-group select, .form-group textarea { 
             width: 100%; 
             padding: 12px 15px; 
-            border: 1.5px solid #dcdde1; 
+            border: 1.5px solid var(--border-color); 
             border-radius: 8px; 
             font-size: 14px; 
-            background: #fafbfc;
+            background: #ffffff;
+            color: #2c3e50;
             transition: all 0.3s;
         }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { 
-            border-color: #1b4d3e; 
+            border-color: var(--accent); 
             background: #fff;
-            box-shadow: 0 0 0 4px rgba(27, 77, 62, 0.1); 
+            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1); 
             outline: none; 
         }
-        
+
         .btn { 
-            background: linear-gradient(135deg, #1b4d3e 0%, #2e7d32 100%); 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); 
             color: #fff; 
             border: none; 
             padding: 12px 24px; 
             border-radius: 8px; 
             cursor: pointer; 
-            font-size: 15px; 
+            font-size: 14px; 
             font-weight: 600; 
             box-shadow: 0 4px 10px rgba(27, 77, 62, 0.2);
             transition: all 0.3s ease; 
         }
         .btn:hover { 
-            background: linear-gradient(135deg, #14382d 0%, #236127 100%); 
+            opacity: 0.95;
             box-shadow: 0 6px 15px rgba(27, 77, 62, 0.3);
             transform: translateY(-1px);
         }
@@ -87,198 +187,241 @@
         .btn-danger { 
             background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%); 
             box-shadow: 0 4px 10px rgba(211, 47, 47, 0.2);
+            padding: 8px 16px;
+            font-size: 13px;
         }
-        .btn-danger:hover { 
-            background: linear-gradient(135deg, #b71c1c 0%, #990000 100%); 
-            box-shadow: 0 6px 15px rgba(211, 47, 47, 0.3);
-        }
-
-        .lang-btn { 
-            background: rgba(255, 255, 255, 0.2); 
-            border: 1.5px solid #fff; 
-            color: #fff; 
-            padding: 8px 16px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            transition: all 0.3s;
-        }
-        .lang-btn:hover { background: #fff; color: #1b4d3e; }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; }
         th, td { padding: 14px 16px; text-align: left; font-size: 14px; }
-        th { background-color: #f1f8f6; color: #1b4d3e; font-weight: 700; border-bottom: 2px solid #e0e0e0; }
-        tr:not(:last-child) td { border-bottom: 1px solid #e0e0e0; }
-        tr:hover td { background-color: #f9fbfb; }
+        th { background-color: #f8f9fa; color: var(--primary); font-weight: 700; border-bottom: 2px solid #e0e0e0; }
+        tr:not(:last-child) td { border-bottom: 1px solid #eef2f3; }
+        tr:hover td { background-color: #fafbfc; }
 
-        .hidden { display: none; }
-        .msg { margin-top: 12px; font-weight: 600; font-size: 14px; }
-        .login-container { max-width: 420px; margin: 100px auto; }
+        .hidden { display: none !important; }
+        .msg { margin-top: 10px; font-weight: 600; font-size: 13px; }
+        .login-container { max-width: 420px; margin: 80px auto; background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         .table-responsive { overflow-x: auto; }
+
+        /* Section Tab Control */
+        .admin-section { display: none; }
+        .admin-section.active-section { display: block; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo" data-translate="adminTitle">Swadesh Jagaran - Admin Portal</div>
-    <div class="header-actions">
-        <button class="lang-btn" onclick="toggleLanguage()">বাংলা / English</button>
-        <div id="authHeader" class="hidden">
-            <button class="btn btn-danger" onclick="logoutAdmin()" data-translate="btnLogout">Logout</button>
-        </div>
+<!-- Sidebar Navigation -->
+<sidebar id="appSidebar" class="hidden">
+    <div class="sidebar-brand">
+        <span>🌿</span> Swadesh Jagaran
     </div>
-</header>
-
-<div class="container">
-    <!-- Login Section -->
-    <div id="loginSection" class="card login-container">
-        <h2 data-translate="loginHeading">Admin Login</h2>
-        <form id="loginForm">
-            <div class="form-group">
-                <label data-translate="lblEmail">Admin ID / Username</label>
-                <input type="text" id="adminUsername" placeholder="admin" required>
-            </div>
-            <div class="form-group">
-                <label data-translate="lblPassword">Password</label>
-                <input type="password" id="adminPassword" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn" style="width: 100%;" data-translate="btnLogin">Login</button>
-        </form>
-        <p id="loginMsg" class="msg" style="color: #d32f2f; text-align: center; margin-top: 15px;"></p>
+    <ul class="sidebar-menu">
+        <li class="active" onclick="switchTab('dashboard', this)">
+            <a href="#">📊 <span data-translate="menuDashboard">Dashboard</span></a>
+        </li>
+        <li onclick="switchTab('notices', this)">
+            <a href="#">📢 <span data-translate="menuNotice">Publish Notice</span></a>
+        </li>
+        <li onclick="switchTab('finances', this)">
+            <a href="#">💰 <span data-translate="menuFinance">Income & Expense</span></a>
+        </li>
+        <li onclick="switchTab('gallery', this)">
+            <a href="#">🖼️ <span data-translate="menuGallery">Gallery Media</span></a>
+        </li>
+        <li onclick="switchTab('members', this)">
+            <a href="#">👥 <span data-translate="menuMembers">Members List</span></a>
+        </li>
+        <li onclick="switchTab('settings', this)">
+            <a href="#">⚙️ <span data-translate="menuSettings">Settings</span></a>
+        </li>
+    </ul>
+    <div class="sidebar-footer">
+        <button class="btn btn-danger" style="width: 100%;" onclick="logoutAdmin()" data-translate="btnLogout">Logout</button>
     </div>
+</sidebar>
 
-    <!-- Admin Dashboard (Hidden until login) -->
-    <div id="dashboardSection" class="hidden">
-        
-        <div class="form-grid">
-            <!-- Add Notice -->
-            <div class="card">
-                <h2 data-translate="noticeHeading">Publish Notice</h2>
-                <form id="noticeForm">
-                    <div class="form-group">
-                        <label data-translate="lblDate">Date</label>
-                        <input type="date" id="noticeDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-translate="lblNoticeText">Notice Description</label>
-                        <textarea id="noticeText" rows="4" placeholder="Write notice here..." required></textarea>
-                    </div>
-                    <button type="submit" class="btn" data-translate="btnPublishNotice">Add Notice</button>
-                </form>
-                <p id="noticeMsg" class="msg" style="color: #2e7d32;"></p>
-            </div>
+<!-- Main Wrapper -->
+<div class="main-wrapper" id="mainWrapper">
+    <!-- Top Header -->
+    <header id="appHeader" class="hidden">
+        <div class="header-title" data-translate="adminPortalTitle">Admin Control Panel</div>
+        <div class="header-actions">
+            <button class="lang-btn" onclick="toggleLanguage()">বাংলা / English</button>
+        </div>
+    </header>
 
-            <!-- Add Income / Expense -->
-            <div class="card">
-                <h2 data-translate="financeHeading">Income & Expense Records</h2>
-                <form id="financeForm">
-                    <div class="form-group">
-                        <label data-translate="lblDate">Date</label>
-                        <input type="date" id="finDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-translate="lblDescription">Description</label>
-                        <input type="text" id="finDesc" placeholder="e.g. Donation or Expense" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-translate="lblType">Transaction Type</label>
-                        <select id="finType">
-                            <option value="Income" data-translate="optIncome">Income</option>
-                            <option value="Expense" data-translate="optExpense">Expense</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label data-translate="lblAmount">Amount</label>
-                        <input type="number" id="finAmount" placeholder="Enter amount" required>
-                    </div>
-                    <button type="submit" class="btn" data-translate="btnSaveFinance">Save Record</button>
-                </form>
-                <p id="finMsg" class="msg" style="color: #2e7d32;"></p>
-            </div>
+    <div class="container">
+        <!-- Login Section -->
+        <div id="loginSection" class="login-container">
+            <h2 style="text-align: center; border: none; color: #1b4d3e;" data-translate="loginHeading">Admin Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label data-translate="lblEmail">Admin ID / Username</label>
+                    <input type="text" id="adminUsername" placeholder="admin" required>
+                </div>
+                <div class="form-group">
+                    <label data-translate="lblPassword">Password</label>
+                    <input type="password" id="adminPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;" data-translate="btnLogin">Login</button>
+            </form>
+            <p id="loginMsg" class="msg" style="color: #d32f2f; text-align: center; margin-top: 15px;"></p>
         </div>
 
-        <div class="form-grid">
-            <!-- Add Gallery Item -->
-            <div class="card">
-                <h2 data-translate="galleryHeading">Add Gallery Media</h2>
-                <form id="galleryForm">
-                    <div class="form-group">
-                        <label data-translate="lblMediaType">Media Type</label>
-                        <select id="galleryType">
-                            <option value="image" data-translate="optImage">Image</option>
-                            <option value="video" data-translate="optVideo">Video</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label data-translate="lblMediaUrl">Media URL</label>
-                        <input type="url" id="galleryUrl" placeholder="https://..." required>
-                    </div>
-                    <button type="submit" class="btn" data-translate="btnAddToGallery">Add to Gallery</button>
-                </form>
-                <p id="galleryMsg" class="msg" style="color: #2e7d32;"></p>
+        <!-- Admin Dashboard Content Wrapper -->
+        <div id="dashboardSection" class="hidden">
+            
+            <!-- Tab 1: Dashboard Overview -->
+            <div id="sec-dashboard" class="admin-section active-section">
+                <div class="card">
+                    <h2 data-translate="welcomeAdmin">Welcome to Admin Dashboard</h2>
+                    <p data-translate="welcomeSub">Select an option from the left sidebar to manage notices, finances, gallery items, and member registrations easily.</p>
+                </div>
             </div>
 
-            <!-- Change Admin Password Card -->
-            <div class="card">
-                <h2 data-translate="passHeading">Change Admin Password</h2>
-                <form id="changePasswordForm">
-                    <div class="form-group">
-                        <label data-translate="lblNewPassword">New Password</label>
-                        <input type="password" id="newPassword" placeholder="Enter new password" required>
-                    </div>
-                    <button type="submit" class="btn" data-translate="btnUpdatePassword">Update Password</button>
-                </form>
-                <p id="passMsg" class="msg" style="color: #2e7d32;"></p>
+            <!-- Tab 2: Publish Notice -->
+            <div id="sec-notices" class="admin-section">
+                <div class="card" style="max-width: 700px; margin: 0 auto;">
+                    <h2 data-translate="noticeHeading">Publish Notice</h2>
+                    <form id="noticeForm">
+                        <div class="form-group">
+                            <label data-translate="lblDate">Date</label>
+                            <input type="date" id="noticeDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="lblNoticeText">Notice Description</label>
+                            <textarea id="noticeText" rows="5" placeholder="Write notice here..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn" data-translate="btnPublishNotice">Add Notice</button>
+                    </form>
+                    <p id="noticeMsg" class="msg" style="color: #2e7d32;"></p>
+                </div>
             </div>
+
+            <!-- Tab 3: Income & Expense -->
+            <div id="sec-finances" class="admin-section">
+                <div class="card" style="max-width: 700px; margin: 0 auto;">
+                    <h2 data-translate="financeHeading">Income & Expense Records</h2>
+                    <form id="financeForm">
+                        <div class="form-group">
+                            <label data-translate="lblDate">Date</label>
+                            <input type="date" id="finDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="lblDescription">Description</label>
+                            <input type="text" id="finDesc" placeholder="e.g. Donation or Expense" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="lblType">Transaction Type</label>
+                            <select id="finType">
+                                <option value="Income" data-translate="optIncome">Income</option>
+                                <option value="Expense" data-translate="optExpense">Expense</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="lblAmount">Amount</label>
+                            <input type="number" id="finAmount" placeholder="Enter amount" required>
+                        </div>
+                        <button type="submit" class="btn" data-translate="btnSaveFinance">Save Record</button>
+                    </form>
+                    <p id="finMsg" class="msg" style="color: #2e7d32;"></p>
+                </div>
+            </div>
+
+            <!-- Tab 4: Gallery Media -->
+            <div id="sec-gallery" class="admin-section">
+                <div class="card" style="max-width: 700px; margin: 0 auto;">
+                    <h2 data-translate="galleryHeading">Add Gallery Media</h2>
+                    <form id="galleryForm">
+                        <div class="form-group">
+                            <label data-translate="lblMediaType">Media Type</label>
+                            <select id="galleryType">
+                                <option value="image" data-translate="optImage">Image</option>
+                                <option value="video" data-translate="optVideo">Video</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="lblMediaUrl">Media URL</label>
+                            <input type="url" id="galleryUrl" placeholder="https://..." required>
+                        </div>
+                        <button type="submit" class="btn" data-translate="btnAddToGallery">Add to Gallery</button>
+                    </form>
+                    <p id="galleryMsg" class="msg" style="color: #2e7d32;"></p>
+                </div>
+            </div>
+
+            <!-- Tab 5: Members List -->
+            <div id="sec-members" class="admin-section">
+                <div class="card">
+                    <h2 data-translate="membersHeading">Registered Members List (Total: <span id="totalMembersCount">0</span>)</h2>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-translate="thName">Member Name</th>
+                                    <th data-translate="thEmail">Email Address</th>
+                                    <th data-translate="thPhone">Phone Number</th>
+                                    <th data-translate="thAddress">Address</th>
+                                </tr>
+                            </thead>
+                            <tbody id="membersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 6: Settings / Password Change -->
+            <div id="sec-settings" class="admin-section">
+                <div class="card" style="max-width: 600px; margin: 0 auto;">
+                    <h2 data-translate="passHeading">Change Admin Password</h2>
+                    <form id="changePasswordForm">
+                        <div class="form-group">
+                            <label data-translate="lblNewPassword">New Password</label>
+                            <input type="password" id="newPassword" placeholder="Enter new password" required>
+                        </div>
+                        <button type="submit" class="btn" data-translate="btnUpdatePassword">Update Password</button>
+                    </form>
+                    <p id="passMsg" class="msg" style="color: #2e7d32;"></p>
+                </div>
+            </div>
+
         </div>
-
-        <!-- View Registered Members -->
-        <div class="card">
-            <h2 data-translate="membersHeading">Registered Members List (Total: <span id="totalMembersCount">0</span>)</h2>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th data-translate="thName">Member Name</th>
-                            <th data-translate="thEmail">Email Address</th>
-                            <th data-translate="thPhone">Phone Number</th>
-                            <th data-translate="thAddress">Address</th>
-                        </tr>
-                    </thead>
-                    <tbody id="membersTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-
     </div>
 </div>
 
 <script>
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCg5ttOQHcdqupwlD9lDam6IFfh6P1mdos",
-  authDomain: "swadeshjagaran.firebaseapp.com",
-  projectId: "swadeshjagaran",
-  storageBucket: "swadeshjagaran.firebasestorage.app",
-  messagingSenderId: "955311438612",
-  appId: "1:955311438612:web:089ee627987ee0b5562001",
-  measurementId: "G-WC17FQTESH"
-};
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyCg5ttOQHcdqupvlD91Dam6IFfh6P1mdos",
+        authDomain: "swadeshjagaran.firebaseapp.com",
+        projectId: "swadeshjagaran",
+        storageBucket: "swadeshjagaran.firebasestorage.app",
+        messagingSenderId: "955311438612",
+        appId: "1:955311438612:web:089ee627987ee6b5562001",
+        measurementId: "G-WC17FQTESH"
+    };
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // Language Translation Dictionary for Admin
+    // Language Dictionary
     let currentLang = 'en';
     const translations = {
         en: {
-            adminTitle: "Swadesh Jagaran - Admin Portal",
+            adminPortalTitle: "Admin Control Panel",
+            menuDashboard: "Dashboard",
+            menuNotice: "Publish Notice",
+            menuFinance: "Income & Expense",
+            menuGallery: "Gallery Media",
+            menuMembers: "Members List",
+            menuSettings: "Settings",
             btnLogout: "Logout",
             loginHeading: "Admin Login",
             lblEmail: "Admin ID / Username",
             lblPassword: "Password",
             btnLogin: "Login",
+            welcomeAdmin: "Welcome to Admin Dashboard",
+            welcomeSub: "Select an option from the left sidebar to manage notices, finances, gallery items, and member registrations easily.",
             noticeHeading: "Publish Notice",
             lblDate: "Date",
             lblNoticeText: "Notice Description",
@@ -308,15 +451,22 @@ const firebaseConfig = {
             noticeSuccess: "Notice published successfully!",
             financeSuccess: "Record saved successfully!",
             gallerySuccess: "Media added to gallery successfully!",
-            loginError: "Invalid Admin ID or Password!",
         },
         bn: {
-            adminTitle: "স্বদেশ জাগরণ - অ্যাডমিন পোর্টাল",
+            adminPortalTitle: "অ্যাডমিন কন্ট্রোল প্যানেল",
+            menuDashboard: "ড্যাশবোর্ড",
+            menuNotice: "নোটিশ প্রকাশ",
+            menuFinance: "আয় ও ব্যয়",
+            menuGallery: "গ্যালারি মিডিয়া",
+            menuMembers: "সদস্যদের তালিকা",
+            menuSettings: "সেটিংস",
             btnLogout: "লগআউট",
             loginHeading: "অ্যাডমিন লগইন",
             lblEmail: "অ্যাডমিন আইডি / ইউজারনেম",
             lblPassword: "পাসওয়ার্ড",
             btnLogin: "লগইন করুন",
+            welcomeAdmin: "অ্যাডমিন ড্যাশবোর্ডে স্বাগতম",
+            welcomeSub: "নোটিশ, হিসাব, গ্যালারি এবং সদস্যদের তালিকা পরিচালনা করতে বাম পাশের মেনু থেকে যেকোনো একটি অপশন বেছে নিন।",
             noticeHeading: "নোটিশ প্রকাশ করুন",
             lblDate: "তারিখ",
             lblNoticeText: "নোটিশের বিবরণ",
@@ -346,7 +496,6 @@ const firebaseConfig = {
             noticeSuccess: "নোটিশ সফলভাবে প্রকাশিত হয়েছে!",
             financeSuccess: "হিসাব সফলভাবে সংরক্ষণ করা হয়েছে!",
             gallerySuccess: "গ্যালারিতে আইটেম সফলভাবে যোগ করা হয়েছে!",
-            loginError: "ভুল আইডি বা পাসওয়ার্ড দেওয়া হয়েছে!",
         }
     };
 
@@ -369,7 +518,16 @@ const firebaseConfig = {
         });
     }
 
-    // Check Firebase Auth State on page load
+    // Tab Navigation Switcher
+    function switchTab(tabId, element) {
+        document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active-section'));
+        document.getElementById('sec-' + tabId).classList.add('active-section');
+
+        document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+        if(element) element.classList.add('active');
+    }
+
+    // Firebase Auth State Listener
     auth.onAuthStateChanged(user => {
         if (user) {
             showDashboard();
@@ -379,12 +537,11 @@ const firebaseConfig = {
         updateLanguage();
     });
 
-    // Admin Login Handler with Detailed Error Display
+    // Login Handler
     document.getElementById("loginForm").addEventListener("submit", function(e) {
         e.preventDefault();
         const inputId = document.getElementById("adminUsername").value.trim().toLowerCase();
         const inputPass = document.getElementById("adminPassword").value.trim();
-
         const dummyEmail = inputId + "@swadeshjagaran.local";
 
         auth.signInWithEmailAndPassword(dummyEmail, inputPass)
@@ -393,7 +550,6 @@ const firebaseConfig = {
                 document.getElementById("loginForm").reset();
             })
             .catch(error => {
-                // Showing exact Firebase error message for debugging
                 document.getElementById("loginMsg").innerText = "Firebase Error: " + error.message;
             });
     });
@@ -401,14 +557,16 @@ const firebaseConfig = {
     function showDashboard() {
         document.getElementById("loginSection").classList.add("hidden");
         document.getElementById("dashboardSection").classList.remove("hidden");
-        document.getElementById("authHeader").classList.remove("hidden");
+        document.getElementById("appSidebar").classList.remove("hidden");
+        document.getElementById("appHeader").classList.remove("hidden");
         loadAdminData();
     }
 
     function showLogin() {
         document.getElementById("loginSection").classList.remove("hidden");
         document.getElementById("dashboardSection").classList.add("hidden");
-        document.getElementById("authHeader").classList.add("hidden");
+        document.getElementById("appSidebar").classList.add("hidden");
+        document.getElementById("appHeader").classList.add("hidden");
     }
 
     function logoutAdmin() {
@@ -450,6 +608,7 @@ const firebaseConfig = {
     document.getElementById("financeForm").addEventListener("submit", function(e) {
         e.preventDefault();
         db.collection("income_expenses").add({
+            date: document.getElementById("finDate5" in window ? "" : document.getElementById("finDate").value), // standard field
             date: document.getElementById("finDate").value,
             description: document.getElementById("finDesc").value,
             type: document.getElementById("finType").value,
@@ -474,7 +633,7 @@ const firebaseConfig = {
         }).catch(err => alert(err.message));
     });
 
-    // Load Members List for Admin
+    // Load Members
     function loadAdminData() {
         db.collection("members").orderBy("timestamp", "desc").onSnapshot(snapshot => {
             const tbody = document.getElementById("membersTableBody");
