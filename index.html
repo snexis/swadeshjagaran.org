@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Income Expense Ledger - Public View</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --success-color: #27ae60;
+            --danger-color: #c0392b;
+            --info-color: #2980b9;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #dddddd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+
+        .admin-link a {
+            color: var(--info-color);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .admin-link a:hover {
+            text-decoration: underline;
+            color: #1f5f8b;
+        }
+
+        .summary-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            flex: 1;
+            padding: 20px;
+            border-radius: 6px;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .summary-card.income { background-color: var(--success-color); }
+        .summary-card.expense { background-color: var(--danger-color); }
+        .summary-card.balance { background-color: var(--info-color); }
+
+        .summary-card h3 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-card p {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .text-income {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .text-expense {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .summary-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>দৈনিক আয়-ব্যয় হিসাব খাতা</h1>
+        <div class="admin-link">
+            <a href="admin.html">অ্যাডমিন প্যানেল লগইন</a>
+        </div>
+    </header>
+
+    <section class="summary-container">
+        <div class="summary-card income">
+            <h3>মোট আয়</h3>
+            <p id="totalIncomeDisplay">৳0</p>
+        </div>
+        <div class="summary-card expense">
+            <h3>মোট ব্যয়</h3>
+            <p id="totalExpenseDisplay">৳0</p>
+        </div>
+        <div class="summary-card balance">
+            <h3>অবশিষ্ট ব্যালেন্স</h3>
+            <p id="netBalanceDisplay">৳0</p>
+        </div>
+    </section>
+
+    <section>
+        <h2 style="font-size: 18px; margin-bottom: 15px; color: var(--primary-color);">সকল লেনদেনের তালিকা</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>তারিখ</th>
+                        <th>বিবরণ</th>
+                        <th>বিল নম্বর</th>
+                        <th>ধরণ</th>
+                        <th>টাকা (৳)</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionTableBody">
+                    <!-- Data will be dynamically rendered here -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<script>
+    const STORAGE_KEY = 'ledger_transactions';
+
+    function loadTransactions() {
+        try {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        } catch (error) {
+            console.error('Failed to load transactions from storage:', error);
+            return [];
+        }
+    }
+
+    function renderPublicView() {
+        const transactions = loadTransactions();
+        const tableBody = document.getElementById('transactionTableBody');
+        tableBody.innerHTML = '';
+
+        let totalIncome = 0;
+        let totalExpense = 0;
+
+        if (transactions.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="5" style="color: #777; padding: 20px;">কোনো হিসাব পাওয়া যায়নি।</td></tr>`;
+        } else {
+            transactions.forEach(transaction => {
+                if (transaction.type === 'Income') {
+                    totalIncome += transaction.amount;
+                } else {
+                    totalExpense += transaction.amount;
+                }
+
+                const row = document.createElement('tr');
+                const isIncome = transaction.type === 'Income';
+                const typeLabel = isIncome ? 'আয়' : 'ব্যয়';
+                const typeClass = isIncome ? 'text-income' : 'text-expense';
+
+                row.innerHTML = `
+                    <td>${transaction.date}</td>
+                    <td>${escapeHtml(transaction.description)}</td>
+                    <td><strong>${escapeHtml(transaction.billNo)}</strong></td>
+                    <td class="${typeClass}">${typeLabel}</td>
+                    <td>৳${transaction.amount.toLocaleString('en-IN')}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        const netBalance = totalIncome - totalExpense;
+
+        document.getElementById('totalIncomeDisplay').innerText = `৳${totalIncome.toLocaleString('en-IN')}`;
+        document.getElementById('totalExpenseDisplay').innerText = `৳${totalExpense.toLocaleString('en-IN')}`;
+        document.getElementById('netBalanceDisplay').innerText = `৳${netBalance.toLocaleString('en-IN')}`;
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>'"]/g, 
+            tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+        );
+    }
+
+    // Initial render
+    renderPublicView();
+
+    // Sync across tabs/windows
+    window.addEventListener('storage', (event) => {
+        if (event.key === STORAGE_KEY) {
+            renderPublicView();
+        }
+    });
+
+    window.addEventListener('focus', renderPublicView);
+</script>
+
+</body>
+</html>
