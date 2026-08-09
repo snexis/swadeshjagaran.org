@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Income Expense Ledger</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --success-color: #27ae60;
+            --success-hover: #219653;
+            --danger-color: #e74c3c;
+            --danger-hover: #c0392b;
+            --info-color: #2980b9;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #dddddd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: none;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+
+        .back-link a {
+            color: var(--info-color);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+            color: #1f5f8b;
+        }
+
+        /* Login Box Styling */
+        #loginContainer {
+            max-width: 400px;
+            margin: 100px auto;
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #loginContainer h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--success-color);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--success-hover);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: #ffffff;
+            padding: 6px 12px;
+            font-size: 12px;
+            width: auto;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+        }
+
+        /* Transaction Form */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 550px;
+            margin: 0 auto 30px auto;
+            background: #fafafa;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--primary-color);
+        }
+
+        input, select {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .text-income {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .text-expense {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Login Container -->
+<div id="loginContainer">
+    <h2>অ্যাডমিন প্যানেল লগইন</h2>
+    <input type="password" id="adminPasswordInput" class="form-control" placeholder="পাসওয়ার্ড দিন">
+    <button type="button" class="btn btn-primary" onclick="authenticateAdmin()">প্রবেশ করুন</button>
+    <p style="margin-top: 15px; font-size: 13px; color: #666;">ডিফল্ট পাসওয়ার্ড: <strong>1234</strong></p>
+</div>
+
+<!-- Admin Panel Main Content -->
+<div id="adminPanelContainer" class="container">
+    <header>
+        <h1>অ্যাডমিন প্যানেল (হিসাব এন্ট্রি ও ম্যানেজমেন্ট)</h1>
+        <div class="back-link">
+            <a href="index.html">&larr; সবার ভিউ পেজে ফিরে যান</a>
+        </div>
+    </header>
+
+    <form id="transactionForm" onsubmit="handleFormSubmit(event)">
+        <div class="form-group">
+            <label for="transactionDate">তারিখ</label>
+            <input type="date" id="transactionDate" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="transactionDescription">বিবরণ</label>
+            <input type="text" id="transactionDescription" class="form-control" placeholder="কিসের বাবদ আয় বা ব্যয়?" required>
+        </div>
+        <div class="form-group">
+            <label for="transactionBillNo">বিল নম্বর</label>
+            <input type="text" id="transactionBillNo" class="form-control" placeholder="যেমন: BILL-101" required>
+        </div>
+        <div class="form-group">
+            <label for="transactionType">ধরণ</label>
+            <select id="transactionType" class="form-control" required>
+                <option value="Income">আয় (Income)</option>
+                <option value="Expense">ব্যয় (Expense)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="transactionAmount">টাকার পরিমাণ (৳)</label>
+            <input type="number" id="transactionAmount" class="form-control" placeholder="পরিমাণ লিখুন" min="0" step="any" required>
+        </div>
+        <button type="submit" class="btn btn-primary">হিসাব সংরক্ষণ করুন</button>
+    </form>
+
+    <section>
+        <h2 style="font-size: 18px; margin-bottom: 15px; color: var(--primary-color);">হিসাব ম্যানেজমেন্ট ও ডিলিট</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>তারিখ</th>
+                        <th>বিবরণ</th>
+                        <th>বিল নম্বর</th>
+                        <th>ধরণ</th>
+                        <th>টাকা</th>
+                        <th>অ্যাকশন</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTableBody">
+                    <!-- Data will be dynamically rendered here -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<script>
+    const STORAGE_KEY = 'ledger_transactions';
+    const ADMIN_PASSWORD = '1234';
+
+    function authenticateAdmin() {
+        const passwordInput = document.getElementById('adminPasswordInput').value;
+        if (passwordInput === ADMIN_PASSWORD) {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('adminPanelContainer').style.display = 'block';
+            document.getElementById('transactionDate').valueAsDate = new Date();
+            renderAdminView();
+        } else {
+            alert('ভুল পাসওয়ার্ড! সঠিক পাসওয়ার্ড দিন।');
+        }
+    }
+
+    function loadTransactions() {
+        try {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        } catch (error) {
+            console.error('Failed to load transactions from storage:', error);
+            return [];
+        }
+    }
+
+    function saveTransactions(transactions) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+        } catch (error) {
+            console.error('Failed to save transactions to storage:', error);
+        }
+    }
+
+    function handleFormSubmit(event) {
+        event.preventDefault();
+
+        const date = document.getElementById('transactionDate').value;
+        const description = document.getElementById('transactionDescription').value.trim();
+        const billNo = document.getElementById('transactionBillNo').value.trim();
+        const type = document.getElementById('transactionType').value;
+        const amount = parseFloat(document.getElementById('transactionAmount').value);
+
+        if (!date || !description || !billNo || isNaN(amount)) {
+            alert('অনুগ্রহ করে সব তথ্য সঠিকভাবে পূরণ করুন।');
+            return;
+        }
+
+        const transactions = loadTransactions();
+
+        const newTransaction = {
+            id: Date.now(),
+            date,
+            description,
+            billNo,
+            type,
+            amount
+        };
+
+        transactions.push(newTransaction);
+        saveTransactions(transactions);
+
+        alert('হিসাব সফলভাবে যোগ করা হয়েছে!');
+        document.getElementById('transactionForm').reset();
+        document.getElementById('transactionDate').valueAsDate = new Date();
+        renderAdminView();
+    }
+
+    function deleteTransaction(id) {
+        if (confirm('আপনি কি নিশ্চিতভাবে এই এন্ট্রি মুছে ফেলতে চান?')) {
+            let transactions = loadTransactions();
+            transactions = transactions.filter(transaction => transaction.id !== id);
+            saveTransactions(transactions);
+            renderAdminView();
+        }
+    }
+
+    function renderAdminView() {
+        const transactions = loadTransactions();
+        const tableBody = document.getElementById('adminTableBody');
+        tableBody.innerHTML = '';
+
+        if (transactions.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="6" style="color: #777; padding: 20px;">কোনো হিসাব পাওয়া যায়নি।</td></tr>`;
+        } else {
+            transactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                const isIncome = transaction.type === 'Income';
+                const typeLabel = isIncome ? 'আয়' : 'ব্যয়';
+                const typeClass = isIncome ? 'text-income' : 'text-expense';
+
+                row.innerHTML = `
+                    <td>${transaction.date}</td>
+                    <td>${escapeHtml(transaction.description)}</td>
+                    <td><strong>${escapeHtml(transaction.billNo)}</strong></td>
+                    <td class="${typeClass}">${typeLabel}</td>
+                    <td>৳${transaction.amount.toLocaleString('en-IN')}</td>
+                    <td><button type="button" class="btn btn-danger" onclick="deleteTransaction(${transaction.id})">মুছে ফেলুন</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>'"]/g, 
+            tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+        );
+    }
+</script>
+
+</body>
+</html>
