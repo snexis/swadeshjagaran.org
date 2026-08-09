@@ -135,8 +135,8 @@
         <h2 data-translate="loginHeading">Admin Login</h2>
         <form id="loginForm">
             <div class="form-group">
-                <label data-translate="lblEmail">Admin Email</label>
-                <input type="email" id="adminEmail" placeholder="admin@swadeshjagaran.com" required>
+                <label data-translate="lblEmail">Admin ID / Username</label>
+                <input type="text" id="adminUsername" placeholder="admin" required>
             </div>
             <div class="form-group">
                 <label data-translate="lblPassword">Password</label>
@@ -218,17 +218,17 @@
                 <p id="galleryMsg" class="msg" style="color: #2e7d32;"></p>
             </div>
 
-            <!-- Change Password Section -->
+            <!-- Change Admin Password Card -->
             <div class="card">
-                <h2 data-translate="passwordHeading">Change Password</h2>
-                <form id="passwordForm">
+                <h2 data-translate="passHeading">Change Admin Password</h2>
+                <form id="changePasswordForm">
                     <div class="form-group">
                         <label data-translate="lblNewPassword">New Password</label>
-                        <input type="password" id="newPassword" placeholder="Minimum 6 characters" required>
+                        <input type="password" id="newPassword" placeholder="Enter new password" required>
                     </div>
-                    <button type="submit" class="btn" style="margin-top: 28px;" data-translate="btnUpdatePassword">Update Password</button>
+                    <button type="submit" class="btn" data-translate="btnUpdatePassword">Update Password</button>
                 </form>
-                <p id="passwordMsg" class="msg" style="color: #2e7d32;"></p>
+                <p id="passMsg" class="msg" style="color: #2e7d32;"></p>
             </div>
         </div>
 
@@ -276,7 +276,7 @@
             adminTitle: "Swadesh Jagaran - Admin Portal",
             btnLogout: "Logout",
             loginHeading: "Admin Login",
-            lblEmail: "Admin Email",
+            lblEmail: "Admin ID / Username",
             lblPassword: "Password",
             btnLogin: "Login",
             noticeHeading: "Publish Notice",
@@ -296,9 +296,10 @@
             optVideo: "Video",
             lblMediaUrl: "Media URL",
             btnAddToGallery: "Add to Gallery",
-            passwordHeading: "Change Password",
+            passHeading: "Change Admin Password",
             lblNewPassword: "New Password",
             btnUpdatePassword: "Update Password",
+            passSuccess: "Password updated successfully!",
             membersHeading: "Registered Members List (Total: ",
             thName: "Member Name",
             thEmail: "Email Address",
@@ -307,15 +308,13 @@
             noticeSuccess: "Notice published successfully!",
             financeSuccess: "Record saved successfully!",
             gallerySuccess: "Media added to gallery successfully!",
-            passSuccess: "Password changed successfully!",
-            loginError: "Login failed: Please check email and password.",
-            passError: "Error: Please re-login and try again."
+            loginError: "Invalid Admin ID or Password!",
         },
         bn: {
             adminTitle: "স্বদেশ জাগরণ - অ্যাডমিন পোর্টাল",
             btnLogout: "লগআউট",
             loginHeading: "অ্যাডমিন লগইন",
-            lblEmail: "অ্যাডমিন ইমেইল",
+            lblEmail: "অ্যাডমিন আইডি / ইউজারনেম",
             lblPassword: "পাসওয়ার্ড",
             btnLogin: "লগইন করুন",
             noticeHeading: "নোটিশ প্রকাশ করুন",
@@ -335,9 +334,10 @@
             optVideo: "ভিডিও (Video)",
             lblMediaUrl: "ফাইলের লিংক (URL)",
             btnAddToGallery: "গ্যালারিতে যুক্ত করুন",
-            passwordHeading: "পাসওয়ার্ড পরিবর্তন করুন",
+            passHeading: "অ্যাডমিন পাসওয়ার্ড পরিবর্তন করুন",
             lblNewPassword: "নতুন পাসওয়ার্ড",
             btnUpdatePassword: "পাসওয়ার্ড আপডেট করুন",
+            passSuccess: "পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!",
             membersHeading: "নিবন্ধিত সদস্যদের তালিকা (মোট: ",
             thName: "সদস্যের নাম",
             thEmail: "ইমেইল ঠিকানা",
@@ -346,9 +346,7 @@
             noticeSuccess: "নোটিশ সফলভাবে প্রকাশিত হয়েছে!",
             financeSuccess: "হিসাব সফলভাবে সংরক্ষণ করা হয়েছে!",
             gallerySuccess: "গ্যালারিতে আইটেম সফলভাবে যোগ করা হয়েছে!",
-            passSuccess: "পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!",
-            loginError: "লগইন ব্যর্থ হয়েছে: সঠিক ইমেইল ও পাসওয়ার্ড দিন।",
-            passError: "ত্রুটি: পুনরায় লগইন করে আবার চেষ্টা করুন।"
+            loginError: "ভুল আইডি বা পাসওয়ার্ড দেওয়া হয়েছে!",
         }
     };
 
@@ -371,52 +369,65 @@
         });
     }
 
-    // Admin Login Handler
+    // Check Firebase Auth State on page load
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            showDashboard();
+        } else {
+            showLogin();
+        }
+        updateLanguage();
+    });
+
+    // Admin Login Handler with ID to Dummy Email Mapping
     document.getElementById("loginForm").addEventListener("submit", function(e) {
         e.preventDefault();
-        const email = document.getElementById("adminEmail").value;
-        const password = document.getElementById("adminPassword").value;
+        const inputId = document.getElementById("adminUsername").value.trim().toLowerCase();
+        const inputPass = document.getElementById("adminPassword").value.trim();
 
-        auth.signInWithEmailAndPassword(email, password)
+        const dummyEmail = inputId + "@swadeshjagaran.local";
+
+        auth.signInWithEmailAndPassword(dummyEmail, inputPass)
             .then(() => {
                 document.getElementById("loginMsg").innerText = "";
+                document.getElementById("loginForm").reset();
             })
             .catch(error => {
                 document.getElementById("loginMsg").innerText = translations[currentLang].loginError;
             });
     });
 
-    // Auth State Monitor
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            document.getElementById("loginSection").classList.add("hidden");
-            document.getElementById("dashboardSection").classList.remove("hidden");
-            document.getElementById("authHeader").classList.remove("hidden");
-            loadAdminData();
-        } else {
-            document.getElementById("loginSection").classList.remove("hidden");
-            document.getElementById("dashboardSection").classList.add("hidden");
-            document.getElementById("authHeader").classList.add("hidden");
-        }
-    });
+    function showDashboard() {
+        document.getElementById("loginSection").classList.add("hidden");
+        document.getElementById("dashboardSection").classList.remove("hidden");
+        document.getElementById("authHeader").classList.remove("hidden");
+        loadAdminData();
+    }
+
+    function showLogin() {
+        document.getElementById("loginSection").classList.remove("hidden");
+        document.getElementById("dashboardSection").classList.add("hidden");
+        document.getElementById("authHeader").classList.add("hidden");
+    }
 
     function logoutAdmin() {
-        auth.signOut();
+        auth.signOut().then(() => {
+            showLogin();
+        });
     }
 
     // Change Password Handler
-    document.getElementById("passwordForm").addEventListener("submit", function(e) {
+    document.getElementById("changePasswordForm").addEventListener("submit", function(e) {
         e.preventDefault();
-        const newPassword = document.getElementById("newPassword").value;
+        const newPass = document.getElementById("newPassword").value.trim();
         const user = auth.currentUser;
 
         if (user) {
-            user.updatePassword(newPassword).then(() => {
-                document.getElementById("passwordMsg").innerText = translations[currentLang].passSuccess;
-                document.getElementById("passwordForm").reset();
+            user.updatePassword(newPass).then(() => {
+                document.getElementById("passMsg").innerText = translations[currentLang].passSuccess;
+                document.getElementById("changePasswordForm").reset();
             }).catch(error => {
-                document.getElementById("passwordMsg").style.color = "#d32f2f";
-                document.getElementById("passwordMsg").innerText = translations[currentLang].passError;
+                alert("Error: " + error.message);
             });
         }
     });
@@ -474,10 +485,6 @@
             });
         });
     }
-
-    window.onload = function() {
-        updateLanguage();
-    };
 </script>
 </body>
 </html>
