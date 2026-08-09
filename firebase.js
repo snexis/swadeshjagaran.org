@@ -14,16 +14,16 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 // আপনার প্রজেক্টের আসল ফায়ারবেস কনফিগারেশন
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyCg5ttOQHcdqupwlD9lDam6IFfh6P1mdos",
-    authDomain: "swadeshjagaran.firebaseapp.com",
-    projectId: "swadeshjagaran",
-    storageBucket: "swadeshjagaran.firebasestorage.app",
-    messagingSenderId: "955311438612",
-    appId: "1:955311438612:web:089ee627987ee0b5562001",
-    measurementId: "G-WC17FQTESH"
+  apiKey: "AIzaSyCg5ttOQHcdqupwlD9lDam6IFfh6P1mdos",
+  authDomain: "swadeshjagaran.firebaseapp.com",
+  projectId: "swadeshjagaran",
+  storageBucket: "swadeshjagaran.firebasestorage.app",
+  messagingSenderId: "955311438612",
+  appId: "1:955311438612:web:089ee627987ee0b5562001",
+  measurementId: "G-WC17FQTESH"
 };
-
 // ফায়ারবেস এবং ক্লাউড ডাটাবেজ ইনিশিয়ালাইজ করা হচ্ছে
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
