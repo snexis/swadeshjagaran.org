@@ -8,6 +8,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase Storage added for Image/Video upload -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         :root {
@@ -207,10 +209,15 @@
             box-shadow: 0 4px 12px rgba(27, 77, 62, 0.2);
             transition: all 0.3s ease; 
         }
-        .btn:hover { 
+        .btn:hover:not(:disabled) { 
             opacity: 0.95;
             box-shadow: 0 6px 18px rgba(27, 77, 62, 0.3);
             transform: translateY(-1px);
+        }
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            box-shadow: none;
         }
         
         .btn-danger { 
@@ -233,6 +240,50 @@
 
         .admin-section { display: none; }
         .admin-section.active-section { display: block; }
+
+        /* Drag and Drop Zone CSS */
+        .drop-zone {
+            width: 100%;
+            height: 140px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            color: #4b6584;
+            border: 2px dashed var(--saffron);
+            border-radius: 8px;
+            background: #fafbfc;
+            transition: all 0.3s;
+        }
+        .drop-zone--over {
+            border-style: solid;
+            background: rgba(255, 153, 51, 0.1);
+        }
+        .drop-zone__input {
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 18px;
+            background-color: var(--india-green);
+            width: 0%;
+            text-align: center;
+            line-height: 18px;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            transition: width 0.3s;
+        }
     </style>
 </head>
 <body>
@@ -240,7 +291,7 @@
 <!-- Sidebar Navigation -->
 <sidebar id="appSidebar" class="hidden">
     <div class="sidebar-brand">
-        <img id="sidebarLogoImg" src="https://via.placeholder.1image.com/40" alt="Logo">
+        <img id="sidebarLogoImg" src="" alt="Logo">
         <span id="sidebarBrandText">স্বদেশ জাগরণ</span>
     </div>
     <ul class="sidebar-menu">
@@ -288,11 +339,11 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label data-translate="lblEmail">Admin ID / Username</label>
-                    <input type="text" id="adminUsername" placeholder="admin" required>
+                    <input type="text" id="adminUsername" required>
                 </div>
                 <div class="form-group">
                     <label data-translate="lblPassword">Password</label>
-                    <input type="password" id="adminPassword" placeholder="••••••••" required>
+                    <input type="password" id="adminPassword" required>
                 </div>
                 <button type="submit" class="btn" style="width: 100%; margin-top: 10px;" data-translate="btnLogin">Login</button>
             </form>
@@ -321,7 +372,7 @@
                         </div>
                         <div class="form-group">
                             <label data-translate="lblNoticeText">Notice Description</label>
-                            <textarea id="noticeText" rows="5" placeholder="Write notice here..." required></textarea>
+                            <textarea id="noticeText" rows="5" required></textarea>
                         </div>
                         <button type="submit" class="btn" data-translate="btnPublishNotice">Add Notice</button>
                     </form>
@@ -340,7 +391,7 @@
                         </div>
                         <div class="form-group">
                             <label data-translate="lblDescription">Description</label>
-                            <input type="text" id="finDesc" placeholder="e.g. Donation or Expense" required>
+                            <input type="text" id="finDesc" required>
                         </div>
                         <div class="form-group">
                             <label data-translate="lblType">Transaction Type</label>
@@ -351,7 +402,7 @@
                         </div>
                         <div class="form-group">
                             <label data-translate="lblAmount">Amount</label>
-                            <input type="number" id="finAmount" placeholder="Enter amount" required>
+                            <input type="number" id="finAmount" required>
                         </div>
                         <button type="submit" class="btn" data-translate="btnSaveFinance">Save Record</button>
                     </form>
@@ -372,10 +423,17 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label data-translate="lblMediaUrl">Media URL</label>
-                            <input type="url" id="galleryUrl" placeholder="https://..." required>
+                            <label data-translate="lblMediaFile">Upload Media (Select or Drag & Drop)</label>
+                            <div id="dropZone" class="drop-zone">
+                                <span class="drop-zone__prompt" data-translate="dropPrompt" id="dropZonePromptText">Drag & Drop file here or click to browse</span>
+                                <input type="file" id="galleryFile" class="drop-zone__input" accept="image/*,video/*" required>
+                            </div>
+                            <!-- Progress bar container -->
+                            <div id="uploadProgress" class="progress-bar hidden">
+                                <div class="progress-bar-fill" id="uploadProgressBar">0%</div>
+                            </div>
                         </div>
-                        <button type="submit" class="btn" data-translate="btnAddToGallery">Add to Gallery</button>
+                        <button type="submit" class="btn" data-translate="btnAddToGallery" id="btnUploadGallery">Add to Gallery</button>
                     </form>
                     <p id="galleryMsg" class="msg" style="color: #138808;"></p>
                 </div>
@@ -408,7 +466,7 @@
                     <form id="changePasswordForm">
                         <div class="form-group">
                             <label data-translate="lblNewPassword">New Password</label>
-                            <input type="password" id="newPassword" placeholder="Enter new password" required>
+                            <input type="password" id="newPassword" required>
                         </div>
                         <button type="submit" class="btn" data-translate="btnUpdatePassword">Update Password</button>
                     </form>
@@ -420,7 +478,7 @@
                     <form id="logoForm">
                         <div class="form-group">
                             <label data-translate="lblLogoUrl">Logo Image URL</label>
-                            <input type="url" id="logoUrlInput" placeholder="https://example.com/logo.png" required>
+                            <input type="url" id="logoUrlInput" required>
                         </div>
                         <button type="submit" class="btn" data-translate="btnUpdateLogo">Update Portal Logo</button>
                     </form>
@@ -434,19 +492,19 @@
 
 <script>
     // Firebase Configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCg5ttOQHcdqupwlD9lDam6IFfh6P1mdos",
-  authDomain: "swadeshjagaran.firebaseapp.com",
-  projectId: "swadeshjagaran",
-  storageBucket: "swadeshjagaran.firebasestorage.app",
-  messagingSenderId: "955311438612",
-  appId: "1:955311438612:web:089ee627987ee0b5562001",
-  measurementId: "G-WC17FQTESH"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyCg5ttOQHcdqupwlD9lDam6IFfh6P1mdos",
+    authDomain: "swadeshjagaran.firebaseapp.com",
+    projectId: "swadeshjagaran",
+    storageBucket: "swadeshjagaran.firebasestorage.app",
+    messagingSenderId: "955311438612",
+    appId: "1:955311438612:web:089ee627987ee0b5562001",
+    measurementId: "G-WC17FQTESH"
+  };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
+    const storage = firebase.storage(); // Initialize Storage
 
     // Language Dictionary
     let currentLang = 'en';
@@ -481,7 +539,8 @@ const firebaseConfig = {
             lblMediaType: "Media Type",
             optImage: "Image",
             optVideo: "Video",
-            lblMediaUrl: "Media URL",
+            lblMediaFile: "Upload Media (Select or Drag & Drop)",
+            dropPrompt: "Drag & Drop file here or click to browse",
             btnAddToGallery: "Add to Gallery",
             passHeading: "Change Admin Password",
             lblNewPassword: "New Password",
@@ -498,14 +557,15 @@ const firebaseConfig = {
             thAddress: "Address",
             noticeSuccess: "Notice published successfully!",
             financeSuccess: "Record saved successfully!",
-            gallerySuccess: "Media added to gallery successfully!",
+            gallerySuccess: "Media uploaded and added successfully!",
+            uploadingMsg: "Uploading... Please wait."
         },
         bn: {
             adminPortalTitle: "🇮🇳 অ্যাডমিন কন্ট্রোল প্যানেল",
             menuDashboard: "ড্যাশবোর্ড",
             menuNotice: "নোটিশ প্রকাশ",
-            menuFinance: "আয় ও ব্যয়",
-            menuGallery: "গ্যালারি মিডিয়া",
+            menuFinance: "আয় ও ব্যয়",
+            menuGallery: "গ্যালারি মিডিয়া",
             menuMembers: "সদস্যদের তালিকা",
             menuSettings: "সেটিংস ও লোগো",
             btnLogout: "লগআউট",
@@ -519,35 +579,37 @@ const firebaseConfig = {
             lblDate: "তারিখ",
             lblNoticeText: "নোটিশের বিবরণ",
             btnPublishNotice: "নোটিশ যোগ করুন",
-            financeHeading: "আয় ও ব্যয়ের হিসাব",
+            financeHeading: "আয় ও ব্যয়ের হিসাব",
             lblDescription: "বিবরণ",
             lblType: "খাতের ধরণ",
-            optIncome: "আয় (Income)",
-            optExpense: "ব্যয় (Expense)",
+            optIncome: "আয় (Income)",
+            optExpense: "ব্যয় (Expense)",
             lblAmount: "টাকার পরিমাণ",
             btnSaveFinance: "হিসাব সংরক্ষণ করুন",
-            galleryHeading: "গ্যালারি মিডিয়া যোগ করুন",
+            galleryHeading: "গ্যালারি মিডিয়া যোগ করুন",
             lblMediaType: "ফাইলের ধরণ",
             optImage: "ছবি (Image)",
             optVideo: "ভিডিও (Video)",
-            lblMediaUrl: "ফাইলের লিংক (URL)",
+            lblMediaFile: "মিডিয়া আপলোড করুন (ফাইল সিলেক্ট বা Drag & Drop)",
+            dropPrompt: "এখানে ফাইল টেনে আনুন বা ক্লিক করে ফাইল খুঁজুন",
             btnAddToGallery: "গ্যালারিতে যুক্ত করুন",
             passHeading: "অ্যাডমিন পাসওয়ার্ড পরিবর্তন করুন",
             lblNewPassword: "নতুন পাসওয়ার্ড",
             btnUpdatePassword: "পাসওয়ার্ড আপডেট করুন",
-            passSuccess: "পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!",
+            passSuccess: "পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!",
             logoHeading: "পোর্টাল লোগো ম্যানেজমেন্ট",
             lblLogoUrl: "লোগো ইমেজ ইউআরএল (URL)",
             btnUpdateLogo: "লোগো আপডেট করুন",
-            logoSuccess: "লোগো সফলভাবে আপডেট হয়েছে!",
+            logoSuccess: "লোগো সফলভাবে আপডেট হয়েছে!",
             membersHeading: "নিবন্ধিত সদস্যদের তালিকা (মোট: ",
             thName: "সদস্যের নাম",
             thEmail: "ইমেইল ঠিকানা",
             thPhone: "ফোন নম্বর",
             thAddress: "ঠিকানা",
-            noticeSuccess: "নোটিশ সফলভাবে প্রকাশিত হয়েছে!",
-            financeSuccess: "হিসাব সফলভাবে সংরক্ষণ করা হয়েছে!",
-            gallerySuccess: "গ্যালারিতে আইটেম সফলভাবে যোগ করা হয়েছে!",
+            noticeSuccess: "নোটিশ সফলভাবে প্রকাশিত হয়েছে!",
+            financeSuccess: "হিসাব সফলভাবে সংরক্ষণ করা হয়েছে!",
+            gallerySuccess: "মিডিয়া সফলভাবে আপলোড এবং যুক্ত করা হয়েছে!",
+            uploadingMsg: "আপলোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।"
         }
     };
 
@@ -568,6 +630,12 @@ const firebaseConfig = {
                 }
             }
         });
+        
+        // Update drag and drop text if a file is not already selected
+        const fileInput = document.getElementById("galleryFile");
+        if (!fileInput.files.length) {
+            document.getElementById("dropZonePromptText").innerText = translations[currentLang].dropPrompt;
+        }
     }
 
     // Tab Navigation Switcher
@@ -702,17 +770,109 @@ const firebaseConfig = {
         }).catch(err => alert(err.message));
     });
 
-    // Add Gallery Item
+    // --- Drag and Drop File Upload Logic ---
+    const dropZone = document.getElementById("dropZone");
+    const fileInput = document.getElementById("galleryFile");
+    const dropZoneText = document.getElementById("dropZonePromptText");
+
+    // Click to open file dialog
+    dropZone.addEventListener("click", () => fileInput.click());
+
+    // Update text when file is selected
+    fileInput.addEventListener("change", function() {
+        if (fileInput.files.length) {
+            dropZoneText.innerText = fileInput.files[0].name;
+        }
+    });
+
+    // Drag over styling
+    dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("drop-zone--over");
+    });
+
+    // Remove styling on leave/end
+    ["dragleave", "dragend"].forEach(type => {
+        dropZone.addEventListener(type, (e) => {
+            dropZone.classList.remove("drop-zone--over");
+        });
+    });
+
+    // Handle dropped file
+    dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("drop-zone--over");
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            dropZoneText.innerText = fileInput.files[0].name;
+        }
+    });
+
+    // Handle Upload and Add Gallery Item
     document.getElementById("galleryForm").addEventListener("submit", function(e) {
         e.preventDefault();
-        db.collection("gallery").add({
-            type: document.getElementById("galleryType").value,
-            url: document.getElementById("galleryUrl").value,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
-            document.getElementById("galleryMsg").innerText = translations[currentLang].gallerySuccess;
-            document.getElementById("galleryForm").reset();
-        }).catch(err => alert(err.message));
+        
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const type = document.getElementById("galleryType").value;
+        const submitBtn = document.getElementById("btnUploadGallery");
+        const msgEl = document.getElementById("galleryMsg");
+        const progressContainer = document.getElementById("uploadProgress");
+        const progressBar = document.getElementById("uploadProgressBar");
+
+        // UI Changes during upload
+        submitBtn.disabled = true;
+        progressContainer.classList.remove("hidden");
+        msgEl.innerText = translations[currentLang].uploadingMsg;
+        msgEl.style.color = "#FF9933"; // Saffron color for loading state
+
+        // Firebase Storage Reference
+        const fileName = new Date().getTime() + "_" + file.name;
+        const storageRef = storage.ref().child('gallery_media/' + fileName);
+
+        const uploadTask = storageRef.put(file);
+
+        uploadTask.on('state_changed', 
+            (snapshot) => {
+                // Observe state change events such as progress
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                progressBar.style.width = progress + '%';
+                progressBar.innerText = Math.round(progress) + '%';
+            }, 
+            (error) => {
+                // Handle unsuccessful uploads
+                msgEl.innerText = "Error: " + error.message;
+                msgEl.style.color = "#d32f2f";
+                submitBtn.disabled = false;
+                progressContainer.classList.add("hidden");
+            }, 
+            () => {
+                // Handle successful uploads on complete
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    // Save to Firestore Database
+                    db.collection("gallery").add({
+                        type: type,
+                        url: downloadURL,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then(() => {
+                        msgEl.innerText = translations[currentLang].gallerySuccess;
+                        msgEl.style.color = "#138808";
+                        
+                        // Reset Form and Progress
+                        document.getElementById("galleryForm").reset();
+                        dropZoneText.innerText = translations[currentLang].dropPrompt;
+                        submitBtn.disabled = false;
+                        progressContainer.classList.add("hidden");
+                        progressBar.style.width = '0%';
+                        progressBar.innerText = '0%';
+                    }).catch(err => {
+                        msgEl.innerText = "Error: " + err.message;
+                        submitBtn.disabled = false;
+                    });
+                });
+            }
+        );
     });
 
     // Load Members
