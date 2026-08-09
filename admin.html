@@ -1,151 +1,260 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>অ্যাডমিন প্যানেল - স্বদেশ জাগরণ</title>
+    <title>Admin Panel - Swadesh Jagaran</title>
     <!-- Firebase SDKs (CDN) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        body { background-color: #f4f6f9; color: #333; line-height: 1.6; }
-        header { background: #1b4d3e; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 20px; font-weight: bold; }
-        .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
-        .card { background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h2 { color: #1b4d3e; margin-bottom: 15px; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        .btn { background: #1b4d3e; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 15px; }
-        .btn:hover { background: #2e7d32; }
-        .btn-danger { background: #d32f2f; }
-        .btn-danger:hover { background: #b71c1c; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background-color: #f1f1f1; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #f4f7f6 0%, #eef2f3 100%); color: #333; min-height: 100vh; line-height: 1.6; }
+        
+        header { 
+            background: linear-gradient(135deg, #1b4d3e 0%, #2e7d32 100%); 
+            color: #fff; 
+            padding: 18px 30px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+        }
+        .logo { font-size: 22px; font-weight: bold; letter-spacing: 0.5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        .header-actions { display: flex; gap: 15px; align-items: center; }
+        
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        
+        .card { 
+            background: #ffffff; 
+            padding: 30px; 
+            margin-bottom: 25px; 
+            border-radius: 14px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06); 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(0,0,0,0.09); }
+        
+        h2 { 
+            color: #1b4d3e; 
+            margin-bottom: 20px; 
+            font-size: 20px; 
+            border-bottom: 2px solid #eef2f3; 
+            padding-bottom: 10px; 
+            font-weight: 700;
+        }
+        
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+        
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea { 
+            width: 100%; 
+            padding: 12px 15px; 
+            border: 1.5px solid #dcdde1; 
+            border-radius: 8px; 
+            font-size: 14px; 
+            background: #fafbfc;
+            transition: all 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { 
+            border-color: #1b4d3e; 
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(27, 77, 62, 0.1); 
+            outline: none; 
+        }
+        
+        .btn { 
+            background: linear-gradient(135deg, #1b4d3e 0%, #2e7d32 100%); 
+            color: #fff; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 15px; 
+            font-weight: 600; 
+            box-shadow: 0 4px 10px rgba(27, 77, 62, 0.2);
+            transition: all 0.3s ease; 
+        }
+        .btn:hover { 
+            background: linear-gradient(135deg, #14382d 0%, #236127 100%); 
+            box-shadow: 0 6px 15px rgba(27, 77, 62, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .btn-danger { 
+            background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%); 
+            box-shadow: 0 4px 10px rgba(211, 47, 47, 0.2);
+        }
+        .btn-danger:hover { 
+            background: linear-gradient(135deg, #b71c1c 0%, #990000 100%); 
+            box-shadow: 0 6px 15px rgba(211, 47, 47, 0.3);
+        }
+
+        .lang-btn { 
+            background: rgba(255, 255, 255, 0.2); 
+            border: 1.5px solid #fff; 
+            color: #fff; 
+            padding: 8px 16px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: all 0.3s;
+        }
+        .lang-btn:hover { background: #fff; color: #1b4d3e; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; }
+        th, td { padding: 14px 16px; text-align: left; font-size: 14px; }
+        th { background-color: #f1f8f6; color: #1b4d3e; font-weight: 700; border-bottom: 2px solid #e0e0e0; }
+        tr:not(:last-child) td { border-bottom: 1px solid #e0e0e0; }
+        tr:hover td { background-color: #f9fbfb; }
+
         .hidden { display: none; }
-        .msg { margin-top: 10px; font-weight: bold; }
+        .msg { margin-top: 12px; font-weight: 600; font-size: 14px; }
+        .login-container { max-width: 420px; margin: 100px auto; }
+        .table-responsive { overflow-x: auto; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">স্বদেশ জাগরণ - অ্যাডমিন প্যানেল</div>
-    <div id="authHeader" class="hidden">
-        <button class="btn btn-danger" onclick="logoutAdmin()">লগআউট</button>
+    <div class="logo" data-translate="adminTitle">Swadesh Jagaran - Admin Portal</div>
+    <div class="header-actions">
+        <button class="lang-btn" onclick="toggleLanguage()">বাংলা / English</button>
+        <div id="authHeader" class="hidden">
+            <button class="btn btn-danger" onclick="logoutAdmin()" data-translate="btnLogout">Logout</button>
+        </div>
     </div>
 </header>
 
 <div class="container">
     <!-- Login Section -->
-    <div id="loginSection" class="card">
-        <h2>অ্যাডমিন লগইন</h2>
+    <div id="loginSection" class="card login-container">
+        <h2 data-translate="loginHeading">Admin Login</h2>
         <form id="loginForm">
             <div class="form-group">
-                <label>অ্যাডমিন ইমেইল</label>
-                <input type="email" id="adminEmail" required>
+                <label data-translate="lblEmail">Admin Email</label>
+                <input type="email" id="adminEmail" placeholder="admin@swadeshjagaran.com" required>
             </div>
             <div class="form-group">
-                <label>পাসওয়ার্ড</label>
-                <input type="password" id="adminPassword" required>
+                <label data-translate="lblPassword">Password</label>
+                <input type="password" id="adminPassword" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="btn">লগইন করুন</button>
+            <button type="submit" class="btn" style="width: 100%;" data-translate="btnLogin">Login</button>
         </form>
-        <p id="loginMsg" class="msg" style="color: red;"></p>
+        <p id="loginMsg" class="msg" style="color: #d32f2f; text-align: center; margin-top: 15px;"></p>
     </div>
 
     <!-- Admin Dashboard (Hidden until login) -->
     <div id="dashboardSection" class="hidden">
         
-        <!-- Add Notice -->
-        <div class="card">
-            <h2>নতুন নোটিশ যোগ করুন</h2>
-            <form id="noticeForm">
-                <div class="form-group">
-                    <label>তারিখ</label>
-                    <input type="date" id="noticeDate" required>
-                </div>
-                <div class="form-group">
-                    <label>নোটিশের বিবরণ</label>
-                    <textarea id="noticeText" rows="3" required></textarea>
-                </div>
-                <button type="submit" class="btn">নোটিশ প্রকাশ করুন</button>
-            </form>
-            <p id="noticeMsg" class="msg" style="color: green;"></p>
+        <div class="form-grid">
+            <!-- Add Notice -->
+            <div class="card">
+                <h2 data-translate="noticeHeading">Publish Notice</h2>
+                <form id="noticeForm">
+                    <div class="form-group">
+                        <label data-translate="lblDate">Date</label>
+                        <input type="date" id="noticeDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-translate="lblNoticeText">Notice Description</label>
+                        <textarea id="noticeText" rows="4" placeholder="Write notice here..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn" data-translate="btnPublishNotice">Add Notice</button>
+                </form>
+                <p id="noticeMsg" class="msg" style="color: #2e7d32;"></p>
+            </div>
+
+            <!-- Add Income / Expense -->
+            <div class="card">
+                <h2 data-translate="financeHeading">Income & Expense Records</h2>
+                <form id="financeForm">
+                    <div class="form-group">
+                        <label data-translate="lblDate">Date</label>
+                        <input type="date" id="finDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-translate="lblDescription">Description</label>
+                        <input type="text" id="finDesc" placeholder="e.g. Donation or Expense" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-translate="lblType">Transaction Type</label>
+                        <select id="finType">
+                            <option value="Income" data-translate="optIncome">Income</option>
+                            <option value="Expense" data-translate="optExpense">Expense</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-translate="lblAmount">Amount</label>
+                        <input type="number" id="finAmount" placeholder="Enter amount" required>
+                    </div>
+                    <button type="submit" class="btn" data-translate="btnSaveFinance">Save Record</button>
+                </form>
+                <p id="finMsg" class="msg" style="color: #2e7d32;"></p>
+            </div>
         </div>
 
-        <!-- Add Income / Expense -->
-        <div class="card">
-            <h2>আয় বা ব্যয়ের হিসাব যোগ করুন</h2>
-            <form id="financeForm">
-                <div class="form-group">
-                    <label>তারিখ</label>
-                    <input type="date" id="finDate" required>
-                </div>
-                <div class="form-group">
-                    <label>বিবরণ</label>
-                    <input type="text" id="finDesc" required>
-                </div>
-                <div class="form-group">
-                    <label>ধরণ</label>
-                    <select id="finType">
-                        <option value="Income">আয় (Income)</option>
-                        <option value="Expense">ব্যয় (Expense)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>টাকার পরিমাণ</label>
-                    <input type="number" id="finAmount" required>
-                </div>
-                <button type="submit" class="btn">হিসাব যোগ করুন</button>
-            </form>
-            <p id="finMsg" class="msg" style="color: green;"></p>
-        </div>
+        <div class="form-grid">
+            <!-- Add Gallery Item -->
+            <div class="card">
+                <h2 data-translate="galleryHeading">Add Gallery Media</h2>
+                <form id="galleryForm">
+                    <div class="form-group">
+                        <label data-translate="lblMediaType">Media Type</label>
+                        <select id="galleryType">
+                            <option value="image" data-translate="optImage">Image</option>
+                            <option value="video" data-translate="optVideo">Video</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-translate="lblMediaUrl">Media URL</label>
+                        <input type="url" id="galleryUrl" placeholder="https://..." required>
+                    </div>
+                    <button type="submit" class="btn" data-translate="btnAddToGallery">Add to Gallery</button>
+                </form>
+                <p id="galleryMsg" class="msg" style="color: #2e7d32;"></p>
+            </div>
 
-        <!-- Add Gallery Item -->
-        <div class="card">
-            <h2>গ্যালারিতে ছবি বা ভিডিও যোগ করুন</h2>
-            <form id="galleryForm">
-                <div class="form-group">
-                    <label>ফাইলের ধরণ</label>
-                    <select id="galleryType">
-                        <option value="image">ছবি (Image)</option>
-                        <option value="video">ভিডিও (Video)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>ছবির বা ভিডিওর লিংক (URL)</label>
-                    <input type="url" id="galleryUrl" placeholder="https://example.com/image.jpg" required>
-                </div>
-                <button type="submit" class="btn">গ্যালারিতে যোগ করুন</button>
-            </form>
-            <p id="galleryMsg" class="msg" style="color: green;"></p>
+            <!-- Change Password Section -->
+            <div class="card">
+                <h2 data-translate="passwordHeading">Change Password</h2>
+                <form id="passwordForm">
+                    <div class="form-group">
+                        <label data-translate="lblNewPassword">New Password</label>
+                        <input type="password" id="newPassword" placeholder="Minimum 6 characters" required>
+                    </div>
+                    <button type="submit" class="btn" style="margin-top: 28px;" data-translate="btnUpdatePassword">Update Password</button>
+                </form>
+                <p id="passwordMsg" class="msg" style="color: #2e7d32;"></p>
+            </div>
         </div>
 
         <!-- View Registered Members -->
         <div class="card">
-            <h2>নিবন্ধিত সদস্যদের তালিকা (মোট সদস্য: <span id="totalMembersCount">0</span>)</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>নাম</th>
-                        <th>ইমেইল</th>
-                        <th>ফোন নম্বর</th>
-                        <th>ঠিকানা</th>
-                    </tr>
-                </thead>
-                <tbody id="membersTableBody"></tbody>
-            </table>
+            <h2 data-translate="membersHeading">Registered Members List (Total: <span id="totalMembersCount">0</span>)</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-translate="thName">Member Name</th>
+                            <th data-translate="thEmail">Email Address</th>
+                            <th data-translate="thPhone">Phone Number</th>
+                            <th data-translate="thAddress">Address</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTableBody"></tbody>
+                </table>
+            </div>
         </div>
 
     </div>
 </div>
 
 <script>
-    // Firebase Configuration (Matching your project)
+    // Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyCg5ttOQHcdqupvlD91Dam6IFfh6P1mdos",
         authDomain: "swadeshjagaran.firebaseapp.com",
@@ -160,6 +269,108 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    // Language Translation Dictionary for Admin
+    let currentLang = 'en';
+    const translations = {
+        en: {
+            adminTitle: "Swadesh Jagaran - Admin Portal",
+            btnLogout: "Logout",
+            loginHeading: "Admin Login",
+            lblEmail: "Admin Email",
+            lblPassword: "Password",
+            btnLogin: "Login",
+            noticeHeading: "Publish Notice",
+            lblDate: "Date",
+            lblNoticeText: "Notice Description",
+            btnPublishNotice: "Add Notice",
+            financeHeading: "Income & Expense Records",
+            lblDescription: "Description",
+            lblType: "Transaction Type",
+            optIncome: "Income",
+            optExpense: "Expense",
+            lblAmount: "Amount",
+            btnSaveFinance: "Save Record",
+            galleryHeading: "Add Gallery Media",
+            lblMediaType: "Media Type",
+            optImage: "Image",
+            optVideo: "Video",
+            lblMediaUrl: "Media URL",
+            btnAddToGallery: "Add to Gallery",
+            passwordHeading: "Change Password",
+            lblNewPassword: "New Password",
+            btnUpdatePassword: "Update Password",
+            membersHeading: "Registered Members List (Total: ",
+            thName: "Member Name",
+            thEmail: "Email Address",
+            thPhone: "Phone Number",
+            thAddress: "Address",
+            noticeSuccess: "Notice published successfully!",
+            financeSuccess: "Record saved successfully!",
+            gallerySuccess: "Media added to gallery successfully!",
+            passSuccess: "Password changed successfully!",
+            loginError: "Login failed: Please check email and password.",
+            passError: "Error: Please re-login and try again."
+        },
+        bn: {
+            adminTitle: "স্বদেশ জাগরণ - অ্যাডমিন পোর্টাল",
+            btnLogout: "লগআউট",
+            loginHeading: "অ্যাডমিন লগইন",
+            lblEmail: "অ্যাডমিন ইমেইল",
+            lblPassword: "পাসওয়ার্ড",
+            btnLogin: "লগইন করুন",
+            noticeHeading: "নোটিশ প্রকাশ করুন",
+            lblDate: "তারিখ",
+            lblNoticeText: "নোটিশের বিবরণ",
+            btnPublishNotice: "নোটিশ যোগ করুন",
+            financeHeading: "আয় ও ব্যয়ের হিসাব",
+            lblDescription: "বিবরণ",
+            lblType: "খাতের ধরণ",
+            optIncome: "আয় (Income)",
+            optExpense: "ব্যয় (Expense)",
+            lblAmount: "টাকার পরিমাণ",
+            btnSaveFinance: "হিসাব সংরক্ষণ করুন",
+            galleryHeading: "গ্যালারি মিডিয়া যোগ করুন",
+            lblMediaType: "ফাইলের ধরণ",
+            optImage: "ছবি (Image)",
+            optVideo: "ভিডিও (Video)",
+            lblMediaUrl: "ফাইলের লিংক (URL)",
+            btnAddToGallery: "গ্যালারিতে যুক্ত করুন",
+            passwordHeading: "পাসওয়ার্ড পরিবর্তন করুন",
+            lblNewPassword: "নতুন পাসওয়ার্ড",
+            btnUpdatePassword: "পাসওয়ার্ড আপডেট করুন",
+            membersHeading: "নিবন্ধিত সদস্যদের তালিকা (মোট: ",
+            thName: "সদস্যের নাম",
+            thEmail: "ইমেইল ঠিকানা",
+            thPhone: "ফোন নম্বর",
+            thAddress: "ঠিকানা",
+            noticeSuccess: "নোটিশ সফলভাবে প্রকাশিত হয়েছে!",
+            financeSuccess: "হিসাব সফলভাবে সংরক্ষণ করা হয়েছে!",
+            gallerySuccess: "গ্যালারিতে আইটেম সফলভাবে যোগ করা হয়েছে!",
+            passSuccess: "পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!",
+            loginError: "লগইন ব্যর্থ হয়েছে: সঠিক ইমেইল ও পাসওয়ার্ড দিন।",
+            passError: "ত্রুটি: পুনরায় লগইন করে আবার চেষ্টা করুন।"
+        }
+    };
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'en' ? 'bn' : 'en';
+        updateLanguage();
+    }
+
+    function updateLanguage() {
+        document.querySelectorAll('[data-translate]').forEach(element => {
+            const key = element.getAttribute('data-translate');
+            if (translations[currentLang][key]) {
+                if(key === 'membersHeading') {
+                    const count = document.getElementById("totalMembersCount").innerText;
+                    element.innerHTML = translations[currentLang][key] + '<span id="totalMembersCount">' + count + '</span>)';
+                } else {
+                    element.innerText = translations[currentLang][key];
+                }
+            }
+        });
+    }
+
     // Admin Login Handler
     document.getElementById("loginForm").addEventListener("submit", function(e) {
         e.preventDefault();
@@ -171,7 +382,7 @@
                 document.getElementById("loginMsg").innerText = "";
             })
             .catch(error => {
-                document.getElementById("loginMsg").innerText = "লগইন ব্যর্থ হয়েছে: " + error.message;
+                document.getElementById("loginMsg").innerText = translations[currentLang].loginError;
             });
     });
 
@@ -193,6 +404,23 @@
         auth.signOut();
     }
 
+    // Change Password Handler
+    document.getElementById("passwordForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const newPassword = document.getElementById("newPassword").value;
+        const user = auth.currentUser;
+
+        if (user) {
+            user.updatePassword(newPassword).then(() => {
+                document.getElementById("passwordMsg").innerText = translations[currentLang].passSuccess;
+                document.getElementById("passwordForm").reset();
+            }).catch(error => {
+                document.getElementById("passwordMsg").style.color = "#d32f2f";
+                document.getElementById("passwordMsg").innerText = translations[currentLang].passError;
+            });
+        }
+    });
+
     // Add Notice
     document.getElementById("noticeForm").addEventListener("submit", function(e) {
         e.preventDefault();
@@ -201,7 +429,7 @@
             text: document.getElementById("noticeText").value,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         }).then(() => {
-            document.getElementById("noticeMsg").innerText = "নোটিশ সফলভাবে প্রকাশিত হয়েছে!";
+            document.getElementById("noticeMsg").innerText = translations[currentLang].noticeSuccess;
             document.getElementById("noticeForm").reset();
         }).catch(err => alert(err.message));
     });
@@ -216,7 +444,7 @@
             amount: document.getElementById("finAmount").value,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         }).then(() => {
-            document.getElementById("finMsg").innerText = "হিসাব সফলভাবে যোগ করা হয়েছে!";
+            document.getElementById("finMsg").innerText = translations[currentLang].financeSuccess;
             document.getElementById("financeForm").reset();
         }).catch(err => alert(err.message));
     });
@@ -229,7 +457,7 @@
             url: document.getElementById("galleryUrl").value,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         }).then(() => {
-            document.getElementById("galleryMsg").innerText = "গ্যালারিতে আইটেম সফলভাবে যোগ করা হয়েছে!";
+            document.getElementById("galleryMsg").innerText = translations[currentLang].gallerySuccess;
             document.getElementById("galleryForm").reset();
         }).catch(err => alert(err.message));
     });
@@ -246,6 +474,10 @@
             });
         });
     }
+
+    window.onload = function() {
+        updateLanguage();
+    };
 </script>
 </body>
 </html>
