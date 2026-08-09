@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>swadeshjagaran</title>
-    <!-- Firebase SDKs -->
+    <title>স্বদেশ জাগরণ - Swadesh Jagaran</title>
+    <!-- Firebase SDKs (CDN) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
@@ -37,7 +37,7 @@
 <body>
 
 <header>
-    <div class="logo" data-translate="siteTitle">NGO Management Portal</div>
+    <div class="logo" data-translate="siteTitle">স্বদেশ জাগরণ</div>
     <nav>
         <a onclick="showSection('home')" data-translate="navHome">Home</a>
         <a onclick="showSection('about')" data-translate="navAbout">About Us</a>
@@ -53,7 +53,7 @@
 <div class="container">
     <!-- Home Section -->
     <section id="home-section" class="content-section">
-        <h2 data-translate="homeTitle">Welcome to Our NGO Portal</h2>
+        <h2 data-translate="homeTitle">Welcome to Swadesh Jagaran</h2>
         <p data-translate="homeDesc">We work for social welfare, education, community support, and transparent financial reporting. Explore our activities, view public accounts, and register to join our mission.</p>
     </section>
 
@@ -118,18 +118,19 @@
 </div>
 
 <footer>
-    <p data-translate="footerText">&copy; 2026 NGO Management System. All Rights Reserved.</p>
+    <p data-translate="footerText">&copy; 2026 Swadesh Jagaran. All Rights Reserved.</p>
 </footer>
 
 <script>
-    // Firebase Configuration
+    // Firebase Configuration (from your console screenshot)
     const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyCg5ttOQHcdqupvlD91Dam6IFfh6P1mdos",
+        authDomain: "swadeshjagaran.firebaseapp.com",
+        projectId: "swadeshjagaran",
+        storageBucket: "swadeshjagaran.firebasestorage.app",
+        messagingSenderId: "955311438612",
+        appId: "1:955311438612:web:089ee627987ee6b5562001",
+        measurementId: "G-WC17FQTESH"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -139,7 +140,7 @@
     let currentLang = 'bn';
     const translations = {
         en: {
-            siteTitle: "NGO Management Portal",
+            siteTitle: "Swadesh Jagaran",
             navHome: "Home",
             navAbout: "About Us",
             navGallery: "Gallery",
@@ -147,7 +148,7 @@
             navFinance: "Income & Expense",
             navRegister: "Register",
             totalMembers: "Total Members",
-            homeTitle: "Welcome to Our NGO Portal",
+            homeTitle: "Welcome to Swadesh Jagaran",
             homeDesc: "We work for social welfare, education, community support, and transparent financial reporting. Explore our activities, view public accounts, and register to join our mission.",
             aboutTitle: "About Us",
             aboutDesc: "Our organization is dedicated to serving society with complete honesty and transparency. All income, expenses, and updates are publicly verifiable while administration is strictly managed.",
@@ -164,10 +165,10 @@
             lblPhone: "Phone Number",
             lblAddress: "Address",
             btnSubmit: "Submit Registration",
-            footerText: "&copy; 2026 NGO Management System. All Rights Reserved."
+            footerText: "&copy; 2026 Swadesh Jagaran. All Rights Reserved."
         },
         bn: {
-            siteTitle: "এনজিও ম্যানেজমেন্ট পোর্টাল",
+            siteTitle: "স্বদেশ জাগরণ",
             navHome: "হোম",
             navAbout: "আমাদের সম্পর্কে",
             navGallery: "গ্যালারি",
@@ -175,7 +176,7 @@
             navFinance: "আয় ও ব্যয়",
             navRegister: "রেজিস্ট্রেশন",
             totalMembers: "মোট সদস্য",
-            homeTitle: "আমাদের এনজিও পোর্টালে স্বাগতম",
+            homeTitle: "স্বদেশ জাগরণে স্বাগতম",
             homeDesc: "আমরা সমাজ কল্যাণ, শিক্ষা, এবং স্বচ্ছ আর্থিক হিসাবের জন্য কাজ করি। আমাদের কার্যক্রম দেখুন এবং সদস্য হতে নিবন্ধন করুন।",
             aboutTitle: "আমাদের সম্পর্কে",
             aboutDesc: "আমাদের সংস্থা সম্পূর্ণ সততা ও স্বচ্ছতার সাথে সমাজের সেবা করার জন্য নিবেদিত। সমস্ত আয়, ব্যয় এবং আপডেট সর্বসাধারণের জন্য উন্মুক্ত।",
@@ -192,7 +193,7 @@
             lblPhone: "ফোন নম্বর",
             lblAddress: "ঠিকানা",
             btnSubmit: "নিবন্ধন জমা দিন",
-            footerText: "&copy; ২০২৬ এনজিও ম্যানেজমেন্ট সিস্টেম। সর্বস্বত্ব সংরক্ষিত।"
+            footerText: "&copy; ২০২৬ স্বদেশ জাগরণ। সর্বস্বত্ব সংরক্ষিত।"
         }
     };
 
@@ -263,7 +264,7 @@
     document.getElementById("memberForm").addEventListener("submit", function(e) {
         e.preventDefault();
         const name = document.getElementById("memberName").value;
-        const email = document.getElementById("memberEmail.value") || document.getElementById("memberEmail").value;
+        const email = document.getElementById("memberEmail").value;
         const phone = document.getElementById("memberPhone").value;
         const address = document.getElementById("memberAddress").value;
 
