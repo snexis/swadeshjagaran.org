@@ -379,7 +379,7 @@
         updateLanguage();
     });
 
-    // Admin Login Handler with ID to Dummy Email Mapping
+    // Admin Login Handler with Detailed Error Display
     document.getElementById("loginForm").addEventListener("submit", function(e) {
         e.preventDefault();
         const inputId = document.getElementById("adminUsername").value.trim().toLowerCase();
@@ -393,7 +393,8 @@
                 document.getElementById("loginForm").reset();
             })
             .catch(error => {
-                document.getElementById("loginMsg").innerText = translations[currentLang].loginError;
+                // Showing exact Firebase error message for debugging
+                document.getElementById("loginMsg").innerText = "Firebase Error: " + error.message;
             });
     });
 
