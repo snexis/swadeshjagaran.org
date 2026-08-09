@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Swadesh Jagaran</title>
+    <title>Admin Control Panel - Swadesh Jagaran</title>
     <!-- Firebase SDKs (CDN) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -11,23 +11,33 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         :root {
-            --primary: #1b4d3e;
-            --primary-dark: #12352b;
-            --accent: #2e7d32;
-            --bg-color: #f4f7f6;
+            --saffron: #FF9933;
+            --white: #FFFFFF;
+            --india-green: #138808;
+            --navy-blue: #000080;
+            --bg-color: #f8f9fa;
             --card-bg: #ffffff;
             --text-main: #2c3e50;
-            --text-muted: #7f8c8d;
-            --border-color: #dcdde1;
-            --sidebar-width: 260px;
+            --border-color: #e0e0e0;
+            --sidebar-width: 270px;
         }
 
-        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; overflow-x: hidden; }
+        body { 
+            background-color: var(--bg-color); 
+            /* Subtle Indian Flag Watermark background */
+            background-image: linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)), 
+                              radial-gradient(circle, rgba(255,153,51,0.08) 0%, rgba(19,136,8,0.08) 100%);
+            color: var(--text-main); 
+            min-height: 100vh; 
+            display: flex; 
+            overflow-x: hidden; 
+        }
 
-        /* Sidebar Styling */
+        /* Tricolor Sidebar Styling */
         sidebar {
             width: var(--sidebar-width);
-            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: linear-gradient(180deg, #1b4d3e 0%, #0d251f 100%);
+            border-right: 4px solid var(--saffron);
             color: #fff;
             position: fixed;
             top: 0;
@@ -35,20 +45,28 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            box-shadow: 5px 0 20px rgba(0,0,0,0.15);
             z-index: 100;
-            transition: transform 0.3s ease;
         }
 
         .sidebar-brand {
             padding: 24px 20px;
-            font-size: 20px;
+            font-size: 19px;
             font-weight: 700;
             letter-spacing: 0.5px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .sidebar-brand img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--saffron);
         }
 
         .sidebar-menu {
@@ -64,9 +82,9 @@
         .sidebar-menu a {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             padding: 12px 16px;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255,255,255,0.85);
             text-decoration: none;
             font-size: 15px;
             font-weight: 500;
@@ -75,9 +93,10 @@
         }
 
         .sidebar-menu a:hover, .sidebar-menu li.active a {
-            background: rgba(255,255,255,0.15);
+            background: linear-gradient(135deg, var(--saffron) 0%, #e07b1b 100%);
             color: #fff;
             transform: translateX(4px);
+            box-shadow: 0 4px 10px rgba(255, 153, 51, 0.3);
         }
 
         .sidebar-footer {
@@ -94,80 +113,90 @@
             min-height: 100vh;
         }
 
-        /* Top Header Styling */
+        /* Tricolor Top Header Bar */
         header {
             background: #ffffff;
-            padding: 15px 30px;
+            padding: 0;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            flex-direction: column;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
             position: sticky;
             top: 0;
             z-index: 99;
         }
 
-        .header-title { font-size: 18px; font-weight: 600; color: var(--primary); }
+        .tricolor-strip {
+            height: 6px;
+            background: linear-gradient(90deg, var(--saffron) 33.33%, var(--white) 33.33%, var(--white) 66.66%, var(--india-green) 66.66%);
+        }
+
+        .header-content {
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title { font-size: 18px; font-weight: 700; color: #1b4d3e; display: flex; align-items: center; gap: 10px; }
         .header-actions { display: flex; gap: 15px; align-items: center; }
 
         .lang-btn { 
-            background: #f1f8f6; 
-            border: 1.5px solid var(--accent); 
-            color: var(--accent); 
+            background: #fff6ee; 
+            border: 1.5px solid var(--saffron); 
+            color: #d36b00; 
             padding: 8px 16px; 
             border-radius: 8px; 
             cursor: pointer; 
             font-weight: 600; 
             transition: all 0.3s;
         }
-        .lang-btn:hover { background: var(--accent); color: #fff; }
+        .lang-btn:hover { background: var(--saffron); color: #fff; }
 
         /* Content Area */
-        .container { padding: 30px; max-width: 1300px; width: 100%; margin: 0 auto; }
+        .container { padding: 35px; max-width: 1300px; width: 100%; margin: 0 auto; }
 
         .card { 
             background: var(--card-bg); 
-            padding: 25px; 
+            padding: 30px; 
             margin-bottom: 25px; 
-            border-radius: 12px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.04); 
+            border-radius: 14px; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.05); 
             border: 1px solid #eaeaea;
+            border-top: 4px solid var(--saffron);
             transition: all 0.3s ease;
         }
-        .card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.07); }
+        .card:hover { box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
 
         h2 { 
-            color: var(--primary); 
+            color: #1b4d3e; 
             margin-bottom: 20px; 
-            font-size: 18px; 
+            font-size: 19px; 
             border-bottom: 2px solid #f0f2f5; 
-            padding-bottom: 10px; 
+            padding-bottom: 12px; 
             font-weight: 700;
         }
 
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 25px; }
-
-        .form-group { margin-bottom: 16px; }
+        .form-group { margin-bottom: 18px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #4b6584; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
         .form-group input, .form-group select, .form-group textarea { 
             width: 100%; 
-            padding: 12px 15px; 
+            padding: 12px 16px; 
             border: 1.5px solid var(--border-color); 
             border-radius: 8px; 
             font-size: 14px; 
-            background: #ffffff;
+            background: #fafbfc;
             color: #2c3e50;
             transition: all 0.3s;
         }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { 
-            border-color: var(--accent); 
+            border-color: var(--saffron); 
             background: #fff;
-            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1); 
+            box-shadow: 0 0 0 4px rgba(255, 153, 51, 0.15); 
             outline: none; 
         }
 
         .btn { 
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); 
+            background: linear-gradient(135deg, #1b4d3e 0%, var(--india-green) 100%); 
             color: #fff; 
             border: none; 
             padding: 12px 24px; 
@@ -175,34 +204,33 @@
             cursor: pointer; 
             font-size: 14px; 
             font-weight: 600; 
-            box-shadow: 0 4px 10px rgba(27, 77, 62, 0.2);
+            box-shadow: 0 4px 12px rgba(27, 77, 62, 0.2);
             transition: all 0.3s ease; 
         }
         .btn:hover { 
             opacity: 0.95;
-            box-shadow: 0 6px 15px rgba(27, 77, 62, 0.3);
+            box-shadow: 0 6px 18px rgba(27, 77, 62, 0.3);
             transform: translateY(-1px);
         }
         
         .btn-danger { 
-            background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%); 
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%); 
             box-shadow: 0 4px 10px rgba(211, 47, 47, 0.2);
-            padding: 8px 16px;
+            padding: 10px 18px;
             font-size: 13px;
         }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; }
         th, td { padding: 14px 16px; text-align: left; font-size: 14px; }
-        th { background-color: #f8f9fa; color: var(--primary); font-weight: 700; border-bottom: 2px solid #e0e0e0; }
+        th { background-color: #f8f9fa; color: #1b4d3e; font-weight: 700; border-bottom: 2px solid #e0e0e0; }
         tr:not(:last-child) td { border-bottom: 1px solid #eef2f3; }
         tr:hover td { background-color: #fafbfc; }
 
         .hidden { display: none !important; }
         .msg { margin-top: 10px; font-weight: 600; font-size: 13px; }
-        .login-container { max-width: 420px; margin: 80px auto; background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .login-container { max-width: 420px; margin: 80px auto; background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-top: 6px solid var(--saffron); }
         .table-responsive { overflow-x: auto; }
 
-        /* Section Tab Control */
         .admin-section { display: none; }
         .admin-section.active-section { display: block; }
     </style>
@@ -212,7 +240,8 @@
 <!-- Sidebar Navigation -->
 <sidebar id="appSidebar" class="hidden">
     <div class="sidebar-brand">
-        <span>🌿</span> Swadesh Jagaran
+        <img id="sidebarLogoImg" src="https://via.placeholder.1image.com/40" alt="Logo">
+        <span id="sidebarBrandText">স্বদেশ জাগরণ</span>
     </div>
     <ul class="sidebar-menu">
         <li class="active" onclick="switchTab('dashboard', this)">
@@ -231,7 +260,7 @@
             <a href="#">👥 <span data-translate="menuMembers">Members List</span></a>
         </li>
         <li onclick="switchTab('settings', this)">
-            <a href="#">⚙️ <span data-translate="menuSettings">Settings</span></a>
+            <a href="#">⚙️ <span data-translate="menuSettings">Settings & Logo</span></a>
         </li>
     </ul>
     <div class="sidebar-footer">
@@ -241,11 +270,14 @@
 
 <!-- Main Wrapper -->
 <div class="main-wrapper" id="mainWrapper">
-    <!-- Top Header -->
+    <!-- Top Tricolor Header -->
     <header id="appHeader" class="hidden">
-        <div class="header-title" data-translate="adminPortalTitle">Admin Control Panel</div>
-        <div class="header-actions">
-            <button class="lang-btn" onclick="toggleLanguage()">বাংলা / English</button>
+        <div class="tricolor-strip"></div>
+        <div class="header-content">
+            <div class="header-title" data-translate="adminPortalTitle">🇮🇳 Admin Control Panel</div>
+            <div class="header-actions">
+                <button class="lang-btn" onclick="toggleLanguage()">বাংলা / English</button>
+            </div>
         </div>
     </header>
 
@@ -293,7 +325,7 @@
                         </div>
                         <button type="submit" class="btn" data-translate="btnPublishNotice">Add Notice</button>
                     </form>
-                    <p id="noticeMsg" class="msg" style="color: #2e7d32;"></p>
+                    <p id="noticeMsg" class="msg" style="color: #138808;"></p>
                 </div>
             </div>
 
@@ -323,7 +355,7 @@
                         </div>
                         <button type="submit" class="btn" data-translate="btnSaveFinance">Save Record</button>
                     </form>
-                    <p id="finMsg" class="msg" style="color: #2e7d32;"></p>
+                    <p id="finMsg" class="msg" style="color: #138808;"></p>
                 </div>
             </div>
 
@@ -345,7 +377,7 @@
                         </div>
                         <button type="submit" class="btn" data-translate="btnAddToGallery">Add to Gallery</button>
                     </form>
-                    <p id="galleryMsg" class="msg" style="color: #2e7d32;"></p>
+                    <p id="galleryMsg" class="msg" style="color: #138808;"></p>
                 </div>
             </div>
 
@@ -369,9 +401,9 @@
                 </div>
             </div>
 
-            <!-- Tab 6: Settings / Password Change -->
+            <!-- Tab 6: Settings & Logo Management -->
             <div id="sec-settings" class="admin-section">
-                <div class="card" style="max-width: 600px; margin: 0 auto;">
+                <div class="card" style="max-width: 650px; margin: 0 auto;">
                     <h2 data-translate="passHeading">Change Admin Password</h2>
                     <form id="changePasswordForm">
                         <div class="form-group">
@@ -380,7 +412,19 @@
                         </div>
                         <button type="submit" class="btn" data-translate="btnUpdatePassword">Update Password</button>
                     </form>
-                    <p id="passMsg" class="msg" style="color: #2e7d32;"></p>
+                    <p id="passMsg" class="msg" style="color: #138808;"></p>
+                </div>
+
+                <div class="card" style="max-width: 650px; margin: 20px auto 0 auto;">
+                    <h2 data-translate="logoHeading">Website / Portal Logo Management</h2>
+                    <form id="logoForm">
+                        <div class="form-group">
+                            <label data-translate="lblLogoUrl">Logo Image URL</label>
+                            <input type="url" id="logoUrlInput" placeholder="https://example.com/logo.png" required>
+                        </div>
+                        <button type="submit" class="btn" data-translate="btnUpdateLogo">Update Portal Logo</button>
+                    </form>
+                    <p id="logoMsg" class="msg" style="color: #138808;"></p>
                 </div>
             </div>
 
@@ -390,16 +434,16 @@
 
 <script>
     // Firebase Configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyCg5ttOQHcdqupvlD91Dam6IFfh6P1mdos",
-        authDomain: "swadeshjagaran.firebaseapp.com",
-        projectId: "swadeshjagaran",
-        storageBucket: "swadeshjagaran.firebasestorage.app",
-        messagingSenderId: "955311438612",
-        appId: "1:955311438612:web:089ee627987ee6b5562001",
-        measurementId: "G-WC17FQTESH"
-    };
-
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCg5ttOQHcdqupwlD9lDam6IFfh6P1mdos",
+  authDomain: "swadeshjagaran.firebaseapp.com",
+  projectId: "swadeshjagaran",
+  storageBucket: "swadeshjagaran.firebasestorage.app",
+  messagingSenderId: "955311438612",
+  appId: "1:955311438612:web:089ee627987ee0b5562001",
+  measurementId: "G-WC17FQTESH"
+};
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -408,13 +452,13 @@
     let currentLang = 'en';
     const translations = {
         en: {
-            adminPortalTitle: "Admin Control Panel",
+            adminPortalTitle: "🇮🇳 Admin Control Panel",
             menuDashboard: "Dashboard",
             menuNotice: "Publish Notice",
             menuFinance: "Income & Expense",
             menuGallery: "Gallery Media",
             menuMembers: "Members List",
-            menuSettings: "Settings",
+            menuSettings: "Settings & Logo",
             btnLogout: "Logout",
             loginHeading: "Admin Login",
             lblEmail: "Admin ID / Username",
@@ -443,6 +487,10 @@
             lblNewPassword: "New Password",
             btnUpdatePassword: "Update Password",
             passSuccess: "Password updated successfully!",
+            logoHeading: "Portal Logo Management",
+            lblLogoUrl: "Logo Image URL",
+            btnUpdateLogo: "Update Portal Logo",
+            logoSuccess: "Logo updated successfully!",
             membersHeading: "Registered Members List (Total: ",
             thName: "Member Name",
             thEmail: "Email Address",
@@ -453,13 +501,13 @@
             gallerySuccess: "Media added to gallery successfully!",
         },
         bn: {
-            adminPortalTitle: "অ্যাডমিন কন্ট্রোল প্যানেল",
+            adminPortalTitle: "🇮🇳 অ্যাডমিন কন্ট্রোল প্যানেল",
             menuDashboard: "ড্যাশবোর্ড",
             menuNotice: "নোটিশ প্রকাশ",
             menuFinance: "আয় ও ব্যয়",
             menuGallery: "গ্যালারি মিডিয়া",
             menuMembers: "সদস্যদের তালিকা",
-            menuSettings: "সেটিংস",
+            menuSettings: "সেটিংস ও লোগো",
             btnLogout: "লগআউট",
             loginHeading: "অ্যাডমিন লগইন",
             lblEmail: "অ্যাডমিন আইডি / ইউজারনেম",
@@ -488,6 +536,10 @@
             lblNewPassword: "নতুন পাসওয়ার্ড",
             btnUpdatePassword: "পাসওয়ার্ড আপডেট করুন",
             passSuccess: "পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!",
+            logoHeading: "পোর্টাল লোগো ম্যানেজমেন্ট",
+            lblLogoUrl: "লোগো ইমেজ ইউআরএল (URL)",
+            btnUpdateLogo: "লোগো আপডেট করুন",
+            logoSuccess: "লোগো সফলভাবে আপডেট হয়েছে!",
             membersHeading: "নিবন্ধিত সদস্যদের তালিকা (মোট: ",
             thName: "সদস্যের নাম",
             thEmail: "ইমেইল ঠিকানা",
@@ -527,10 +579,41 @@
         if(element) element.classList.add('active');
     }
 
+    // Load Saved Logo from Firestore or localStorage
+    function loadPortalLogo() {
+        db.collection("settings").doc("portal").get().then(doc => {
+            if (doc.exists && doc.data().logoUrl) {
+                const url = doc.data().logoUrl;
+                document.getElementById("sidebarLogoImg").src = url;
+                localStorage.setItem("portalLogo", url);
+            }
+        }).catch(() => {
+            const savedLogo = localStorage.getItem("portalLogo");
+            if(savedLogo) {
+                document.getElementById("sidebarLogoImg").src = savedLogo;
+            }
+        });
+    }
+
+    // Update Logo Handler
+    document.getElementById("logoForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const newLogoUrl = document.getElementById("logoUrlInput").value.trim();
+        db.collection("settings").doc("portal").set({
+            logoUrl: newLogoUrl
+        }, { merge: true }).then(() => {
+            document.getElementById("logoMsg").innerText = translations[currentLang].logoSuccess;
+            document.getElementById("sidebarLogoImg").src = newLogoUrl;
+            localStorage.setItem("portalLogo", newLogoUrl);
+            document.getElementById("logoForm").reset();
+        }).catch(err => alert(err.message));
+    });
+
     // Firebase Auth State Listener
     auth.onAuthStateChanged(user => {
         if (user) {
             showDashboard();
+            loadPortalLogo();
         } else {
             showLogin();
         }
@@ -608,7 +691,6 @@
     document.getElementById("financeForm").addEventListener("submit", function(e) {
         e.preventDefault();
         db.collection("income_expenses").add({
-            date: document.getElementById("finDate5" in window ? "" : document.getElementById("finDate").value), // standard field
             date: document.getElementById("finDate").value,
             description: document.getElementById("finDesc").value,
             type: document.getElementById("finType").value,
