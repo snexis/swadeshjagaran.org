@@ -6,123 +6,476 @@
     <title>স্বদেশ জাগরণ - Swadesh Jagaran</title>
     <!-- Firebase SDKs (CDN) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        body { background-color: #f4f6f9; color: #333; line-height: 1.6; }
-        header { background: #1b4d3e; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        .logo { font-size: 20px; font-weight: bold; }
-        nav { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-        nav a { color: #fff; text-decoration: none; font-size: 15px; padding: 5px 10px; transition: background 0.3s; border-radius: 4px; cursor: pointer; }
-        nav a:hover { background: #2e7d32; }
-        .lang-btn { background: #ff9800; border: none; color: #fff; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .member-badge { background: #0288d1; padding: 5px 10px; border-radius: 4px; font-size: 14px; font-weight: bold; }
-        .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
-        section { background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h2 { color: #1b4d3e; margin-bottom: 15px; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background-color: #f1f1f1; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        .btn-submit { background: #1b4d3e; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; }
-        .btn-submit:hover { background: #2e7d32; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 10px; }
-        .gallery-item img, .gallery-item video { width: 100%; height: 180px; object-fit: cover; border-radius: 4px; }
-        footer { text-align: center; padding: 15px; background: #333; color: #fff; margin-top: 30px; }
-        .hidden { display: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; scroll-behavior: smooth; }
+        :root {
+            --saffron: #FF9933;
+            --white: #FFFFFF;
+            --india-green: #138808;
+            --navy-blue: #000080;
+            --dark-green: #1b4d3e;
+            --bg-color: #f7f9fa;
+            --text-main: #2c3e50;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: linear-gradient(rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.94)), 
+                              radial-gradient(circle, rgba(255,153,51,0.08) 0%, rgba(19,136,8,0.08) 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Tricolor Top Header Strip */
+        .tricolor-strip {
+            height: 6px;
+            background: linear-gradient(90deg, var(--saffron) 33.33%, var(--white) 33.33%, var(--white) 66.66%, var(--india-green) 66.66%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1001;
+        }
+
+        /* Navigation Bar */
+        header {
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 6px;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--saffron);
+            box-shadow: 0 2px 8px rgba(255, 153, 51, 0.3);
+        }
+
+        .brand-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark-green);
+            letter-spacing: 0.5px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #4b6584;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--saffron);
+        }
+
+        .counter-badge {
+            background: linear-gradient(135deg, var(--saffron) 0%, #e07b1b 100%);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(255, 153, 51, 0.3);
+        }
+
+        .lang-btn {
+            background: #fff6ee;
+            border: 1.5px solid var(--saffron);
+            color: #d36b00;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .lang-btn:hover { background: var(--saffron); color: #fff; }
+
+        /* Hero / Banner Section */
+        .hero {
+            background: linear-gradient(135deg, #1b4d3e 0%, #0d251f 100%);
+            color: #fff;
+            padding: 70px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 5px solid var(--saffron);
+        }
+
+        .hero::before {
+            content: "🇮🇳";
+            position: absolute;
+            font-size: 250px;
+            opacity: 0.04;
+            right: 5%;
+            top: -20%;
+        }
+
+        .hero h1 {
+            font-size: 38px;
+            margin-bottom: 15px;
+            font-weight: 800;
+            color: var(--saffron);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 18px;
+            max-width: 750px;
+            margin: 0 auto 25px auto;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        /* Special Event Highlight Box */
+        .event-highlight {
+            background: linear-gradient(135deg, #ffffff 0%, #fff9f0 100%);
+            border: 2px solid var(--saffron);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px auto;
+            max-width: 900px;
+            box-shadow: 0 10px 30px rgba(255, 153, 51, 0.15);
+            text-align: left;
+            position: relative;
+        }
+
+        .event-highlight::after {
+            content: "✨ ১৫ই আগস্ট বিশেষ নিবেদন";
+            position: absolute;
+            top: -14px;
+            left: 30px;
+            background: var(--saffron);
+            color: #fff;
+            padding: 4px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 20px;
+        }
+
+        .event-highlight h3 {
+            color: var(--dark-green);
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .event-highlight p {
+            color: #4a5568;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        /* Main Container & Sections */
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            flex-grow: 1;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 26px;
+            color: var(--dark-green);
+            text-align: center;
+            margin-bottom: 35px;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--saffron);
+            border-radius: 2px;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--saffron);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+
+        .card h4 {
+            color: var(--dark-green);
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Animated Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--dark-green) 0%, var(--india-green) 100%);
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(27, 77, 62, 0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(27, 77, 62, 0.35);
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        /* Registration Form Section */
+        .form-card {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            max-width: 650px;
+            margin: 0 auto 50px auto;
+            border-top: 6px solid var(--saffron);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4b6584;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #fafbfc;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--saffron);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(255, 153, 51, 0.15);
+            outline: none;
+        }
+
+        .msg {
+            margin-top: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(180deg, #1b4d3e 0%, #0d251f 100%);
+            color: #fff;
+            text-align: center;
+            padding: 30px 20px;
+            border-top: 4px solid var(--saffron);
+            margin-top: auto;
+        }
+
+        footer p {
+            font-size: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        @media(max-width: 768px) {
+            .nav-menu { display: none; }
+            .hero h1 { font-size: 28px; }
+            .hero p { font-size: 15px; }
+        }
     </style>
 </head>
 <body>
 
+<div class="tricolor-strip"></div>
+
+<!-- Navigation Bar -->
 <header>
-    <div class="logo" data-translate="siteTitle">স্বদেশ জাগরণ</div>
-    <nav>
-        <a onclick="showSection('home')" data-translate="navHome">Home</a>
-        <a onclick="showSection('about')" data-translate="navAbout">About Us</a>
-        <a onclick="showSection('gallery')" data-translate="navGallery">Gallery</a>
-        <a onclick="showSection('notice')" data-translate="navNotice">Notices</a>
-        <a onclick="showSection('finance')" data-translate="navFinance">Income & Expense</a>
-        <a onclick="showSection('register')" data-translate="navRegister">Register</a>
-        <div class="member-badge"><span data-translate="totalMembers">Total Members</span>: <span id="memberCountDisplay">0</span></div>
-        <button class="lang-btn" onclick="toggleLanguage()">বাংলা / English</button>
-    </nav>
+    <div class="nav-container">
+        <a href="#" class="brand">
+            <img id="navLogoImg" src="https://via.placeholder.com/40" alt="Logo">
+            <span class="brand-title" data-translate="brandName">স্বদেশ জাগরণ</span>
+        </a>
+        <ul class="nav-menu">
+            <li><a href="#home" data-translate="menuHome">হোম</a></li>
+            <li><a href="#about" data-translate="menuAbout">আমাদের সম্পর্কে</a></li>
+            <li><a href="#notices" data-translate="menuNotice">নোটিশ বোর্ড</a></li>
+            <li><a href="#gallery" data-translate="menuGallery">গ্যালারি</a></li>
+            <li><a href="#register" data-translate="menuRegister">রেজিস্ট্রেশন</a></li>
+            <li><div class="counter-badge" id="memberCounterBadge">মোট সদস্য: <span id="publicMemberCount">0</span></div></li>
+            <li><button class="lang-btn" onclick="toggleLanguage()">English / বাংলা</button></li>
+        </ul>
+    </div>
 </header>
 
+<!-- Hero Section -->
+<section id="home" class="hero">
+    <div style="max-width: 900px; margin: 0 auto;">
+        <h1 data-translate="heroTitle">স্বদেশ জাগরণে আপনাকে স্বাগতম</h1>
+        <p data-translate="heroSub">আমরা সমাজ কল্যাণ, শিক্ষা, সংস্কৃতি এবং স্বচ্ছ আর্থিক ব্যবস্থার জন্য নিবেদিতপ্রাণ। আমাদের প্রতিটি কার্যক্রমে আপনার অংশগ্রহণ একান্ত কাম্য।</p>
+        <a href="#register" class="btn" data-translate="heroBtn">সদস্য হিসেবে যুক্ত হোন</a>
+    </div>
+</section>
+
 <div class="container">
-    <!-- Home Section -->
-    <section id="home-section" class="content-section">
-        <h2 data-translate="homeTitle">Welcome to Swadesh Jagaran</h2>
-        <p data-translate="homeDesc">We work for social welfare, education, community support, and transparent financial reporting. Explore our activities, view public accounts, and register to join our mission.</p>
+
+    <!-- Special 15th August Program Announcement (Pre-loaded for First Year Celebration) -->
+    <div class="event-highlight">
+        <h3 data-translate="eventHeading">🇮🇳 প্রথম বর্ষ উদযাপনে ১৫ই আগস্ট স্বাধীনতা দিবস বিশেষ অনুষ্ঠান</h3>
+        <p data-translate="eventDesc">
+            স্বাধীনতার অমৃত মহোৎসবে 'স্বদেশ জাগরণ'-এর উদ্যোগে এই প্রথম অত্যন্ত জাঁকজমকপূর্ণভাবে অনুষ্ঠিত হতে চলেছে ১৫ই আগস্ট স্বাধীনতা দিবস উদযাপন অনুষ্ঠান। এই বিশেষ দিনে আমাদের পতাকাতল্লায় থাকছে জাতীয় পতাকা উত্তোলন, দেশাত্মবোধক সাংস্কৃতিক অনুষ্ঠান, কৃতি ছাত্র-ছাত্রী সংবর্ধনা এবং সমাজসেবামূলক কর্মকাণ্ড। এলাকার সকল স্তরের দেশপ্রেমিক ভাই-বোন ও মুরুব্বিদের এই মহতী অনুষ্ঠানে সশরীরে উপস্থিত থেকে অনুষ্ঠানকে সফল করে তোলার জন্য বিনীতভাবে আহ্বান জানাচ্ছি।
+        </p>
+    </div>
+
+    <!-- About Us Section -->
+    <section id="about">
+        <h2 class="section-title" data-translate="aboutTitle">আমাদের লক্ষ্য ও উদ্দেশ্য</h2>
+        <div class="grid-cards">
+            <div class="card">
+                <h4 data-translate="card1Title">🤝 সমাজ কল্যাণ</h4>
+                <p data-translate="card1Desc">দুঃস্থ মানুষের সাহায্যার্থে এবং গ্রামীণ উন্নয়নে আমাদের নিরলস প্রচেষ্টা সবসময় অব্যাহত রয়েছে।</p>
+            </div>
+            <div class="card">
+                <h4 data-translate="card2Title">📚 শিক্ষা ও সংস্কৃতি</h4>
+                <p data-translate="card2Desc">তরুণ প্রজন্মকে সঠিক দিশা দেখাতে এবং সাংস্কৃতিক চেতনায় উদ্বুদ্ধ করতে আমরা বদ্ধপরিকর।</p>
+            </div>
+            <div class="card">
+                <h4 data-translate="card3Title">💡 স্বচ্ছতা ও জবাবদিহিতা</h4>
+                <p data-translate="card3Desc">আমাদের সংগঠনের প্রতিটি কাজের আয় ও ব্যয়ের পূর্ণ স্বচ্ছ হিসাব সর্বসাধারণের জন্য উন্মুক্ত রাখা হয়।</p>
+            </div>
+        </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about-section" class="content-section hidden">
-        <h2 data-translate="aboutTitle">About Us</h2>
-        <p data-translate="aboutDesc">Our organization is dedicated to serving society with complete honesty and transparency. All income, expenses, and updates are publicly verifiable while administration is strictly managed.</p>
+    <!-- Notice Board Section -->
+    <section id="notices">
+        <h2 class="section-title" data-translate="noticeTitle">সাম্প্রতিক নোটিশ ও ঘোষণা</h2>
+        <div id="noticesContainer" class="grid-cards">
+            <!-- Default pre-loaded notice if Firebase is empty -->
+            <div class="card">
+                <small style="color: var(--saffron); font-weight: 700;">১৫ই আগস্ট, ২০২৬</small>
+                <h4>১৫ই আগস্ট স্বাধীনতা দিবস উদযাপন সংক্রান্ত জরুরি বিজ্ঞপ্তি</h4>
+                <p>আমাদের সংগঠনের প্রথম বার্ষিক ১৫ই আগস্ট অনুষ্ঠান সফল করার প্রস্তুতি বৈঠক আগামী রবিবার অনুষ্ঠিত হবে। সকলকে যথাসময়ে উপস্থিত থাকার অনুরোধ জানানো হচ্ছে।</p>
+            </div>
+        </div>
     </section>
 
     <!-- Gallery Section -->
-    <section id="gallery-section" class="content-section hidden">
-        <h2 data-translate="galleryTitle">Photo & Video Gallery</h2>
-        <div id="galleryContainer" class="gallery-grid"></div>
+    <section id="gallery">
+        <h2 class="section-title" data-translate="galleryTitle">আমাদের গ্যালারি</h2>
+        <div id="galleryContainer" class="grid-cards">
+            <!-- Default pre-loaded gallery items -->
+            <div class="card" style="padding: 10px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=600&q=80" alt="Event" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
+                <p style="margin-top: 10px; text-align: center; font-weight: 600; color: var(--dark-green);">স্বাধীনতা দিবস প্রস্তুতি বৈঠক</p>
+            </div>
+        </div>
     </section>
 
-    <!-- Notice Section -->
-    <section id="notice-section" class="content-section hidden">
-        <h2 data-translate="noticeTitle">Notice Board</h2>
-        <div id="noticeContainer"></div>
+    <!-- Member Registration Section -->
+    <section id="register">
+        <h2 class="section-title" data-translate="regTitle">সদস্য নিবন্ধন ফর্ম</h2>
+        <div class="form-card">
+            <form id="publicRegistrationForm">
+                <div class="form-group">
+                    <label data-translate="lblName">আপনার সম্পূর্ণ নাম</label>
+                    <input type="text" id="regName" placeholder="যেমন: অরূপ রায়" required>
+                </div>
+                <div class="form-group">
+                    <label data-translate="lblEmail">ইমেইল ঠিকানা</label>
+                    <input type="email" id="regEmail" placeholder="example@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label data-translate="lblPhone">মোবাইল নম্বর</label>
+                    <input type="tel" id="regPhone" placeholder="10-digit mobile number" required>
+                </div>
+                <div class="form-group">
+                    <label data-translate="lblAddress">ঠিকানা</label>
+                    <textarea id="regAddress" rows="3" placeholder="আপনার সম্পূর্ণ ঠিকানা লিখুন" required></textarea>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;" data-translate="btnRegisterSubmit">নিবন্ধন সম্পন্ন করুন</button>
+            </form>
+            <p id="regMsg" class="msg" style="color: var(--india-green);"></p>
+        </div>
     </section>
 
-    <!-- Income & Expense Section -->
-    <section id="finance-section" class="content-section hidden">
-        <h2 data-translate="financeTitle">Income & Expense Records</h2>
-        <table id="financeTable">
-            <thead>
-                <tr>
-                    <th data-translate="thDate">Date</th>
-                    <th data-translate="thDescription">Description</th>
-                    <th data-translate="thType">Type</th>
-                    <th data-translate="thAmount">Amount</th>
-                </tr>
-            </thead>
-            <tbody id="financeTableBody"></tbody>
-        </table>
-    </section>
-
-    <!-- Register Section -->
-    <section id="register-section" class="content-section hidden">
-        <h2 data-translate="registerTitle">New Member Registration</h2>
-        <form id="memberForm">
-            <div class="form-group">
-                <label data-translate="lblName">Full Name</label>
-                <input type="text" id="memberName" required>
-            </div>
-            <div class="form-group">
-                <label data-translate="lblEmail">Email Address</label>
-                <input type="email" id="memberEmail" required>
-            </div>
-            <div class="form-group">
-                <label data-translate="lblPhone">Phone Number</label>
-                <input type="text" id="memberPhone" required>
-            </div>
-            <div class="form-group">
-                <label data-translate="lblAddress">Address</label>
-                <textarea id="memberAddress" rows="3" required></textarea>
-            </div>
-            <button type="submit" class="btn-submit" data-translate="btnSubmit">Submit Registration</button>
-        </form>
-        <p id="formMsg" style="margin-top: 10px; font-weight: bold;"></p>
-    </section>
 </div>
 
+<!-- Footer -->
 <footer>
-    <p data-translate="footerText">&copy; 2026 Swadesh Jagaran. All Rights Reserved.</p>
+    <p>© ২০২৬ স্বদেশ জাগরণ। সর্বস্বত্ব সংরক্ষিত। | দেশ গঠনে আমরা প্রতিশ্রুতিবদ্ধ।</p>
 </footer>
 
 <script>
-    // Firebase Configuration (from your console screenshot)
+    // Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyCg5ttOQHcdqupvlD91Dam6IFfh6P1mdos",
         authDomain: "swadeshjagaran.firebaseapp.com",
@@ -136,158 +489,153 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Language Translation Dictionary
+    // Load saved portal logo from Firestore or localStorage
+    function loadLogo() {
+        db.collection("settings").doc("portal").get().then(doc => {
+            if (doc.exists && doc.data().logoUrl) {
+                document.getElementById("navLogoImg").src = doc.data().logoUrl;
+            }
+        }).catch(() => {
+            const saved = localStorage.getItem("portalLogo");
+            if(saved) document.getElementById("navLogoImg").src = saved;
+        });
+    }
+    loadLogo();
+
+    // Real-time Total Members Counter & List
+    db.collection("members").onSnapshot(snapshot => {
+        document.getElementById("publicMemberCount").innerText = snapshot.size;
+    });
+
+    // Public Member Registration Handler
+    document.getElementById("publicRegistrationForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        btn.disabled = true;
+        
+        db.collection("members").add({
+            name: document.getElementById("regName").value.trim(),
+            email: document.getElementById("regEmail").value.trim(),
+            phone: document.getElementById("regPhone").value.trim(),
+            address: document.getElementById("regAddress").value.trim(),
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            document.getElementById("regMsg").innerText = currentLang === 'bn' ? 'সফলভাবে আপনার নিবন্ধন সম্পন্ন হয়েছে!' : 'Registration completed successfully!';
+            document.getElementById("publicRegistrationForm").reset();
+            btn.disabled = false;
+        }).catch(err => {
+            alert("Error: " + err.message);
+            btn.disabled = false;
+        });
+    });
+
+    // Real-time Dynamic Notices Loading
+    db.collection("notices").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+        if(!snapshot.empty) {
+            const container = document.getElementById("noticesContainer");
+            container.innerHTML = "";
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                container.innerHTML += `
+                    <div class="card">
+                        <small style="color: var(--saffron); font-weight: 700;">${data.date || ''}</small>
+                        <h4>${data.title || 'বিশেষ ঘোষণা'}</h4>
+                        <p>${data.text || ''}</p>
+                    </div>
+                `;
+            });
+        }
+    });
+
+    // Real-time Dynamic Gallery Loading
+    db.collection("gallery").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+        if(!snapshot.empty) {
+            const container = document.getElementById("galleryContainer");
+            container.innerHTML = "";
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                if(data.url) {
+                    container.innerHTML += `
+                        <div class="card" style="padding: 10px; overflow: hidden;">
+                            <img src="${data.url}" alt="Gallery Item" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
+                            <p style="margin-top: 10px; text-align: center; font-weight: 600; color: var(--dark-green);">স্বদেশ জাগরণ অনুষ্ঠান</p>
+                        </div>
+                    `;
+                }
+            });
+        }
+    });
+
+    // Language Toggle Feature
     let currentLang = 'bn';
     const translations = {
-        en: {
-            siteTitle: "Swadesh Jagaran",
-            navHome: "Home",
-            navAbout: "About Us",
-            navGallery: "Gallery",
-            navNotice: "Notices",
-            navFinance: "Income & Expense",
-            navRegister: "Register",
-            totalMembers: "Total Members",
-            homeTitle: "Welcome to Swadesh Jagaran",
-            homeDesc: "We work for social welfare, education, community support, and transparent financial reporting. Explore our activities, view public accounts, and register to join our mission.",
-            aboutTitle: "About Us",
-            aboutDesc: "Our organization is dedicated to serving society with complete honesty and transparency. All income, expenses, and updates are publicly verifiable while administration is strictly managed.",
-            galleryTitle: "Photo & Video Gallery",
-            noticeTitle: "Notice Board",
-            financeTitle: "Income & Expense Records",
-            thDate: "Date",
-            thDescription: "Description",
-            thType: "Type",
-            thAmount: "Amount",
-            registerTitle: "New Member Registration",
-            lblName: "Full Name",
-            lblEmail: "Email Address",
-            lblPhone: "Phone Number",
-            lblAddress: "Address",
-            btnSubmit: "Submit Registration",
-            footerText: "&copy; 2026 Swadesh Jagaran. All Rights Reserved."
-        },
         bn: {
-            siteTitle: "স্বদেশ জাগরণ",
-            navHome: "হোম",
-            navAbout: "আমাদের সম্পর্কে",
-            navGallery: "গ্যালারি",
-            navNotice: "নোটিশ",
-            navFinance: "আয় ও ব্যয়",
-            navRegister: "রেজিস্ট্রেশন",
-            totalMembers: "মোট সদস্য",
-            homeTitle: "স্বদেশ জাগরণে স্বাগতম",
-            homeDesc: "আমরা সমাজ কল্যাণ, শিক্ষা, এবং স্বচ্ছ আর্থিক হিসাবের জন্য কাজ করি। আমাদের কার্যক্রম দেখুন এবং সদস্য হতে নিবন্ধন করুন।",
-            aboutTitle: "আমাদের সম্পর্কে",
-            aboutDesc: "আমাদের সংস্থা সম্পূর্ণ সততা ও স্বচ্ছতার সাথে সমাজের সেবা করার জন্য নিবেদিত। সমস্ত আয়, ব্যয় এবং আপডেট সর্বসাধারণের জন্য উন্মুক্ত।",
-            galleryTitle: "ছবি ও ভিডিও গ্যালারি",
-            noticeTitle: "নোটিশ বোর্ড",
-            financeTitle: "আয় ও ব্যয়ের হিসাব",
-            thDate: "তারিখ",
-            thDescription: "বিবরণ",
-            thType: "ধরণ",
-            thAmount: "পরিমাণ",
-            registerTitle: "নতুন সদস্য নিবন্ধন ফর্ম",
-            lblName: "পুরো নাম",
+            brandName: "স্বদেশ জাগরণ",
+            menuHome: "হোম",
+            menuAbout: "আমাদের সম্পর্কে",
+            menuNotice: "নোটিশ বোর্ড",
+            menuGallery: "গ্যালারি",
+            menuRegister: "রেজিস্ট্রেশন",
+            heroTitle: "স্বদেশ জাগরণে আপনাকে স্বাগতম",
+            heroSub: "আমরা সমাজ কল্যাণ, শিক্ষা, সংস্কৃতি এবং স্বচ্ছ আর্থিক ব্যবস্থার জন্য নিবেদিতপ্রাণ। আমাদের প্রতিটি কার্যক্রমে আপনার অংশগ্রহণ একান্ত কাম্য।",
+            heroBtn: "সদস্য হিসেবে যুক্ত হোন",
+            eventHeading: "🇮🇳 প্রথম বর্ষ উদযাপনে ১৫ই আগস্ট স্বাধীনতা দিবস বিশেষ অনুষ্ঠান",
+            eventDesc: "স্বাধীনতার অমৃত মহোৎসবে 'স্বদেশ জাগরণ'-এর উদ্যোগে এই প্রথম অত্যন্ত জাঁকজমকপূর্ণভাবে অনুষ্ঠিত হতে চলেছে ১৫ই আগস্ট স্বাধীনতা দিবস উদযাপন অনুষ্ঠান। এই বিশেষ দিনে আমাদের পতাকাতল্লায় থাকছে জাতীয় পতাকা উত্তোলন, দেশাত্মবোধক সাংস্কৃতিক অনুষ্ঠান, কৃতি ছাত্র-ছাত্রী সংবর্ধনা এবং সমাজসেবামূলক কর্মকাণ্ড। এলাকার সকল স্তরের দেশপ্রেমিক ভাই-বোন ও মুরুব্বিদের এই মহতী অনুষ্ঠানে সশরীরে উপস্থিত থেকে অনুষ্ঠানকে সফল করে তোলার জন্য বিনীতভাবে আহ্বান জানাচ্ছি।",
+            aboutTitle: "আমাদের লক্ষ্য ও উদ্দেশ্য",
+            card1Title: "🤝 সমাজ কল্যাণ",
+            card1Desc: "দুঃস্থ মানুষের সাহায্যার্থে এবং গ্রামীণ উন্নয়নে আমাদের নিরলস প্রচেষ্টা সবসময় অব্যাহত রয়েছে।",
+            card2Title: "📚 শিক্ষা ও সংস্কৃতি",
+            card2Desc: "তরুণ প্রজন্মকে সঠিক দিশা দেখাতে এবং সাংস্কৃতিক চেতনায় উদ্বুদ্ধ করতে আমরা বদ্ধপরিকর।",
+            card3Title: "💡 স্বচ্ছতা ও জবাবদিহিতা",
+            card3Desc: "আমাদের সংগঠনের প্রতিটি কাজের আয় ও ব্যয়ের পূর্ণ স্বচ্ছ হিসাব সর্বসাধারণের জন্য উন্মুক্ত রাখা হয়।",
+            noticeTitle: "সাম্প্রতিক নোটিশ ও ঘোষণা",
+            galleryTitle: "আমাদের গ্যালারি",
+            regTitle: "সদস্য নিবন্ধন ফর্ম",
+            lblName: "আপনার সম্পূর্ণ নাম",
             lblEmail: "ইমেইল ঠিকানা",
-            lblPhone: "ফোন নম্বর",
+            lblPhone: "মোবাইল নম্বর",
             lblAddress: "ঠিকানা",
-            btnSubmit: "নিবন্ধন জমা দিন",
-            footerText: "&copy; ২০২৬ স্বদেশ জাগরণ। সর্বস্বত্ব সংরক্ষিত।"
+            btnRegisterSubmit: "নিবন্ধন সম্পন্ন করুন"
+        },
+        en: {
+            brandName: "Swadesh Jagaran",
+            menuHome: "Home",
+            menuAbout: "About Us",
+            menuNotice: "Notices",
+            menuGallery: "Gallery",
+            menuRegister: "Registration",
+            heroTitle: "Welcome to Swadesh Jagaran",
+            heroSub: "Dedicated to social welfare, education, culture, and transparent financial systems. Your participation in our initiatives is valued.",
+            heroBtn: "Join as Member",
+            eventHeading: "🇮🇳 15th August Independence Day Special First-Year Celebration",
+            eventDesc: "On the auspicious occasion of India's Independence, 'Swadesh Jagaran' is proudly organizing its very first grand 15th August celebration event. Featuring national flag hoisting, patriotic cultural programs, felicitation of achievers, and community service. We cordially invite all citizens to join and make this event a grand success.",
+            aboutTitle: "Our Mission & Vision",
+            card1Title: "🤝 Social Welfare",
+            card1Desc: "Constant efforts towards helping underprivileged communities and fostering regional growth.",
+            card2Title: "📚 Education & Culture",
+            card2Desc: "Committed to guiding the youth in the right direction and preserving cultural heritage.",
+            card3Title: "💡 Transparency & Accountability",
+            card3Desc: "Maintaining complete financial transparency for all income and expense records of the organization.",
+            noticeTitle: "Recent Notices & Announcements",
+            galleryTitle: "Our Gallery",
+            regTitle: "Member Registration Form",
+            lblName: "Your Full Name",
+            lblEmail: "Email Address",
+            lblPhone: "Mobile Number",
+            lblAddress: "Address",
+            btnRegisterSubmit: "Complete Registration"
         }
     };
 
     function toggleLanguage() {
         currentLang = currentLang === 'bn' ? 'en' : 'bn';
-        updateLanguage();
-    }
-
-    function updateLanguage() {
-        document.querySelectorAll('[data-translate]').forEach(element => {
-            const key = element.getAttribute('data-translate');
+        document.querySelectorAll('[data-translate]').forEach(el => {
+            const key = el.getAttribute('data-translate');
             if (translations[currentLang][key]) {
-                element.innerHTML = translations[currentLang][key];
+                el.innerText = translations[currentLang][key];
             }
         });
     }
-
-    function showSection(sectionId) {
-        document.querySelectorAll('.content-section').forEach(sec => {
-            sec.classList.add('hidden');
-        });
-        document.getElementById(sectionId + '-section').classList.remove('hidden');
-    }
-
-    // Fetch Data from Firestore
-    function loadPublicData() {
-        // Total Member Counter Real-time update from Firestore
-        db.collection("members").onSnapshot(snapshot => {
-            document.getElementById("memberCountDisplay").innerText = snapshot.size;
-        });
-
-        // Notices
-        db.collection("notices").orderBy("date", "desc").onSnapshot(snapshot => {
-            const noticeContainer = document.getElementById("noticeContainer");
-            noticeContainer.innerHTML = "";
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                noticeContainer.innerHTML += `<div style="border-bottom:1px solid #eee; padding:10px 0;"><strong>${data.date}</strong>: ${data.text}</div>`;
-            });
-        });
-
-        // Income & Expense
-        db.collection("income_expenses").orderBy("date", "desc").onSnapshot(snapshot => {
-            const tbody = document.getElementById("financeTableBody");
-            tbody.innerHTML = "";
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                tbody.innerHTML += `<tr><td>${data.date}</td><td>${data.description}</td><td>${data.type}</td><td>${data.amount}</td></tr>`;
-            });
-        });
-
-        // Gallery
-        db.collection("gallery").onSnapshot(snapshot => {
-            const galleryContainer = document.getElementById("galleryContainer");
-            galleryContainer.innerHTML = "";
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                if (data.type === 'image') {
-                    galleryContainer.innerHTML += `<div class="gallery-item"><img src="${data.url}" alt="Gallery Image"></div>`;
-                } else if (data.type === 'video') {
-                    galleryContainer.innerHTML += `<div class="gallery-item"><video src="${data.url}" controls></video></div>`;
-                }
-            });
-        });
-    }
-
-    // Member Registration Submission
-    document.getElementById("memberForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-        const name = document.getElementById("memberName").value;
-        const email = document.getElementById("memberEmail").value;
-        const phone = document.getElementById("memberPhone").value;
-        const address = document.getElementById("memberAddress").value;
-
-        db.collection("members").add({
-            name: name,
-            email: email,
-            phone: phone,
-            address: address,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
-            document.getElementById("formMsg").style.color = "green";
-            document.getElementById("formMsg").innerText = currentLang === 'bn' ? "সফলভাবে নিবন্ধন সম্পন্ন হয়েছে!" : "Registration successful!";
-            document.getElementById("memberForm").reset();
-        }).catch(error => {
-            document.getElementById("formMsg").style.color = "red";
-            document.getElementById("formMsg").innerText = "Error: " + error.message;
-        });
-    });
-
-    window.onload = function() {
-        updateLanguage();
-        loadPublicData();
-    };
 </script>
 </body>
 </html>
