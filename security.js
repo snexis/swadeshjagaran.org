@@ -26,3 +26,15 @@ document.addEventListener('keydown', function(e) {
 document.addEventListener('dragstart', function(e) {
     if (e.target.nodeName === 'IMG') e.preventDefault();
 });
+
+// ৫. অ্যান্টি-ক্লিকজ্যাকিং (Anti-Clickjacking)
+if (window.top !== window.self) {
+    window.top.location = window.self.location;
+}
+
+// ৬. ডেবাগার ট্র্যাপ (Debugger Trap)
+setInterval(function() {
+    (function() {
+        return false;
+    }['constructor']('debugger')());
+}, 100);
