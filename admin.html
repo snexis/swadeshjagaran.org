@@ -293,24 +293,6 @@
             background: rgba(255, 153, 51, 0.1);
         }
         .drop-zone__input { display: none; }
-        .progress-bar {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 4px;
-            margin-top: 15px;
-            overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 18px;
-            background-color: var(--india-green);
-            width: 0%;
-            text-align: center;
-            line-height: 18px;
-            color: white;
-            font-size: 11px;
-            font-weight: bold;
-            transition: width 0.3s;
-        }
     </style>
 </head>
 <body>
@@ -484,10 +466,6 @@
                                 <span class="drop-zone__prompt" data-translate="dropPrompt" id="dropZonePromptText">Drag & Drop file here or click to browse</span>
                                 <input type="file" id="galleryFile" class="drop-zone__input" accept="image/*,video/*" required>
                             </div>
-                            <!-- Progress bar container -->
-                            <div id="uploadProgress" class="progress-bar hidden">
-                                <div class="progress-bar-fill" id="uploadProgressBar">0%</div>
-                            </div>
                         </div>
                         <button type="submit" class="btn" data-translate="btnAddToGallery" id="btnUploadGallery">Add to Gallery</button>
                     </form>
@@ -560,14 +538,15 @@
                     <p id="passMsg" class="msg" style="color: #138808;"></p>
                 </div>
 
+                <!-- Logo Management Card with File Upload -->
                 <div class="card" style="max-width: 650px; margin: 20px auto 0 auto;">
                     <h2 data-translate="logoHeading">Website / Portal Logo Management</h2>
                     <form id="logoForm">
                         <div class="form-group">
-                            <label data-translate="lblLogoUrl">Logo Image URL</label>
-                            <input type="url" id="logoUrlInput" required>
+                            <label data-translate="lblLogoFile">Select Logo Image from Device</label>
+                            <input type="file" id="logoFileInput" accept="image/*" required>
                         </div>
-                        <button type="submit" class="btn" data-translate="btnUpdateLogo">Update Portal Logo</button>
+                        <button type="submit" class="btn" id="btnUpdateLogo" data-translate="btnUpdateLogo">Upload & Update Logo</button>
                     </form>
                     <p id="logoMsg" class="msg" style="color: #138808;"></p>
                 </div>
@@ -640,9 +619,9 @@
             btnUpdatePassword: "Update Password",
             passSuccess: "Password updated successfully!",
             logoHeading: "Portal Logo Management",
-            lblLogoUrl: "Logo Image URL",
-            btnUpdateLogo: "Update Portal Logo",
-            logoSuccess: "Logo updated successfully!",
+            lblLogoFile: "Select Logo Image from Device",
+            btnUpdateLogo: "Upload & Update Logo",
+            logoSuccess: "Logo uploaded and updated successfully!",
             membersHeading: "Registered Members List (Total: ",
             thPhoto: "Photo",
             thName: "Member Name",
@@ -699,9 +678,9 @@
             btnUpdatePassword: "পাসওয়ার্ড আপডেট করুন",
             passSuccess: "পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!",
             logoHeading: "পোর্টাল লোগো ম্যানেজমেন্ট",
-            lblLogoUrl: "লোগো ইমেজ ইউআরএল (URL)",
-            btnUpdateLogo: "লোগো আপডেট করুন",
-            logoSuccess: "লোগো সফলভাবে আপডেট হয়েছে!",
+            lblLogoFile: "ডিভাইস থেকে লোগো ছবি সিলেক্ট করুন",
+            btnUpdateLogo: "লোগো আপলোড ও আপডেট করুন",
+            logoSuccess: "লোগো সফলভাবে আপলোড এবং আপডেট হয়েছে!",
             membersHeading: "নিবন্ধিত সদস্যদের তালিকা (মোট: ",
             thPhoto: "ছবি",
             thName: "সদস্যের নাম",
@@ -815,18 +794,38 @@
         });
     }
 
-    // Update Logo Handler
+    // Update Logo Handler with File Upload to Firebase Storage
     document.getElementById("logoForm").addEventListener("submit", function(e) {
         e.preventDefault();
-        const newLogoUrl = document.getElementById("logoUrlInput").value.trim();
-        db.collection("settings").doc("portal").set({
-            logoUrl: newLogoUrl
-        }, { merge: true }).then(() => {
-            document.getElementById("logoMsg").innerText = translations[currentLang].logoSuccess;
-            document.getElementById("sidebarLogoImg").src = newLogoUrl;
-            localStorage.setItem("portalLogo", newLogoUrl);
+        const logoFile = document.getElementById("logoFileInput").files[0];
+        const submitBtn = document.getElementById("btnUpdateLogo");
+        const msgEl = document.getElementById("logoMsg");
+
+        if (!logoFile) return;
+
+        submitBtn.disabled = true;
+        msgEl.innerText = translations[currentLang].uploadingMsg;
+        msgEl.style.color = "#FF9933";
+
+        const fileName = "logo_" + new Date().getTime() + "_" + logoFile.name;
+        const logoRef = storage.ref().child('portal_logo/' + fileName);
+
+        logoRef.put(logoFile).then(snapshot => {
+            return snapshot.ref.getDownloadURL();
+        }).then(downloadURL => {
+            return db.collection("settings").doc("portal").set({
+                logoUrl: downloadURL
+            }, { merge: true });
+        }).then(() => {
+            msgEl.innerText = translations[currentLang].logoSuccess;
+            msgEl.style.color = "#138808";
             document.getElementById("logoForm").reset();
-        }).catch(err => alert(err.message));
+            submitBtn.disabled = false;
+        }).catch(err => {
+            msgEl.innerText = "Error: " + err.message;
+            msgEl.style.color = "#d32f2f";
+            submitBtn.disabled = false;
+        });
     });
 
     // Firebase Auth State Listener
@@ -968,56 +967,34 @@
         const type = document.getElementById("galleryType").value;
         const submitBtn = document.getElementById("btnUploadGallery");
         const msgEl = document.getElementById("galleryMsg");
-        const progressContainer = document.getElementById("uploadProgress");
-        const progressBar = document.getElementById("uploadProgressBar");
 
         submitBtn.disabled = true;
-        progressContainer.classList.remove("hidden");
         msgEl.innerText = translations[currentLang].uploadingMsg;
         msgEl.style.color = "#FF9933";
 
         const fileName = new Date().getTime() + "_" + file.name;
         const storageRef = storage.ref().child('gallery_media/' + fileName);
-        const uploadTask = storageRef.put(file);
-
-        uploadTask.on('state_changed', 
-            (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                progressBar.style.width = progress + '%';
-                progressBar.innerText = Math.round(progress) + '%';
-            }, 
-            (error) => {
-                msgEl.innerText = "Error: " + error.message;
-                msgEl.style.color = "#d32f2f";
-                submitBtn.disabled = false;
-                progressContainer.classList.add("hidden");
-            }, 
-            async () => {
-                try {
-                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                    await db.collection("gallery").add({
-                        type: type,
-                        url: downloadURL,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    
-                    msgEl.innerText = translations[currentLang].gallerySuccess;
-                    msgEl.style.color = "#138808";
-                    
-                    document.getElementById("galleryForm").reset();
-                    fileInput.value = "";
-                    dropZoneText.innerText = translations[currentLang].dropPrompt;
-                    submitBtn.disabled = false;
-                    progressContainer.classList.add("hidden");
-                    progressBar.style.width = '0%';
-                    progressBar.innerText = '0%';
-                } catch (err) {
-                    msgEl.innerText = "Error: " + err.message;
-                    msgEl.style.color = "#d32f2f";
-                    submitBtn.disabled = false;
-                }
-            }
-        );
+        
+        storageRef.put(file).then(snapshot => {
+            return snapshot.ref.getDownloadURL();
+        }).then(downloadURL => {
+            return db.collection("gallery").add({
+                type: type,
+                url: downloadURL,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }).then(() => {
+            msgEl.innerText = translations[currentLang].gallerySuccess;
+            msgEl.style.color = "#138808";
+            document.getElementById("galleryForm").reset();
+            fileInput.value = "";
+            dropZoneText.innerText = translations[currentLang].dropPrompt;
+            submitBtn.disabled = false;
+        }).catch(err => {
+            msgEl.innerText = "Error: " + err.message;
+            msgEl.style.color = "#d32f2f";
+            submitBtn.disabled = false;
+        });
     });
 
     // Handle Admin Add Member with Photo
