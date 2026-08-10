@@ -231,6 +231,14 @@
         tr:not(:last-child) td { border-bottom: 1px solid #eef2f3; }
         tr:hover td { background-color: #fafbfc; }
 
+        .member-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--saffron);
+        }
+
         .hidden { display: none !important; }
         .msg { margin-top: 10px; font-weight: 600; font-size: 13px; }
         .login-container { max-width: 420px; margin: 80px auto; background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-top: 6px solid var(--saffron); }
@@ -265,8 +273,8 @@
         /* Drag and Drop Zone CSS */
         .drop-zone {
             width: 100%;
-            height: 140px;
-            padding: 20px;
+            height: 120px;
+            padding: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -372,7 +380,7 @@
         <!-- Admin Dashboard Content Wrapper -->
         <div id="dashboardSection" class="hidden">
             
-            <!-- Tab 1: Dashboard Overview (With Clock & Visitor Counter Widgets) -->
+            <!-- Tab 1: Dashboard Overview -->
             <div id="sec-dashboard" class="admin-section active-section">
                 
                 <!-- Live Widgets Grid -->
@@ -487,14 +495,45 @@
                 </div>
             </div>
 
-            <!-- Tab 5: Members List -->
+            <!-- Tab 5: Members List & Add Member Form -->
             <div id="sec-members" class="admin-section">
+                <!-- Add Member Form Card -->
+                <div class="card" style="max-width: 700px; margin: 0 auto 25px auto;">
+                    <h2 data-translate="addMemberHeading">Add New Member</h2>
+                    <form id="memberForm">
+                        <div class="form-group">
+                            <label data-translate="thName">Member Name</label>
+                            <input type="text" id="memberName" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="thEmail">Email Address</label>
+                            <input type="email" id="memberEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="thPhone">Phone Number</label>
+                            <input type="text" id="memberPhone" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="thAddress">Address</label>
+                            <input type="text" id="memberAddress" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="lblMemberPhoto">Member Photo (Select Image)</label>
+                            <input type="file" id="memberPhotoFile" accept="image/*" required>
+                        </div>
+                        <button type="submit" class="btn" id="btnSaveMember" data-translate="btnSaveMember">Add Member</button>
+                    </form>
+                    <p id="memberMsg" class="msg" style="color: #138808;"></p>
+                </div>
+
+                <!-- Members List Table Card -->
                 <div class="card">
                     <h2 data-translate="membersHeading">Registered Members List (Total: <span id="totalMembersCount">0</span>)</h2>
                     <div class="table-responsive">
                         <table>
                             <thead>
                                 <tr>
+                                    <th data-translate="thPhoto">Photo</th>
                                     <th data-translate="thName">Member Name</th>
                                     <th data-translate="thEmail">Email Address</th>
                                     <th data-translate="thPhone">Phone Number</th>
@@ -593,6 +632,9 @@
             lblMediaFile: "Upload Media (Select or Drag & Drop)",
             dropPrompt: "Drag & Drop file here or click to browse",
             btnAddToGallery: "Add to Gallery",
+            addMemberHeading: "Add New Member",
+            lblMemberPhoto: "Member Photo",
+            btnSaveMember: "Add Member",
             passHeading: "Change Admin Password",
             lblNewPassword: "New Password",
             btnUpdatePassword: "Update Password",
@@ -602,6 +644,7 @@
             btnUpdateLogo: "Update Portal Logo",
             logoSuccess: "Logo updated successfully!",
             membersHeading: "Registered Members List (Total: ",
+            thPhoto: "Photo",
             thName: "Member Name",
             thEmail: "Email Address",
             thPhone: "Phone Number",
@@ -609,6 +652,7 @@
             noticeSuccess: "Notice published successfully!",
             financeSuccess: "Record saved successfully!",
             gallerySuccess: "Media uploaded and added successfully!",
+            memberSuccess: "Member added successfully with photo!",
             uploadingMsg: "Uploading... Please wait."
         },
         bn: {
@@ -647,6 +691,9 @@
             lblMediaFile: "মিডিয়া আপলোড করুন (ফাইল সিলেক্ট বা Drag & Drop)",
             dropPrompt: "এখানে ফাইল টেনে আনুন বা ক্লিক করে ফাইল খুঁজুন",
             btnAddToGallery: "গ্যালারিতে যুক্ত করুন",
+            addMemberHeading: "নতুন সদস্য যোগ করুন",
+            lblMemberPhoto: "সদস্যের ছবি",
+            btnSaveMember: "সদস্য যুক্ত করুন",
             passHeading: "অ্যাডমিন পাসওয়ার্ড পরিবর্তন করুন",
             lblNewPassword: "নতুন পাসওয়ার্ড",
             btnUpdatePassword: "পাসওয়ার্ড আপডেট করুন",
@@ -656,6 +703,7 @@
             btnUpdateLogo: "লোগো আপডেট করুন",
             logoSuccess: "লোগো সফলভাবে আপডেট হয়েছে!",
             membersHeading: "নিবন্ধিত সদস্যদের তালিকা (মোট: ",
+            thPhoto: "ছবি",
             thName: "সদস্যের নাম",
             thEmail: "ইমেইল ঠিকানা",
             thPhone: "ফোন নম্বর",
@@ -663,6 +711,7 @@
             noticeSuccess: "নোটিশ সফলভাবে প্রকাশিত হয়েছে!",
             financeSuccess: "হিসাব সফলভাবে সংরক্ষণ করা হয়েছে!",
             gallerySuccess: "মিডিয়া সফলভাবে আপলোড এবং যুক্ত করা হয়েছে!",
+            memberSuccess: "সদস্যের ছবিসহ সফলভাবে তালিকাভুক্ত করা হয়েছে!",
             uploadingMsg: "আপলোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।"
         }
     };
@@ -686,8 +735,9 @@
         });
         
         const fileInput = document.getElementById("galleryFile");
-        if (!fileInput.files.length) {
-            document.getElementById("dropZonePromptText").innerText = translations[currentLang].dropPrompt;
+        if (fileInput && !fileInput.files.length) {
+            const dropPrompt = document.getElementById("dropZonePromptText");
+            if(dropPrompt) dropPrompt.innerText = translations[currentLang].dropPrompt;
         }
     }
 
@@ -700,10 +750,11 @@
             const seconds = String(now.getSeconds()).padStart(2, '0');
             const ampm = hours >= 12 ? 'PM' : 'AM';
             hours = hours % 12;
-            hours = hours ? hours : 12; // the hour '0' should be '12'
+            hours = hours ? hours : 12;
             const strHours = String(hours).padStart(2, '0');
             
-            document.getElementById("liveClockDisplay").innerText = `${strHours}:${minutes}:${seconds} ${ampm}`;
+            const clockEl = document.getElementById("liveClockDisplay");
+            if(clockEl) clockEl.innerText = `${strHours}:${minutes}:${seconds} ${ampm}`;
         }
         updateClock();
         setInterval(updateClock, 1000);
@@ -713,7 +764,6 @@
     function initVisitorCounter() {
         const visitorRef = db.collection("stats").doc("visitors");
         
-        // Check if visitor already counted in this session
         if (!sessionStorage.getItem("visited")) {
             visitorRef.get().then(doc => {
                 if (doc.exists) {
@@ -727,13 +777,15 @@
             }).catch(err => console.log(err));
         }
 
-        // Real-time listener for visitor display
         visitorRef.onSnapshot(doc => {
-            if (doc.exists) {
-                const totalVisitors = doc.data().count || 0;
-                document.getElementById("visitorCountDisplay").innerText = totalVisitors.toLocaleString();
-            } else {
-                document.getElementById("visitorCountDisplay").innerText = "1";
+            const visitorEl = document.getElementById("visitorCountDisplay");
+            if (visitorEl) {
+                if (doc.exists) {
+                    const totalVisitors = doc.data().count || 0;
+                    visitorEl.innerText = totalVisitors.toLocaleString();
+                } else {
+                    visitorEl.innerText = "1";
+                }
             }
         });
     }
@@ -747,15 +799,15 @@
         if(element) element.classList.add('active');
     }
 
-    // Load Saved Logo from Firestore or localStorage
+    // Load Saved Logo from Firestore with Realtime Listener
     function loadPortalLogo() {
-        db.collection("settings").doc("portal").get().then(doc => {
+        db.collection("settings").doc("portal").onSnapshot(doc => {
             if (doc.exists && doc.data().logoUrl) {
                 const url = doc.data().logoUrl;
                 document.getElementById("sidebarLogoImg").src = url;
                 localStorage.setItem("portalLogo", url);
             }
-        }).catch(() => {
+        }, err => {
             const savedLogo = localStorage.getItem("portalLogo");
             if(savedLogo) {
                 document.getElementById("sidebarLogoImg").src = savedLogo;
@@ -872,38 +924,40 @@
         }).catch(err => alert(err.message));
     });
 
-    // Drag and Drop File Upload Logic
+    // Drag and Drop File Upload Logic for Gallery
     const dropZone = document.getElementById("dropZone");
     const fileInput = document.getElementById("galleryFile");
     const dropZoneText = document.getElementById("dropZonePromptText");
 
-    dropZone.addEventListener("click", () => fileInput.click());
+    if(dropZone && fileInput) {
+        dropZone.addEventListener("click", () => fileInput.click());
 
-    fileInput.addEventListener("change", function() {
-        if (fileInput.files.length) {
-            dropZoneText.innerText = fileInput.files[0].name;
-        }
-    });
-
-    dropZone.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dropZone.classList.add("drop-zone--over");
-    });
-
-    ["dragleave", "dragend"].forEach(type => {
-        dropZone.addEventListener(type, (e) => {
-            dropZone.classList.remove("drop-zone--over");
+        fileInput.addEventListener("change", function() {
+            if (fileInput.files.length) {
+                dropZoneText.innerText = fileInput.files[0].name;
+            }
         });
-    });
 
-    dropZone.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dropZone.classList.remove("drop-zone--over");
-        if (e.dataTransfer.files.length) {
-            fileInput.files = e.dataTransfer.files;
-            dropZoneText.innerText = fileInput.files[0].name;
-        }
-    });
+        dropZone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZone.classList.add("drop-zone--over");
+        });
+
+        ["dragleave", "dragend"].forEach(type => {
+            dropZone.addEventListener(type, (e) => {
+                dropZone.classList.remove("drop-zone--over");
+            });
+        });
+
+        dropZone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropZone.classList.remove("drop-zone--over");
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                dropZoneText.innerText = fileInput.files[0].name;
+            }
+        });
+    }
 
     // Handle Upload and Add Gallery Item
     document.getElementById("galleryForm").addEventListener("submit", function(e) {
@@ -938,32 +992,78 @@
                 submitBtn.disabled = false;
                 progressContainer.classList.add("hidden");
             }, 
-            () => {
-                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                    db.collection("gallery").add({
+            async () => {
+                try {
+                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                    await db.collection("gallery").add({
                         type: type,
                         url: downloadURL,
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    }).then(() => {
-                        msgEl.innerText = translations[currentLang].gallerySuccess;
-                        msgEl.style.color = "#138808";
-                        
-                        document.getElementById("galleryForm").reset();
-                        dropZoneText.innerText = translations[currentLang].dropPrompt;
-                        submitBtn.disabled = false;
-                        progressContainer.classList.add("hidden");
-                        progressBar.style.width = '0%';
-                        progressBar.innerText = '0%';
-                    }).catch(err => {
-                        msgEl.innerText = "Error: " + err.message;
-                        submitBtn.disabled = false;
                     });
-                });
+                    
+                    msgEl.innerText = translations[currentLang].gallerySuccess;
+                    msgEl.style.color = "#138808";
+                    
+                    document.getElementById("galleryForm").reset();
+                    fileInput.value = "";
+                    dropZoneText.innerText = translations[currentLang].dropPrompt;
+                    submitBtn.disabled = false;
+                    progressContainer.classList.add("hidden");
+                    progressBar.style.width = '0%';
+                    progressBar.innerText = '0%';
+                } catch (err) {
+                    msgEl.innerText = "Error: " + err.message;
+                    msgEl.style.color = "#d32f2f";
+                    submitBtn.disabled = false;
+                }
             }
         );
     });
 
-    // Load Members & Update Dash Counter
+    // Handle Admin Add Member with Photo
+    document.getElementById("memberForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("memberName").value.trim();
+        const email = document.getElementById("memberEmail").value.trim();
+        const phone = document.getElementById("memberPhone").value.trim();
+        const address = document.getElementById("memberAddress").value.trim();
+        const photoFile = document.getElementById("memberPhotoFile").files[0];
+        const submitBtn = document.getElementById("btnSaveMember");
+        const msgEl = document.getElementById("memberMsg");
+
+        if (!photoFile) return;
+
+        submitBtn.disabled = true;
+        msgEl.innerText = translations[currentLang].uploadingMsg;
+        msgEl.style.color = "#FF9933";
+
+        const fileName = "member_" + new Date().getTime() + "_" + photoFile.name;
+        const photoRef = storage.ref().child('member_photos/' + fileName);
+        
+        photoRef.put(photoFile).then(snapshot => {
+            return snapshot.ref.getDownloadURL();
+        }).then(downloadURL => {
+            return db.collection("members").add({
+                name: name,
+                email: email,
+                phone: phone,
+                address: address,
+                photoUrl: downloadURL,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }).then(() => {
+            msgEl.innerText = translations[currentLang].memberSuccess;
+            msgEl.style.color = "#138808";
+            document.getElementById("memberForm").reset();
+            submitBtn.disabled = false;
+        }).catch(err => {
+            msgEl.innerText = "Error: " + err.message;
+            msgEl.style.color = "#d32f2f";
+            submitBtn.disabled = false;
+        });
+    });
+
+    // Load Members & Update Dash Counter with Photo and Details
     function loadAdminData() {
         db.collection("members").orderBy("timestamp", "desc").onSnapshot(snapshot => {
             const tbody = document.getElementById("membersTableBody");
@@ -974,7 +1074,14 @@
             
             snapshot.forEach(doc => {
                 const data = doc.data();
-                tbody.innerHTML += `<tr><td>${data.name || ''}</td><td>${data.email || ''}</td><td>${data.phone || ''}</td><td>${data.address || ''}</td></tr>`;
+                const photoHtml = data.photoUrl ? `<img src="${data.photoUrl}" class="member-avatar" alt="Photo">` : `<span>No Image</span>`;
+                tbody.innerHTML += `<tr>
+                    <td>${photoHtml}</td>
+                    <td>${data.name || ''}</td>
+                    <td>${data.email || ''}</td>
+                    <td>${data.phone || ''}</td>
+                    <td>${data.address || ''}</td>
+                </tr>`;
             });
         });
     }
