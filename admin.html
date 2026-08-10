@@ -9,6 +9,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <!-- Browser Image Compression Library for fast uploading -->
+    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.0/dist/browser-image-compression.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         :root {
@@ -538,7 +540,7 @@
                     <p id="passMsg" class="msg" style="color: #138808;"></p>
                 </div>
 
-                <!-- Logo Management Card with File Upload -->
+                <!-- Logo Management Card with Fast File Upload -->
                 <div class="card" style="max-width: 650px; margin: 20px auto 0 auto;">
                     <h2 data-translate="logoHeading">Website / Portal Logo Management</h2>
                     <form id="logoForm">
@@ -558,15 +560,15 @@
 
 <script>
     // Firebase Configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCg5ttOQHcdqupwlD9lDam6IFfh6P1mdos",
-    authDomain: "swadeshjagaran.firebaseapp.com",
-    projectId: "swadeshjagaran",
-    storageBucket: "swadeshjagaran.firebasestorage.app",
-    messagingSenderId: "955311438612",
-    appId: "1:955311438612:web:089ee627987ee0b5562001",
-    measurementId: "G-WC17FQTESH"
-  };
+    const firebaseConfig = {
+        apiKey: "AIzaSyCg5ttOQHcdqupwlD9lDam6IFfh6P1mdos",
+        authDomain: "swadeshjagaran.firebaseapp.com",
+        projectId: "swadeshjagaran",
+        storageBucket: "swadeshjagaran.firebasestorage.app",
+        messagingSenderId: "955311438612",
+        appId: "1:955311438612:web:089ee627987ee0b5562001",
+        measurementId: "G-WC17FQTESH"
+    };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -794,8 +796,8 @@
         });
     }
 
-    // Update Logo Handler with File Upload to Firebase Storage
-    document.getElementById("logoForm").addEventListener("submit", function(e) {
+    // Logo Upload Handler with Image Compression
+    document.getElementById("logoForm").addEventListener("submit", async function(e) {
         e.preventDefault();
         const logoFile = document.getElementById("logoFileInput").files[0];
         const submitBtn = document.getElementById("btnUpdateLogo");
@@ -804,28 +806,32 @@
         if (!logoFile) return;
 
         submitBtn.disabled = true;
-        msgEl.innerText = translations[currentLang].uploadingMsg;
+        msgEl.innerText = "Compressing & Uploading...";
         msgEl.style.color = "#FF9933";
 
-        const fileName = "logo_" + new Date().getTime() + "_" + logoFile.name;
-        const logoRef = storage.ref().child('portal_logo/' + fileName);
+        try {
+            const options = { maxSizeMB: 0.5, maxWidthOrHeight: 800, useWebWorker: true };
+            const compressedFile = await imageCompression(logoFile, options);
 
-        logoRef.put(logoFile).then(snapshot => {
-            return snapshot.ref.getDownloadURL();
-        }).then(downloadURL => {
-            return db.collection("settings").doc("portal").set({
+            const fileName = "logo_" + new Date().getTime() + "_" + logoFile.name;
+            const logoRef = storage.ref().child('portal_logo/' + fileName);
+
+            const snapshot = await logoRef.put(compressedFile);
+            const downloadURL = await snapshot.ref.getDownloadURL();
+            
+            await db.collection("settings").doc("portal").set({
                 logoUrl: downloadURL
             }, { merge: true });
-        }).then(() => {
+
             msgEl.innerText = translations[currentLang].logoSuccess;
             msgEl.style.color = "#138808";
             document.getElementById("logoForm").reset();
             submitBtn.disabled = false;
-        }).catch(err => {
+        } catch (err) {
             msgEl.innerText = "Error: " + err.message;
             msgEl.style.color = "#d32f2f";
             submitBtn.disabled = false;
-        });
+        }
     });
 
     // Firebase Auth State Listener
@@ -958,8 +964,8 @@
         });
     }
 
-    // Handle Upload and Add Gallery Item
-    document.getElementById("galleryForm").addEventListener("submit", function(e) {
+    // Handle Upload and Add Gallery Media (with compression for images & progress for videos)
+    document.getElementById("galleryForm").addEventListener("submit", async function(e) {
         e.preventDefault();
         const file = fileInput.files[0];
         if (!file) return;
@@ -969,36 +975,50 @@
         const msgEl = document.getElementById("galleryMsg");
 
         submitBtn.disabled = true;
-        msgEl.innerText = translations[currentLang].uploadingMsg;
         msgEl.style.color = "#FF9933";
 
-        const fileName = new Date().getTime() + "_" + file.name;
-        const storageRef = storage.ref().child('gallery_media/' + fileName);
-        
-        storageRef.put(file).then(snapshot => {
-            return snapshot.ref.getDownloadURL();
-        }).then(downloadURL => {
-            return db.collection("gallery").add({
-                type: type,
-                url: downloadURL,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        }).then(() => {
-            msgEl.innerText = translations[currentLang].gallerySuccess;
-            msgEl.style.color = "#138808";
-            document.getElementById("galleryForm").reset();
-            fileInput.value = "";
-            dropZoneText.innerText = translations[currentLang].dropPrompt;
-            submitBtn.disabled = false;
-        }).catch(err => {
+        try {
+            let fileToUpload = file;
+
+            if (type === 'image') {
+                msgEl.innerText = "Compressing image...";
+                const options = { maxSizeMB: 1, maxWidthOrHeight: 1200, useWebWorker: true };
+                fileToUpload = await imageCompression(file, options);
+            }
+
+            const fileName = new Date().getTime() + "_" + file.name;
+            const uploadTask = storage.ref().child('gallery_media/' + fileName).put(fileToUpload);
+            
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    msgEl.innerText = "Uploading: " + Math.round(progress) + "%";
+                },
+                (err) => { throw err; },
+                async () => {
+                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                    await db.collection("gallery").add({
+                        type: type,
+                        url: downloadURL,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    msgEl.innerText = translations[currentLang].gallerySuccess;
+                    msgEl.style.color = "#138808";
+                    document.getElementById("galleryForm").reset();
+                    fileInput.value = "";
+                    dropZoneText.innerText = translations[currentLang].dropPrompt;
+                    submitBtn.disabled = false;
+                }
+            );
+        } catch (err) {
             msgEl.innerText = "Error: " + err.message;
             msgEl.style.color = "#d32f2f";
             submitBtn.disabled = false;
-        });
+        }
     });
 
     // Handle Admin Add Member with Photo
-    document.getElementById("memberForm").addEventListener("submit", function(e) {
+    document.getElementById("memberForm").addEventListener("submit", async function(e) {
         e.preventDefault();
         const name = document.getElementById("memberName").value.trim();
         const email = document.getElementById("memberEmail").value.trim();
@@ -1014,13 +1034,17 @@
         msgEl.innerText = translations[currentLang].uploadingMsg;
         msgEl.style.color = "#FF9933";
 
-        const fileName = "member_" + new Date().getTime() + "_" + photoFile.name;
-        const photoRef = storage.ref().child('member_photos/' + fileName);
-        
-        photoRef.put(photoFile).then(snapshot => {
-            return snapshot.ref.getDownloadURL();
-        }).then(downloadURL => {
-            return db.collection("members").add({
+        try {
+            const options = { maxSizeMB: 0.8, maxWidthOrHeight: 1000, useWebWorker: true };
+            const compressedPhoto = await imageCompression(photoFile, options);
+
+            const fileName = "member_" + new Date().getTime() + "_" + photoFile.name;
+            const photoRef = storage.ref().child('member_photos/' + fileName);
+            
+            const snapshot = await photoRef.put(compressedPhoto);
+            const downloadURL = await snapshot.ref.getDownloadURL();
+            
+            await db.collection("members").add({
                 name: name,
                 email: email,
                 phone: phone,
@@ -1028,16 +1052,16 @@
                 photoUrl: downloadURL,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
-        }).then(() => {
+
             msgEl.innerText = translations[currentLang].memberSuccess;
             msgEl.style.color = "#138808";
             document.getElementById("memberForm").reset();
             submitBtn.disabled = false;
-        }).catch(err => {
+        } catch (err) {
             msgEl.innerText = "Error: " + err.message;
             msgEl.style.color = "#d32f2f";
             submitBtn.disabled = false;
-        });
+        }
     });
 
     // Load Members & Update Dash Counter with Photo and Details
