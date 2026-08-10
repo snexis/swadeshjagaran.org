@@ -3,639 +3,408 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>স্বদেশ জাগরণ - Swadesh Jagaran</title>
-    <!-- Firebase SDKs (CDN) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <title data-bn="স্বদেশ জাগরণ | ভারতবর্ষ" data-en="Swadesh Jagaran | India">স্বদেশ জাগরণ | ভারতবর্ষ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        saffron: '#FF9933',
+                        indiaWhite: '#FFFFFF',
+                        indiaGreen: '#138808',
+                        navyBlue: '#000080'
+                    },
+                    fontFamily: {
+                        bengali: ['Hind Siliguri', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; scroll-behavior: smooth; }
-        :root {
-            --saffron: #FF9933;
-            --white: #FFFFFF;
-            --india-green: #138808;
-            --navy-blue: #000080;
-            --dark-green: #1b4d3e;
-            --bg-color: #f7f9fa;
-            --text-main: #2c3e50;
-        }
-
+        /* Tricolor subtle background */
         body {
-            background-color: var(--bg-color);
-            background-image: linear-gradient(rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.94)), 
-                              radial-gradient(circle, rgba(255,153,51,0.08) 0%, rgba(19,136,8,0.08) 100%);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background: linear-gradient(to bottom, rgba(255, 153, 51, 0.03), rgba(255, 255, 255, 1), rgba(19, 136, 8, 0.03));
+            background-attachment: fixed;
         }
-
-        /* Tricolor Top Header Strip */
-        .tricolor-strip {
-            height: 6px;
-            background: linear-gradient(90deg, var(--saffron) 33.33%, var(--white) 33.33%, var(--white) 66.66%, var(--india-green) 66.66%);
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1001;
+        /* Hide sections initially for single page tab view */
+        .tab-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
         }
-
-        /* Navigation Bar */
-        header {
-            background: #ffffff;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            position: sticky;
-            top: 6px;
-            z-index: 1000;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .brand img {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--saffron);
-            box-shadow: 0 2px 8px rgba(255, 153, 51, 0.3);
-        }
-
-        .brand-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--dark-green);
-            letter-spacing: 0.5px;
-        }
-
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 25px;
-            align-items: center;
-        }
-
-        .nav-menu a {
-            text-decoration: none;
-            color: #4b6584;
-            font-weight: 600;
-            font-size: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-menu a:hover {
-            color: var(--saffron);
-        }
-
-        .counter-badge {
-            background: linear-gradient(135deg, var(--saffron) 0%, #e07b1b 100%);
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 14px;
-            box-shadow: 0 4px 12px rgba(255, 153, 51, 0.3);
-        }
-
-        .lang-btn {
-            background: #fff6ee;
-            border: 1.5px solid var(--saffron);
-            color: #d36b00;
-            padding: 8px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        .lang-btn:hover { background: var(--saffron); color: #fff; }
-
-        /* Hero / Banner Section */
-        .hero {
-            background: linear-gradient(135deg, #1b4d3e 0%, #0d251f 100%);
-            color: #fff;
-            padding: 70px 20px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            border-bottom: 5px solid var(--saffron);
-        }
-
-        .hero::before {
-            content: "🇮🇳";
-            position: absolute;
-            font-size: 250px;
-            opacity: 0.04;
-            right: 5%;
-            top: -20%;
-        }
-
-        .hero h1 {
-            font-size: 38px;
-            margin-bottom: 15px;
-            font-weight: 800;
-            color: var(--saffron);
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .hero p {
-            font-size: 18px;
-            max-width: 750px;
-            margin: 0 auto 25px auto;
-            color: #e2e8f0;
-            line-height: 1.6;
-        }
-
-        /* Special Event Highlight Box */
-        .event-highlight {
-            background: linear-gradient(135deg, #ffffff 0%, #fff9f0 100%);
-            border: 2px solid var(--saffron);
-            border-radius: 16px;
-            padding: 30px;
-            margin: 40px auto;
-            max-width: 900px;
-            box-shadow: 0 10px 30px rgba(255, 153, 51, 0.15);
-            text-align: left;
-            position: relative;
-        }
-
-        .event-highlight::after {
-            content: "✨ ১৫ই আগস্ট বিশেষ নিবেদন";
-            position: absolute;
-            top: -14px;
-            left: 30px;
-            background: var(--saffron);
-            color: #fff;
-            padding: 4px 14px;
-            font-size: 13px;
-            font-weight: 700;
-            border-radius: 20px;
-        }
-
-        .event-highlight h3 {
-            color: var(--dark-green);
-            font-size: 24px;
-            margin-bottom: 12px;
-        }
-
-        .event-highlight p {
-            color: #4a5568;
-            font-size: 16px;
-            line-height: 1.7;
-        }
-
-        /* Main Container & Sections */
-        .container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
-            flex-grow: 1;
-            width: 100%;
-        }
-
-        .section-title {
-            font-size: 26px;
-            color: var(--dark-green);
-            text-align: center;
-            margin-bottom: 35px;
-            font-weight: 700;
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background: var(--saffron);
-            border-radius: 2px;
-        }
-
-        .grid-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-            margin-bottom: 50px;
-        }
-
-        .card {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-            border-top: 4px solid var(--saffron);
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
-        }
-
-        .card h4 {
-            color: var(--dark-green);
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-
-        .card p {
-            color: #64748b;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        /* Animated Buttons */
-        .btn {
-            background: linear-gradient(135deg, var(--dark-green) 0%, var(--india-green) 100%);
-            color: #fff;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(27, 77, 62, 0.2);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 20px rgba(27, 77, 62, 0.35);
-        }
-
-        .btn:active {
-            transform: translateY(1px) scale(0.98);
-        }
-
-        /* Registration Form Section */
-        .form-card {
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-            max-width: 650px;
-            margin: 0 auto 50px auto;
-            border-top: 6px solid var(--saffron);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
+        .tab-section.active {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #4b6584;
-            font-size: 14px;
         }
-
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 15px;
-            background: #fafbfc;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus, .form-group textarea:focus {
-            border-color: var(--saffron);
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(255, 153, 51, 0.15);
-            outline: none;
-        }
-
-        .msg {
-            margin-top: 15px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        /* Footer */
-        footer {
-            background: linear-gradient(180deg, #1b4d3e 0%, #0d251f 100%);
-            color: #fff;
-            text-align: center;
-            padding: 30px 20px;
-            border-top: 4px solid var(--saffron);
-            margin-top: auto;
-        }
-
-        footer p {
-            font-size: 15px;
-            letter-spacing: 0.5px;
-        }
-
-        @media(max-width: 768px) {
-            .nav-menu { display: none; }
-            .hero h1 { font-size: 28px; }
-            .hero p { font-size: 15px; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-<body>
+<body class="font-bengali text-gray-800 antialiased min-h-screen flex flex-col">
 
-<div class="tricolor-strip"></div>
-
-<!-- Navigation Bar -->
-<header>
-    <div class="nav-container">
-        <a href="#" class="brand">
-            <img id="navLogoImg" src="https://via.placeholder.com/40" alt="Logo">
-            <span class="brand-title" data-translate="brandName">স্বদেশ জাগরণ</span>
-        </a>
-        <ul class="nav-menu">
-            <li><a href="#home" data-translate="menuHome">হোম</a></li>
-            <li><a href="#about" data-translate="menuAbout">আমাদের সম্পর্কে</a></li>
-            <li><a href="#notices" data-translate="menuNotice">নোটিশ বোর্ড</a></li>
-            <li><a href="#gallery" data-translate="menuGallery">গ্যালারি</a></li>
-            <li><a href="#register" data-translate="menuRegister">রেজিস্ট্রেশন</a></li>
-            <li><div class="counter-badge" id="memberCounterBadge">মোট সদস্য: <span id="publicMemberCount">0</span></div></li>
-            <li><button class="lang-btn" onclick="toggleLanguage()">English / বাংলা</button></li>
-        </ul>
-    </div>
-</header>
-
-<!-- Hero Section -->
-<section id="home" class="hero">
-    <div style="max-width: 900px; margin: 0 auto;">
-        <h1 data-translate="heroTitle">স্বদেশ জাগরণে আপনাকে স্বাগতম</h1>
-        <p data-translate="heroSub">আমরা সমাজ কল্যাণ, শিক্ষা, সংস্কৃতি এবং স্বচ্ছ আর্থিক ব্যবস্থার জন্য নিবেদিতপ্রাণ। আমাদের প্রতিটি কার্যক্রমে আপনার অংশগ্রহণ একান্ত কাম্য।</p>
-        <a href="#register" class="btn" data-translate="heroBtn">সদস্য হিসেবে যুক্ত হোন</a>
-    </div>
-</section>
-
-<div class="container">
-
-    <!-- Special 15th August Program Announcement (Pre-loaded for First Year Celebration) -->
-    <div class="event-highlight">
-        <h3 data-translate="eventHeading">🇮🇳 প্রথম বর্ষ উদযাপনে ১৫ই আগস্ট স্বাধীনতা দিবস বিশেষ অনুষ্ঠান</h3>
-        <p data-translate="eventDesc">
-            স্বাধীনতার অমৃত মহোৎসবে 'স্বদেশ জাগরণ'-এর উদ্যোগে এই প্রথম অত্যন্ত জাঁকজমকপূর্ণভাবে অনুষ্ঠিত হতে চলেছে ১৫ই আগস্ট স্বাধীনতা দিবস উদযাপন অনুষ্ঠান। এই বিশেষ দিনে আমাদের পতাকাতল্লায় থাকছে জাতীয় পতাকা উত্তোলন, দেশাত্মবোধক সাংস্কৃতিক অনুষ্ঠান, কৃতি ছাত্র-ছাত্রী সংবর্ধনা এবং সমাজসেবামূলক কর্মকাণ্ড। এলাকার সকল স্তরের দেশপ্রেমিক ভাই-বোন ও মুরুব্বিদের এই মহতী অনুষ্ঠানে সশরীরে উপস্থিত থেকে অনুষ্ঠানকে সফল করে তোলার জন্য বিনীতভাবে আহ্বান জানাচ্ছি।
-        </p>
+    <!-- Top Bar -->
+    <div class="bg-navyBlue text-white text-sm py-2 px-4 shadow-sm">
+        <div class="container mx-auto flex justify-between items-center max-w-7xl">
+            <div class="flex items-center space-x-4">
+                <span><i class="fas fa-phone-alt mr-2"></i>+৯১ ৯৮৭৬৫ ৪৩২১০</span>
+                <span class="hidden md:inline"><i class="fas fa-envelope mr-2"></i>contact@swadeshjagaran.in</span>
+            </div>
+            <div class="flex items-center">
+                <button id="langToggle" class="bg-saffron text-white px-4 py-1 rounded text-xs font-bold hover:bg-opacity-90 transition shadow-sm tracking-wider">ENGLISH</button>
+            </div>
+        </div>
     </div>
 
-    <!-- About Us Section -->
-    <section id="about">
-        <h2 class="section-title" data-translate="aboutTitle">আমাদের লক্ষ্য ও উদ্দেশ্য</h2>
-        <div class="grid-cards">
-            <div class="card">
-                <h4 data-translate="card1Title">🤝 সমাজ কল্যাণ</h4>
-                <p data-translate="card1Desc">দুঃস্থ মানুষের সাহায্যার্থে এবং গ্রামীণ উন্নয়নে আমাদের নিরলস প্রচেষ্টা সবসময় অব্যাহত রয়েছে।</p>
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50 border-b-4 border-indiaGreen">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center max-w-7xl">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="showSection('home')">
+                <div class="w-12 h-12 rounded-full bg-saffron flex items-center justify-center text-white font-bold text-2xl shadow-md border-2 border-white ring-2 ring-indiaGreen">স</div>
+                <div>
+                    <h1 class="text-2xl font-bold text-navyBlue leading-tight" data-en="Swadesh Jagaran" data-bn="স্বদেশ জাগরণ">স্বদেশ জাগরণ</h1>
+                    <p class="text-xs text-gray-600 font-medium mt-1" data-en="A Step Towards Building India" data-bn="ভারতবর্ষ গঠনের লক্ষ্যে এক দৃঢ় পদক্ষেপ">ভারতবর্ষ গঠনের লক্ষ্যে এক দৃঢ় পদক্ষেপ</p>
+                </div>
             </div>
-            <div class="card">
-                <h4 data-translate="card2Title">📚 শিক্ষা ও সংস্কৃতি</h4>
-                <p data-translate="card2Desc">তরুণ প্রজন্মকে সঠিক দিশা দেখাতে এবং সাংস্কৃতিক চেতনায় উদ্বুদ্ধ করতে আমরা বদ্ধপরিকর।</p>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-8 font-semibold text-gray-700">
+                <button onclick="showSection('home')" class="nav-btn hover:text-saffron transition border-b-2 border-transparent hover:border-saffron pb-1" data-en="Home" data-bn="হোম">হোম</button>
+                <button onclick="showSection('about')" class="nav-btn hover:text-saffron transition border-b-2 border-transparent hover:border-saffron pb-1" data-en="About Us" data-bn="আমাদের সম্পর্কে">আমাদের সম্পর্কে</button>
+                <button onclick="showSection('notice')" class="nav-btn hover:text-saffron transition border-b-2 border-transparent hover:border-saffron pb-1" data-en="Notice Board" data-bn="নোটিশ বোর্ড">নোটিশ বোর্ড</button>
+                <button onclick="showSection('gallery')" class="nav-btn hover:text-saffron transition border-b-2 border-transparent hover:border-saffron pb-1" data-en="Gallery" data-bn="গ্যালারি">গ্যালারি</button>
+                <button onclick="showSection('join')" class="bg-indiaGreen text-white px-5 py-2 rounded-lg hover:bg-opacity-90 transition shadow-md" data-en="Registration Form" data-bn="রেজিস্ট্রেশন ফর্ম">রেজিস্ট্রেশন ফর্ম</button>
             </div>
-            <div class="card">
-                <h4 data-translate="card3Title">💡 স্বচ্ছতা ও জবাবদিহিতা</h4>
-                <p data-translate="card3Desc">আমাদের সংগঠনের প্রতিটি কাজের আয় ও ব্যয়ের পূর্ণ স্বচ্ছ হিসাব সর্বসাধারণের জন্য উন্মুক্ত রাখা হয়।</p>
+            
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="menuBtn" class="text-navyBlue focus:outline-none">
+                    <i class="fas fa-bars text-3xl"></i>
+                </button>
             </div>
         </div>
-    </section>
-
-    <!-- Notice Board Section -->
-    <section id="notices">
-        <h2 class="section-title" data-translate="noticeTitle">সাম্প্রতিক নোটিশ ও ঘোষণা</h2>
-        <div id="noticesContainer" class="grid-cards">
-            <!-- Default pre-loaded notice if Firebase is empty -->
-            <div class="card">
-                <small style="color: var(--saffron); font-weight: 700;">১৫ই আগস্ট, ২০২৬</small>
-                <h4>১৫ই আগস্ট স্বাধীনতা দিবস উদযাপন সংক্রান্ত জরুরি বিজ্ঞপ্তি</h4>
-                <p>আমাদের সংগঠনের প্রথম বার্ষিক ১৫ই আগস্ট অনুষ্ঠান সফল করার প্রস্তুতি বৈঠক আগামী রবিবার অনুষ্ঠিত হবে। সকলকে যথাসময়ে উপস্থিত থাকার অনুরোধ জানানো হচ্ছে।</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Gallery Section -->
-    <section id="gallery">
-        <h2 class="section-title" data-translate="galleryTitle">আমাদের গ্যালারি</h2>
-        <div id="galleryContainer" class="grid-cards">
-            <!-- Default pre-loaded gallery items -->
-            <div class="card" style="padding: 10px; overflow: hidden;">
-                <img src="https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=600&q=80" alt="Event" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
-                <p style="margin-top: 10px; text-align: center; font-weight: 600; color: var(--dark-green);">স্বাধীনতা দিবস প্রস্তুতি বৈঠক</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Member Registration Section -->
-    <section id="register">
-        <h2 class="section-title" data-translate="regTitle">সদস্য নিবন্ধন ফর্ম</h2>
-        <div class="form-card">
-            <form id="publicRegistrationForm">
-                <div class="form-group">
-                    <label data-translate="lblName">আপনার সম্পূর্ণ নাম</label>
-                    <input type="text" id="regName" placeholder="যেমন: অরূপ রায়" required>
-                </div>
-                <div class="form-group">
-                    <label data-translate="lblEmail">ইমেইল ঠিকানা</label>
-                    <input type="email" id="regEmail" placeholder="example@gmail.com" required>
-                </div>
-                <div class="form-group">
-                    <label data-translate="lblPhone">মোবাইল নম্বর</label>
-                    <input type="tel" id="regPhone" placeholder="10-digit mobile number" required>
-                </div>
-                <div class="form-group">
-                    <label data-translate="lblAddress">ঠিকানা</label>
-                    <textarea id="regAddress" rows="3" placeholder="আপনার সম্পূর্ণ ঠিকানা লিখুন" required></textarea>
-                </div>
-                <button type="submit" class="btn" style="width: 100%;" data-translate="btnRegisterSubmit">নিবন্ধন সম্পন্ন করুন</button>
-            </form>
-            <p id="regMsg" class="msg" style="color: var(--india-green);"></p>
-        </div>
-    </section>
-
-</div>
-
-<!-- Footer -->
-<footer>
-    <p>© ২০২৬ স্বদেশ জাগরণ। সর্বস্বত্ব সংরক্ষিত। | দেশ গঠনে আমরা প্রতিশ্রুতিবদ্ধ।</p>
-</footer>
-
-<script>
-    // Firebase Configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyCg5ttOQHcdqupvlD91Dam6IFfh6P1mdos",
-        authDomain: "swadeshjagaran.firebaseapp.com",
-        projectId: "swadeshjagaran",
-        storageBucket: "swadeshjagaran.firebasestorage.app",
-        messagingSenderId: "955311438612",
-        appId: "1:955311438612:web:089ee627987ee6b5562001",
-        measurementId: "G-WC17FQTESH"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    // Load saved portal logo from Firestore or localStorage
-    function loadLogo() {
-        db.collection("settings").doc("portal").get().then(doc => {
-            if (doc.exists && doc.data().logoUrl) {
-                document.getElementById("navLogoImg").src = doc.data().logoUrl;
-            }
-        }).catch(() => {
-            const saved = localStorage.getItem("portalLogo");
-            if(saved) document.getElementById("navLogoImg").src = saved;
-        });
-    }
-    loadLogo();
-
-    // Real-time Total Members Counter & List
-    db.collection("members").onSnapshot(snapshot => {
-        document.getElementById("publicMemberCount").innerText = snapshot.size;
-    });
-
-    // Public Member Registration Handler
-    document.getElementById("publicRegistrationForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-        const btn = e.target.querySelector('button');
-        btn.disabled = true;
         
-        db.collection("members").add({
-            name: document.getElementById("regName").value.trim(),
-            email: document.getElementById("regEmail").value.trim(),
-            phone: document.getElementById("regPhone").value.trim(),
-            address: document.getElementById("regAddress").value.trim(),
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
-            document.getElementById("regMsg").innerText = currentLang === 'bn' ? 'সফলভাবে আপনার নিবন্ধন সম্পন্ন হয়েছে!' : 'Registration completed successfully!';
-            document.getElementById("publicRegistrationForm").reset();
-            btn.disabled = false;
-        }).catch(err => {
-            alert("Error: " + err.message);
-            btn.disabled = false;
-        });
-    });
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t px-4 py-3 space-y-3 font-semibold shadow-inner">
+            <button onclick="showSection('home'); toggleMobileMenu()" class="block w-full text-left py-2 hover:text-saffron" data-en="Home" data-bn="হোম">হোম</button>
+            <button onclick="showSection('about'); toggleMobileMenu()" class="block w-full text-left py-2 hover:text-saffron" data-en="About Us" data-bn="আমাদের সম্পর্কে">আমাদের সম্পর্কে</button>
+            <button onclick="showSection('notice'); toggleMobileMenu()" class="block w-full text-left py-2 hover:text-saffron" data-en="Notice Board" data-bn="নোটিশ বোর্ড">নোটিশ বোর্ড</button>
+            <button onclick="showSection('gallery'); toggleMobileMenu()" class="block w-full text-left py-2 hover:text-saffron" data-en="Gallery" data-bn="গ্যালারি">গ্যালারি</button>
+            <button onclick="showSection('join'); toggleMobileMenu()" class="block w-full text-center py-2 bg-indiaGreen text-white rounded-lg shadow-sm" data-en="Registration Form" data-bn="রেজিস্ট্রেশন ফর্ম">রেজিস্ট্রেশন ফর্ম</button>
+        </div>
+    </nav>
 
-    // Real-time Dynamic Notices Loading
-    db.collection("notices").orderBy("timestamp", "desc").onSnapshot(snapshot => {
-        if(!snapshot.empty) {
-            const container = document.getElementById("noticesContainer");
-            container.innerHTML = "";
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                container.innerHTML += `
-                    <div class="card">
-                        <small style="color: var(--saffron); font-weight: 700;">${data.date || ''}</small>
-                        <h4>${data.title || 'বিশেষ ঘোষণা'}</h4>
-                        <p>${data.text || ''}</p>
+    <!-- Main Content Area -->
+    <main class="flex-grow">
+
+        <!-- 1. HOME SECTION -->
+        <section id="home" class="tab-section active">
+            <div class="relative bg-gradient-to-br from-navyBlue via-blue-900 to-gray-900 text-white py-32 px-4 text-center overflow-hidden">
+                <!-- Decorative tricolor circles -->
+                <div class="absolute top-0 left-0 w-64 h-64 bg-saffron rounded-full mix-blend-multiply filter blur-3xl opacity-20 transform -translate-x-1/2 -translate-y-1/2"></div>
+                <div class="absolute bottom-0 right-0 w-64 h-64 bg-indiaGreen rounded-full mix-blend-multiply filter blur-3xl opacity-20 transform translate-x-1/2 translate-y-1/2"></div>
+                
+                <div class="container mx-auto max-w-4xl relative z-10">
+                    <h2 class="text-4xl md:text-6xl font-bold mb-6 leading-tight tracking-wide" data-en="Awakening India Through Unity and Culture" data-bn="ঐতিহ্য ও ঐক্যের মাধ্যমে ভারতবর্ষের জাগরণ">ঐতিহ্য ও ঐক্যের মাধ্যমে ভারতবর্ষের জাগরণ</h2>
+                    <p class="text-lg md:text-2xl text-gray-300 mb-10 leading-relaxed" data-en="Working together for social welfare, cultural preservation, and the holistic development of the Indian society." data-bn="সমাজ কল্যাণ, ভারতীয় সংস্কৃতি রক্ষা এবং ভারতীয় সমাজের সার্বিক উন্নয়নের জন্য আমরা সকলে একসাথে অঙ্গীকারবদ্ধ।">সমাজ কল্যাণ, ভারতীয় সংস্কৃতি রক্ষা এবং ভারতীয় সমাজের সার্বিক উন্নয়নের জন্য আমরা সকলে একসাথে অঙ্গীকারবদ্ধ।</p>
+                    <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                        <button onclick="showSection('join')" class="w-full sm:w-auto bg-saffron text-white font-bold px-8 py-4 rounded-lg shadow-lg hover:bg-opacity-90 transition text-lg" data-en="Become a Member" data-bn="সদস্যপদ গ্রহণ করুন">সদস্যপদ গ্রহণ করুন</button>
+                        <button onclick="showSection('about')" class="w-full sm:w-auto bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-bold hover:bg-white hover:text-navyBlue transition text-lg" data-en="Learn More" data-bn="আরও জানুন">আরও জানুন</button>
                     </div>
-                `;
-            });
-        }
-    });
+                </div>
+            </div>
+        </section>
 
-    // Real-time Dynamic Gallery Loading
-    db.collection("gallery").orderBy("timestamp", "desc").onSnapshot(snapshot => {
-        if(!snapshot.empty) {
-            const container = document.getElementById("galleryContainer");
-            container.innerHTML = "";
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                if(data.url) {
-                    container.innerHTML += `
-                        <div class="card" style="padding: 10px; overflow: hidden;">
-                            <img src="${data.url}" alt="Gallery Item" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
-                            <p style="margin-top: 10px; text-align: center; font-weight: 600; color: var(--dark-green);">স্বদেশ জাগরণ অনুষ্ঠান</p>
+        <!-- 2. ABOUT US SECTION -->
+        <section id="about" class="tab-section py-16 px-4">
+            <div class="container mx-auto max-w-5xl bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-gray-100">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-navyBlue mb-4" data-en="About Swadesh Jagaran" data-bn="স্বদেশ জাগরণ সম্পর্কে">স্বদেশ জাগরণ সম্পর্কে</h3>
+                    <div class="w-24 h-1 bg-saffron mx-auto rounded-full"></div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-10 items-center">
+                    <div>
+                        <h4 class="text-2xl font-semibold mb-6 text-indiaGreen" data-en="Our Vision & Mission" data-bn="আমাদের সুনির্দিষ্ট লক্ষ্য ও উদ্দেশ্য">আমাদের সুনির্দিষ্ট লক্ষ্য ও উদ্দেশ্য</h4>
+                        <p class="text-gray-700 mb-6 leading-relaxed text-lg" data-en="Swadesh Jagaran is a socio-cultural organization dedicated to inspiring the youth of India, preserving our rich indigenous culture, and fostering a strong sense of national duty." data-bn="স্বদেশ জাগরণ একটি সামাজিক ও সাংস্কৃতিক সংগঠন, যা ভারতবর্ষের যুবসমাজকে উদ্বুদ্ধ করতে, আমাদের প্রাচীন সংস্কৃতি রক্ষা করতে এবং ভারতীয়দের মধ্যে জাতীয় দায়িত্ববোধ জাগ্রত করতে সম্পূর্ণরূপে প্রতিশ্রুতিবদ্ধ।">স্বদেশ জাগরণ একটি সামাজিক ও সাংস্কৃতিক সংগঠন, যা ভারতবর্ষের যুবসমাজকে উদ্বুদ্ধ করতে, আমাদের প্রাচীন সংস্কৃতি রক্ষা করতে এবং ভারতীয়দের মধ্যে জাতীয় দায়িত্ববোধ জাগ্রত করতে সম্পূর্ণরূপে প্রতিশ্রুতিবদ্ধ।</p>
+                        <ul class="space-y-4 text-gray-700 font-medium">
+                            <li class="flex items-center"><i class="fas fa-dharmachakra text-navyBlue mr-3 text-xl"></i><span data-en="Social Welfare & Community Service" data-bn="সমাজ কল্যাণ ও জনসেবামূলক কাজ">সমাজ কল্যাণ ও জনসেবামূলক কাজ</span></li>
+                            <li class="flex items-center"><i class="fas fa-dharmachakra text-navyBlue mr-3 text-xl"></i><span data-en="Indian Cultural Awareness Programs" data-bn="ভারতীয় সাংস্কৃতিক সচেতনতা কর্মসূচি">ভারতীয় সাংস্কৃতিক সচেতনতা কর্মসূচি</span></li>
+                            <li class="flex items-center"><i class="fas fa-dharmachakra text-navyBlue mr-3 text-xl"></i><span data-en="Youth Empowerment" data-bn="যুব উন্নয়ন ও সশক্তিকরণ">যুব উন্নয়ন ও সশক্তিকরণ</span></li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-8 rounded-xl shadow-inner border-l-8 border-saffron relative">
+                        <i class="fas fa-quote-left text-4xl text-gray-200 absolute top-4 left-4"></i>
+                        <h4 class="text-xl font-bold mb-4 text-navyBlue relative z-10 pl-6" data-en="Message from Leadership" data-bn="নেতৃত্বের বাণী">নেতৃত্বের বাণী</h4>
+                        <p class="text-gray-700 italic leading-relaxed relative z-10 pl-6" data-en="“India prospers when its youth walks on the path of righteousness, service, and self-reliance.”" data-bn="“ভারতবর্ষ তখনই চরম সমৃদ্ধির শিখরে পৌঁছায়, যখন তার যুবসমাজ নিঃস্বার্থ সেবা, কর্তব্যপরায়ণতা এবং আত্মনির্ভরতার সঠিক পথে অগ্রসর হয়।”">“ভারতবর্ষ তখনই চরম সমৃদ্ধির শিখরে পৌঁছায়, যখন তার যুবসমাজ নিঃস্বার্থ সেবা, কর্তব্যপরায়ণতা এবং আত্মনির্ভরতার সঠিক পথে অগ্রসর হয়।”</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. NOTICE BOARD SECTION -->
+        <section id="notice" class="tab-section py-16 px-4">
+            <div class="container mx-auto max-w-4xl">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-navyBlue mb-4" data-en="Notice Board" data-bn="নোটিশ বোর্ড">নোটিশ বোর্ড</h3>
+                    <div class="w-24 h-1 bg-saffron mx-auto rounded-full"></div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-xl p-8 space-y-6 border border-gray-100">
+                    <!-- Notice 1 -->
+                    <div class="p-6 border-l-4 border-saffron bg-orange-50 rounded-lg hover:shadow-md transition">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-bold text-saffron uppercase tracking-widest px-2 py-1 bg-white rounded" data-en="Urgent Notice" data-bn="জরুরি নোটিশ">জরুরি নোটিশ</span>
+                            <span class="text-xs text-gray-500 font-semibold" data-en="Date: 10 Aug 2026" data-bn="তারিখ: ১০ অগাস্ট ২০২৬">তারিখ: ১০ অগাস্ট ২০২৬</span>
                         </div>
-                    `;
-                }
+                        <h5 class="font-bold text-xl text-navyBlue mt-2" data-en="Annual General Meeting 2026" data-bn="আসন্ন বার্ষিক সাধারণ সভা ২০২৬">আসন্ন বার্ষিক সাধারণ সভা ২০২৬</h5>
+                        <p class="text-gray-700 mt-2" data-en="The annual general meeting of our organization will be held this coming Sunday. All members of our Indian community are requested to attend." data-bn="আগামী রবিবার আমাদের সংগঠনের বার্ষিক সাধারণ সভা অনুষ্ঠিত হবে। ভারতবর্ষের উন্নয়নে নিবেদিত প্রাণ সকল সদস্যের উপস্থিতি একান্তভাবে কামনা করছি।">আগামী রবিবার আমাদের সংগঠনের বার্ষিক সাধারণ সভা অনুষ্ঠিত হবে। ভারতবর্ষের উন্নয়নে নিবেদিত প্রাণ সকল সদস্যের উপস্থিতি একান্তভাবে কামনা করছি।</p>
+                    </div>
+                    <!-- Notice 2 -->
+                    <div class="p-6 border-l-4 border-indiaGreen bg-green-50 rounded-lg hover:shadow-md transition">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-bold text-indiaGreen uppercase tracking-widest px-2 py-1 bg-white rounded" data-en="Announcement" data-bn="ঘোষণা">ঘোষণা</span>
+                            <span class="text-xs text-gray-500 font-semibold" data-en="Date: 05 Aug 2026" data-bn="তারিখ: ০৫ অগাস্ট ২০২৬">তারিখ: ০৫ অগাস্ট ২০২৬</span>
+                        </div>
+                        <h5 class="font-bold text-xl text-navyBlue mt-2" data-en="Free Health Checkup Camp" data-bn="বিনামূল্যে স্বাস্থ্য পরীক্ষা শিবির">বিনামূল্যে স্বাস্থ্য পরীক্ষা শিবির</h5>
+                        <p class="text-gray-700 mt-2" data-en="A free medical checkup camp has been organized for the citizens on the upcoming holiday at the community hall." data-bn="আসন্ন ছুটির দিনে কমিউনিটি হলে ভারতীয় নাগরিকদের জন্য একটি বিনামূল্যে স্বাস্থ্য পরীক্ষা শিবিরের আয়োজন করা হয়েছে।">আসন্ন ছুটির দিনে কমিউনিটি হলে ভারতীয় নাগরিকদের জন্য একটি বিনামূল্যে স্বাস্থ্য পরীক্ষা শিবিরের আয়োজন করা হয়েছে।</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. GALLERY SECTION -->
+        <section id="gallery" class="tab-section py-16 px-4">
+            <div class="container mx-auto max-w-6xl bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-gray-100">
+                <div class="text-center mb-10">
+                    <h3 class="text-3xl font-bold text-navyBlue mb-4" data-en="Our Gallery" data-bn="আমাদের গ্যালারি">আমাদের গ্যালারি</h3>
+                    <div class="w-24 h-1 bg-saffron mx-auto rounded-full"></div>
+                </div>
+
+                <!-- Gallery Sub-Tabs -->
+                <div class="flex justify-center space-x-4 mb-10">
+                    <button id="btnPhotos" onclick="toggleGallery('photos')" class="px-6 py-2 bg-saffron text-white font-bold rounded-lg shadow hover:bg-opacity-90 transition" data-en="Photos" data-bn="স্থিরচিত্র (Photos)">স্থিরচিত্র (Photos)</button>
+                    <button id="btnVideos" onclick="toggleGallery('videos')" class="px-6 py-2 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:bg-gray-300 transition" data-en="Videos" data-bn="ভিডিও (Videos)">ভিডিও (Videos)</button>
+                </div>
+
+                <!-- Photos Section -->
+                <div id="galleryPhotos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 animation-fade-in">
+                    <div class="overflow-hidden rounded-xl shadow-md border group">
+                        <div class="h-56 bg-gray-300 flex items-center justify-center relative">
+                            <i class="fas fa-image text-4xl text-gray-400"></i>
+                            <div class="absolute inset-0 bg-navyBlue bg-opacity-0 group-hover:bg-opacity-20 transition duration-300"></div>
+                        </div>
+                        <div class="p-4 bg-gray-50 border-t-4 border-saffron"><p class="font-semibold text-navyBlue text-center" data-en="Social Welfare Drive" data-bn="সমাজ কল্যাণ কর্মসূচি">সমাজ কল্যাণ কর্মসূচি</p></div>
+                    </div>
+                    <div class="overflow-hidden rounded-xl shadow-md border group">
+                        <div class="h-56 bg-gray-300 flex items-center justify-center relative">
+                            <i class="fas fa-image text-4xl text-gray-400"></i>
+                            <div class="absolute inset-0 bg-navyBlue bg-opacity-0 group-hover:bg-opacity-20 transition duration-300"></div>
+                        </div>
+                        <div class="p-4 bg-gray-50 border-t-4 border-indiaGreen"><p class="font-semibold text-navyBlue text-center" data-en="Indian Cultural Seminar" data-bn="ভারতীয় সাংস্কৃতিক সেমিনার">ভারতীয় সাংস্কৃতিক সেমিনার</p></div>
+                    </div>
+                    <div class="overflow-hidden rounded-xl shadow-md border group">
+                        <div class="h-56 bg-gray-300 flex items-center justify-center relative">
+                            <i class="fas fa-image text-4xl text-gray-400"></i>
+                            <div class="absolute inset-0 bg-navyBlue bg-opacity-0 group-hover:bg-opacity-20 transition duration-300"></div>
+                        </div>
+                        <div class="p-4 bg-gray-50 border-t-4 border-navyBlue"><p class="font-semibold text-navyBlue text-center" data-en="Tree Plantation Camp" data-bn="বৃক্ষরোপণ অভিযান">বৃক্ষরোপণ অভিযান</p></div>
+                    </div>
+                </div>
+
+                <!-- Videos Section (Hidden by default) -->
+                <div id="galleryVideos" class="hidden grid grid-cols-1 md:grid-cols-2 gap-8 animation-fade-in">
+                    <div class="overflow-hidden rounded-xl shadow-md border bg-black group relative cursor-pointer">
+                        <div class="h-64 flex items-center justify-center">
+                            <i class="fas fa-play-circle text-6xl text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 transition duration-300"></i>
+                        </div>
+                        <div class="absolute bottom-0 w-full p-4 bg-gradient-to-t from-black to-transparent">
+                            <p class="font-semibold text-white text-center" data-en="Independence Day Celebration" data-bn="স্বাধীনতা দিবস উদযাপন">স্বাধীনতা দিবস উদযাপন</p>
+                        </div>
+                    </div>
+                    <div class="overflow-hidden rounded-xl shadow-md border bg-black group relative cursor-pointer">
+                        <div class="h-64 flex items-center justify-center">
+                            <i class="fas fa-play-circle text-6xl text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 transition duration-300"></i>
+                        </div>
+                        <div class="absolute bottom-0 w-full p-4 bg-gradient-to-t from-black to-transparent">
+                            <p class="font-semibold text-white text-center" data-en="Youth Awareness Rally" data-bn="যুব সচেতনতা ব়্যালি">যুব সচেতনতা ব়্যালি</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. REGISTRATION FORM SECTION -->
+        <section id="join" class="tab-section py-16 px-4">
+            <div class="container mx-auto max-w-2xl">
+                <div class="bg-white p-8 md:p-12 rounded-2xl shadow-2xl border-t-8 border-saffron border-b-8 border-indiaGreen">
+                    <div class="text-center mb-8">
+                        <h3 class="text-3xl font-bold text-navyBlue mb-2" data-en="Registration Form" data-bn="রেজিস্ট্রেশন ফর্ম">রেজিস্ট্রেশন ফর্ম</h3>
+                        <p class="text-gray-500 font-medium" data-en="Fill out the exact details below to join" data-bn="যুক্ত হওয়ার জন্য নিচের তথ্যগুলো নিখুঁতভাবে পূরণ করুন">যুক্ত হওয়ার জন্য নিচের তথ্যগুলো নিখুঁতভাবে পূরণ করুন</p>
+                    </div>
+                    
+                    <!-- Form without placeholders, matching the image fields -->
+                    <form id="memberForm" class="space-y-6">
+                        <div>
+                            <label class="block text-base font-semibold text-navyBlue mb-2" data-en="Full Name" data-bn="আপনার সম্পূর্ণ নাম">আপনার সম্পূর্ণ নাম</label>
+                            <input type="text" id="memberName" required class="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-saffron focus:border-transparent outline-none transition bg-gray-50">
+                        </div>
+                        <div>
+                            <label class="block text-base font-semibold text-navyBlue mb-2" data-en="Email Address" data-bn="ইমেইল ঠিকানা">ইমেইল ঠিকানা</label>
+                            <input type="email" id="memberEmail" required class="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-saffron focus:border-transparent outline-none transition bg-gray-50">
+                        </div>
+                        <div>
+                            <label class="block text-base font-semibold text-navyBlue mb-2" data-en="Mobile Number" data-bn="মোবাইল নম্বর">মোবাইল নম্বর</label>
+                            <input type="tel" id="memberPhone" required pattern="[0-9]{10}" class="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-saffron focus:border-transparent outline-none transition bg-gray-50">
+                        </div>
+                        <div>
+                            <label class="block text-base font-semibold text-navyBlue mb-2" data-en="Address" data-bn="ঠিকানা">ঠিকানা</label>
+                            <textarea id="memberAddress" rows="3" required class="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-saffron focus:border-transparent outline-none transition bg-gray-50 resize-none"></textarea>
+                        </div>
+                        <div class="pt-4">
+                            <button type="submit" class="w-full bg-indiaGreen text-white font-bold text-lg py-4 rounded-lg hover:bg-green-700 transition shadow-lg" data-en="Complete Registration" data-bn="নিবন্ধন সম্পন্ন করুন">নিবন্ধন সম্পন্ন করুন</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-navyBlue text-white py-10 px-4 text-center mt-auto border-t-4 border-saffron">
+        <div class="container mx-auto">
+            <h5 class="text-2xl font-bold mb-3" data-en="Swadesh Jagaran" data-bn="স্বদেশ জাগরণ">স্বদেশ জাগরণ</h5>
+            <p class="text-gray-300 mb-6 max-w-lg mx-auto" data-en="Dedicated to the eternal service, culture, and absolute development of India." data-bn="ভারতবর্ষের চিরন্তন সেবা, সংস্কৃতি এবং চূড়ান্ত উন্নয়নের প্রতি সম্পূর্ণভাবে উৎসর্গীকৃত।">ভারতবর্ষের চিরন্তন সেবা, সংস্কৃতি এবং চূড়ান্ত উন্নয়নের প্রতি সম্পূর্ণভাবে উৎসর্গীকৃত।</p>
+            <div class="flex justify-center space-x-5 mb-6">
+                <a href="#" class="w-12 h-12 rounded-full bg-white text-navyBlue flex items-center justify-center text-xl hover:bg-saffron hover:text-white transition shadow-lg"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="w-12 h-12 rounded-full bg-white text-navyBlue flex items-center justify-center text-xl hover:bg-indiaGreen hover:text-white transition shadow-lg"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" class="w-12 h-12 rounded-full bg-white text-navyBlue flex items-center justify-center text-xl hover:bg-red-600 hover:text-white transition shadow-lg"><i class="fab fa-youtube"></i></a>
+            </div>
+            <div class="w-full h-px bg-blue-800 mb-6"></div>
+            <p class="text-sm text-gray-400" data-en="&copy; 2026 Swadesh Jagaran. All Rights Reserved." data-bn="&copy; ২০২৬ স্বদেশ জাগরণ। সর্বস্বত্ব সংরক্ষিত।">&copy; ২০২৬ স্বদেশ জাগরণ। সর্বস্বত্ব সংরক্ষিত।</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+    <!-- Interactive Script -->
+    <script>
+        // --- 1. Single Page Tab Logic ---
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.tab-section').forEach(sec => {
+                sec.classList.remove('active');
             });
+            // Show target section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-    });
 
-    // Language Toggle Feature
-    let currentLang = 'bn';
-    const translations = {
-        bn: {
-            brandName: "স্বদেশ জাগরণ",
-            menuHome: "হোম",
-            menuAbout: "আমাদের সম্পর্কে",
-            menuNotice: "নোটিশ বোর্ড",
-            menuGallery: "গ্যালারি",
-            menuRegister: "রেজিস্ট্রেশন",
-            heroTitle: "স্বদেশ জাগরণে আপনাকে স্বাগতম",
-            heroSub: "আমরা সমাজ কল্যাণ, শিক্ষা, সংস্কৃতি এবং স্বচ্ছ আর্থিক ব্যবস্থার জন্য নিবেদিতপ্রাণ। আমাদের প্রতিটি কার্যক্রমে আপনার অংশগ্রহণ একান্ত কাম্য।",
-            heroBtn: "সদস্য হিসেবে যুক্ত হোন",
-            eventHeading: "🇮🇳 প্রথম বর্ষ উদযাপনে ১৫ই আগস্ট স্বাধীনতা দিবস বিশেষ অনুষ্ঠান",
-            eventDesc: "স্বাধীনতার অমৃত মহোৎসবে 'স্বদেশ জাগরণ'-এর উদ্যোগে এই প্রথম অত্যন্ত জাঁকজমকপূর্ণভাবে অনুষ্ঠিত হতে চলেছে ১৫ই আগস্ট স্বাধীনতা দিবস উদযাপন অনুষ্ঠান। এই বিশেষ দিনে আমাদের পতাকাতল্লায় থাকছে জাতীয় পতাকা উত্তোলন, দেশাত্মবোধক সাংস্কৃতিক অনুষ্ঠান, কৃতি ছাত্র-ছাত্রী সংবর্ধনা এবং সমাজসেবামূলক কর্মকাণ্ড। এলাকার সকল স্তরের দেশপ্রেমিক ভাই-বোন ও মুরুব্বিদের এই মহতী অনুষ্ঠানে সশরীরে উপস্থিত থেকে অনুষ্ঠানকে সফল করে তোলার জন্য বিনীতভাবে আহ্বান জানাচ্ছি।",
-            aboutTitle: "আমাদের লক্ষ্য ও উদ্দেশ্য",
-            card1Title: "🤝 সমাজ কল্যাণ",
-            card1Desc: "দুঃস্থ মানুষের সাহায্যার্থে এবং গ্রামীণ উন্নয়নে আমাদের নিরলস প্রচেষ্টা সবসময় অব্যাহত রয়েছে।",
-            card2Title: "📚 শিক্ষা ও সংস্কৃতি",
-            card2Desc: "তরুণ প্রজন্মকে সঠিক দিশা দেখাতে এবং সাংস্কৃতিক চেতনায় উদ্বুদ্ধ করতে আমরা বদ্ধপরিকর।",
-            card3Title: "💡 স্বচ্ছতা ও জবাবদিহিতা",
-            card3Desc: "আমাদের সংগঠনের প্রতিটি কাজের আয় ও ব্যয়ের পূর্ণ স্বচ্ছ হিসাব সর্বসাধারণের জন্য উন্মুক্ত রাখা হয়।",
-            noticeTitle: "সাম্প্রতিক নোটিশ ও ঘোষণা",
-            galleryTitle: "আমাদের গ্যালারি",
-            regTitle: "সদস্য নিবন্ধন ফর্ম",
-            lblName: "আপনার সম্পূর্ণ নাম",
-            lblEmail: "ইমেইল ঠিকানা",
-            lblPhone: "মোবাইল নম্বর",
-            lblAddress: "ঠিকানা",
-            btnRegisterSubmit: "নিবন্ধন সম্পন্ন করুন"
-        },
-        en: {
-            brandName: "Swadesh Jagaran",
-            menuHome: "Home",
-            menuAbout: "About Us",
-            menuNotice: "Notices",
-            menuGallery: "Gallery",
-            menuRegister: "Registration",
-            heroTitle: "Welcome to Swadesh Jagaran",
-            heroSub: "Dedicated to social welfare, education, culture, and transparent financial systems. Your participation in our initiatives is valued.",
-            heroBtn: "Join as Member",
-            eventHeading: "🇮🇳 15th August Independence Day Special First-Year Celebration",
-            eventDesc: "On the auspicious occasion of India's Independence, 'Swadesh Jagaran' is proudly organizing its very first grand 15th August celebration event. Featuring national flag hoisting, patriotic cultural programs, felicitation of achievers, and community service. We cordially invite all citizens to join and make this event a grand success.",
-            aboutTitle: "Our Mission & Vision",
-            card1Title: "🤝 Social Welfare",
-            card1Desc: "Constant efforts towards helping underprivileged communities and fostering regional growth.",
-            card2Title: "📚 Education & Culture",
-            card2Desc: "Committed to guiding the youth in the right direction and preserving cultural heritage.",
-            card3Title: "💡 Transparency & Accountability",
-            card3Desc: "Maintaining complete financial transparency for all income and expense records of the organization.",
-            noticeTitle: "Recent Notices & Announcements",
-            galleryTitle: "Our Gallery",
-            regTitle: "Member Registration Form",
-            lblName: "Your Full Name",
-            lblEmail: "Email Address",
-            lblPhone: "Mobile Number",
-            lblAddress: "Address",
-            btnRegisterSubmit: "Complete Registration"
+        // --- Mobile Menu Toggle ---
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('hidden');
         }
-    };
+        document.getElementById('menuBtn').addEventListener('click', toggleMobileMenu);
 
-    function toggleLanguage() {
-        currentLang = currentLang === 'bn' ? 'en' : 'bn';
-        document.querySelectorAll('[data-translate]').forEach(el => {
-            const key = el.getAttribute('data-translate');
-            if (translations[currentLang][key]) {
-                el.innerText = translations[currentLang][key];
+        // --- 2. Gallery Toggle Logic (Photos / Videos) ---
+        function toggleGallery(type) {
+            const photosDiv = document.getElementById('galleryPhotos');
+            const videosDiv = document.getElementById('galleryVideos');
+            const btnPhotos = document.getElementById('btnPhotos');
+            const btnVideos = document.getElementById('btnVideos');
+
+            if (type === 'photos') {
+                photosDiv.classList.remove('hidden');
+                videosDiv.classList.add('hidden');
+                // Button Styling
+                btnPhotos.classList.replace('bg-gray-200', 'bg-saffron');
+                btnPhotos.classList.replace('text-gray-700', 'text-white');
+                btnVideos.classList.replace('bg-saffron', 'bg-gray-200');
+                btnVideos.classList.replace('text-white', 'text-gray-700');
+            } else {
+                photosDiv.classList.add('hidden');
+                videosDiv.classList.remove('hidden');
+                // Button Styling
+                btnVideos.classList.replace('bg-gray-200', 'bg-saffron');
+                btnVideos.classList.replace('text-gray-700', 'text-white');
+                btnPhotos.classList.replace('bg-saffron', 'bg-gray-200');
+                btnPhotos.classList.replace('text-white', 'text-gray-700');
             }
+        }
+
+        // --- 3. Strict Language Toggle Logic ---
+        const langToggle = document.getElementById('langToggle');
+        let currentLang = 'bn';
+
+        langToggle.addEventListener('click', () => {
+            currentLang = currentLang === 'bn' ? 'en' : 'bn';
+            
+            // Toggle Button Text
+            langToggle.textContent = currentLang === 'bn' ? 'ENGLISH' : 'বাংলা';
+            
+            // Update all elements with data attributes
+            document.querySelectorAll('[data-en][data-bn]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLang}`);
+            });
+
+            // Update Page Title
+            document.title = document.title = currentLang === 'bn' ? "স্বদেশ জাগরণ | ভারতবর্ষ" : "Swadesh Jagaran | India";
         });
-    }
-</script>
+
+        // --- Firebase Configuration & Registration Form Submission ---
+        // (Replace with your actual Firebase config)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        const memberForm = document.getElementById('memberForm');
+        memberForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('memberName').value;
+            const email = document.getElementById('memberEmail').value;
+            const phone = document.getElementById('memberPhone').value;
+            const address = document.getElementById('memberAddress').value;
+
+            // Submit to Firebase
+            db.collection("members").add({
+                name: name,
+                email: email,
+                phone: phone,
+                address: address,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                const successMsg = currentLang === 'bn' ? "নিবন্ধন সফলভাবে সম্পন্ন হয়েছে!" : "Registration successfully completed!";
+                alert(successMsg);
+                memberForm.reset();
+            })
+            .catch((error) => {
+                console.error("Error: ", error);
+                const errorMsg = currentLang === 'bn' ? "সমস্যা হয়েছে, আবার চেষ্টা করুন।" : "An error occurred, please try again.";
+                alert(errorMsg);
+            });
+        });
+    </script>
 </body>
 </html>
