@@ -218,17 +218,17 @@
 <sidebar id="appSidebar" class="hidden">
     <div class="sidebar-brand">
         <img id="sidebarLogoImg" src="" alt="Logo" onerror="this.style.display='none'">
-        <span id="sidebarBrandText">স্বদেশ জাগরণ</span>
+        <span id="sidebarBrandText">?????? ?????</span>
     </div>
     <ul class="sidebar-menu">
-        <li class="active" onclick="switchTab('dashboard', this)"><a href="#">🏠 <span>Dashboard</span></a></li>
-        <li onclick="switchTab('website-builder', this)"><a href="#">🌍 <span>Website Builder (CMS)</span></a></li>
-        <li onclick="switchTab('visitors', this)"><a href="#">📊 <span>Visitor Logs</span></a></li>
-        <li onclick="switchTab('notices', this)"><a href="#">📢 <span>Publish Notice</span></a></li>
-        <li onclick="switchTab('finances', this)"><a href="#">💰 <span>Income & Expense</span></a></li>
-        <li onclick="switchTab('gallery', this)"><a href="#">🖼️ <span>Gallery Media</span></a></li>
-        <li onclick="switchTab('members', this)"><a href="#">👥 <span>Members List</span></a></li>
-        <li onclick="switchTab('settings', this)"><a href="#">⚙️ <span>Settings & Security</span></a></li>
+        <li class="active" onclick="switchTab('dashboard', this)"><a href="#">?? <span>Dashboard</span></a></li>
+        <li onclick="switchTab('website-builder', this)"><a href="#">?? <span>Website Builder (CMS)</span></a></li>
+        <li onclick="switchTab('visitors', this)"><a href="#">?? <span>Visitor Logs</span></a></li>
+        <li onclick="switchTab('notices', this)"><a href="#">?? <span>Publish Notice</span></a></li>
+        <li onclick="switchTab('finances', this)"><a href="#">?? <span>Income & Expense</span></a></li>
+        <li onclick="switchTab('gallery', this)"><a href="#">??? <span>Gallery Media</span></a></li>
+        <li onclick="switchTab('members', this)"><a href="#">?? <span>Members List</span></a></li>
+        <li onclick="switchTab('settings', this)"><a href="#">?? <span>Settings & Security</span></a></li>
     </ul>
     <div class="sidebar-footer">
         <button class="btn btn-danger" style="width: 100%;" onclick="logoutAdmin()">Logout</button>
@@ -241,11 +241,11 @@
         <div class="tricolor-strip"></div>
         <div class="header-content">
             <div class="header-left">
-                <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
-                <div class="header-title">অ্যাডমিন প্যানেল</div>
+                <button class="hamburger-btn" onclick="toggleSidebar()">?</button>
+                <div class="header-title">???????? ???????</div>
             </div>
             <div class="header-actions">
-                <button class="lang-btn" onclick="toggleLanguage()">বাংলা / English</button>
+                <button class="lang-btn" onclick="toggleLanguage()">????? / English</button>
             </div>
         </div>
     </header>
@@ -263,7 +263,7 @@
                     <label>Password</label>
                     <div class="password-wrapper">
                         <input type="password" id="adminPassword" required>
-                        <span class="eye-icon" onclick="togglePasswordVisibility('adminPassword', this)">👁️</span>
+                        <span class="eye-icon" onclick="togglePasswordVisibility('adminPassword', this)">???</span>
                     </div>
                 </div>
                 <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Secure Login</button>
@@ -278,21 +278,21 @@
             <div id="sec-dashboard" class="admin-section active-section">
                 <div class="dashboard-widgets">
                     <div class="widget-card">
-                        <div class="widget-icon">⏱️</div>
+                        <div class="widget-icon">??</div>
                         <div class="widget-info">
                             <h4>Live Time</h4>
                             <div class="widget-value" id="liveClockDisplay">00:00:00 AM</div>
                         </div>
                     </div>
                     <div class="widget-card green">
-                        <div class="widget-icon">🌐</div>
+                        <div class="widget-icon">??</div>
                         <div class="widget-info">
                             <h4>Total Visitors</h4>
                             <div class="widget-value" id="visitorCountDisplay">Loading...</div>
                         </div>
                     </div>
                     <div class="widget-card blue">
-                        <div class="widget-icon">👥</div>
+                        <div class="widget-icon">??</div>
                         <div class="widget-info">
                             <h4>Total Members</h4>
                             <div class="widget-value" id="dashMemberCountDisplay">0</div>
@@ -308,11 +308,11 @@
             <!-- Tab 2: NEW! WordPress like Website Builder (CMS) -->
             <div id="sec-website-builder" class="admin-section">
                 <div class="card">
-                    <h2>🌍 Website Builder & Theme Control (CMS)</h2>
+                    <h2>?? Website Builder & Theme Control (CMS)</h2>
                     <p style="font-size: 13px; color: #7f8c8d; margin-bottom: 20px;">Control exactly what is shown on the main website. Toggle sections on/off, change colors, and update header/footer texts instantly.</p>
                     
                     <form id="cmsForm">
-                        <h3 style="font-size: 15px; color: var(--saffron); margin-bottom: 10px;">🎨 Theme Colors</h3>
+                        <h3 style="font-size: 15px; color: var(--saffron); margin-bottom: 10px;">?? Theme Colors</h3>
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Website Primary Color</label>
@@ -324,7 +324,7 @@
                             </div>
                         </div>
 
-                        <h3 style="font-size: 15px; color: var(--saffron); margin: 20px 0 10px 0;">📝 Header & Footer Text</h3>
+                        <h3 style="font-size: 15px; color: var(--saffron); margin: 20px 0 10px 0;">?? Header & Footer Text</h3>
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Header / Website Title</label>
@@ -336,7 +336,7 @@
                             </div>
                         </div>
 
-                        <h3 style="font-size: 15px; color: var(--saffron); margin: 20px 0 10px 0;">👁️ Toggle Website Sections (Show / Hide)</h3>
+                        <h3 style="font-size: 15px; color: var(--saffron); margin: 20px 0 10px 0;">??? Toggle Website Sections (Show / Hide)</h3>
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Show Notice Board Section?</label>
@@ -511,14 +511,14 @@
                             <label>Current Password</label>
                             <div class="password-wrapper">
                                 <input type="password" id="oldPassword" required>
-                                <span class="eye-icon" onclick="togglePasswordVisibility('oldPassword', this)">👁️</span>
+                                <span class="eye-icon" onclick="togglePasswordVisibility('oldPassword', this)">???</span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label>New Password</label>
                             <div class="password-wrapper">
                                 <input type="password" id="newPassword" required>
-                                <span class="eye-icon" onclick="togglePasswordVisibility('newPassword', this)">👁️</span>
+                                <span class="eye-icon" onclick="togglePasswordVisibility('newPassword', this)">???</span>
                             </div>
                         </div>
                         <button type="submit" class="btn">Update Password Securely</button>
@@ -573,11 +573,11 @@
         const inputField = document.getElementById(inputId);
         if (inputField.type === "password") {
             inputField.type = "text";
-            iconElement.innerText = "🙈"; // Hide Icon
+            iconElement.innerText = "??"; // Hide Icon
             iconElement.style.color = "var(--saffron)";
         } else {
             inputField.type = "password";
-            iconElement.innerText = "👁️"; // Show Icon
+            iconElement.innerText = "???"; // Show Icon
             iconElement.style.color = "#7f8c8d";
         }
     }
@@ -805,7 +805,7 @@
             let html = "";
             snap.forEach(doc => {
                 const d = doc.data();
-                html += `<tr><td>${d.date}</td><td>${d.description}</td><td>${d.type}</td><td>₹${d.amount}</td><td>
+                html += `<tr><td>${d.date}</td><td>${d.description}</td><td>${d.type}</td><td>?${d.amount}</td><td>
                     <button class="btn btn-warning" onclick="editFinance('${doc.id}', '${d.date}', '${encodeURIComponent(d.description)}', '${d.type}', ${d.amount})">Edit</button>
                     <button class="btn btn-danger" onclick="deleteDoc('finances', '${doc.id}', loadFinancesList)">Delete</button>
                 </td></tr>`;
