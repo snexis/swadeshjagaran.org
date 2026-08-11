@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Swadesh Jagaran | Cultural & Traditional Movement</title>
     <style>
-        /* =========================================
-           GLOBAL STYLES & INDIAN THEME VARIABLES
-           ========================================= */
         :root {
             --saffron: #FF9933;
             --white: #FFFFFF;
@@ -25,37 +22,32 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Anti-Copy Prevention Style */
         body {
             background-color: var(--bg-light);
             color: var(--text-dark);
-            padding-top: 80px;
-            user-select: none; /* Prevents text selection */
+            padding-top: 90px;
+            user-select: none;
             -webkit-user-select: none;
             -ms-user-select: none;
         }
 
-        /* Allow selection inside form inputs */
         input, textarea, select {
             user-select: text;
             -webkit-user-select: text;
             -ms-user-select: text;
         }
 
-        /* =========================================
-           HEADER & NAVIGATION (SPA DESIGN)
-           ========================================= */
         header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 80px;
+            height: 85px;
             background-color: var(--white);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 40px;
+            padding: 0 30px;
             z-index: 1000;
             box-shadow: var(--shadow);
             border-bottom: 4px solid transparent;
@@ -65,25 +57,25 @@
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--saffron) 33%, var(--white) 33%, var(--white) 66%, var(--green) 66%);
             border: 2px solid var(--navy-blue);
         }
 
         .logo-text h1 {
-            font-size: 22px;
+            font-size: 20px;
             color: var(--saffron);
             margin: 0;
         }
 
         .logo-text p {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--green);
             margin: 0;
         }
@@ -91,7 +83,7 @@
         nav ul {
             display: flex;
             list-style: none;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
         }
 
@@ -99,7 +91,7 @@
             text-decoration: none;
             color: var(--text-dark);
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
             padding: 8px 12px;
             border-radius: 5px;
             cursor: pointer;
@@ -112,66 +104,54 @@
         }
 
         .btn-donate {
-            background-color: var(--green);
+            background-color: var(--green) !important;
             color: var(--white) !important;
             border-radius: 20px !important;
-            padding: 10px 20px !important;
+            padding: 8px 16px !important;
         }
 
         .btn-join {
-            background-color: var(--saffron);
+            background-color: var(--saffron) !important;
             color: var(--white) !important;
             border-radius: 20px !important;
-            padding: 10px 20px !important;
+            padding: 8px 16px !important;
         }
 
         .lang-switch {
             background: var(--navy-blue);
             color: var(--white);
             border: none;
-            padding: 8px 15px;
+            padding: 8px 14px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            margin-left: 10px;
+            margin-left: 5px;
         }
 
-        /* =========================================
-           SPA SECTION CONTAINERS
-           ========================================= */
         .page-section {
             display: none;
-            padding: 40px;
+            padding: 30px 20px;
             max-width: 1200px;
             margin: 0 auto;
-            animation: fadeIn 0.5s ease-in-out;
-            min-height: calc(100vh - 160px);
+            min-height: calc(100vh - 170px);
         }
 
         .page-section.active-section {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         .section-title {
             text-align: center;
             color: var(--navy-blue);
-            margin-bottom: 30px;
-            font-size: 28px;
+            margin-bottom: 25px;
+            font-size: 26px;
         }
 
-        /* =========================================
-           SPECIAL EVENT BANNER
-           ========================================= */
         .event-banner {
-            background: linear-gradient(135deg, rgba(255,153,51,0.1), rgba(19,136,8,0.1));
+            background: linear-gradient(135deg, rgba(255,153,51,0.12), rgba(19,136,8,0.12));
             border: 2px solid var(--saffron);
-            border-radius: 10px;
-            padding: 30px;
+            border-radius: 12px;
+            padding: 25px;
             text-align: center;
             margin-bottom: 30px;
             box-shadow: var(--shadow);
@@ -179,18 +159,17 @@
         
         .event-banner h3 {
             color: var(--navy-blue);
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 22px;
+            margin-bottom: 12px;
         }
 
-        /* =========================================
-           ACCOUNTS & TRANSPARENCY SECTION
-           ========================================= */
         .accounts-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         
         .current-balance-badge {
@@ -198,18 +177,20 @@
             color: var(--white);
             padding: 10px 20px;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .summary-cards {
             display: flex;
-            gap: 20px;
-            margin-bottom: 40px;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         .card {
             flex: 1;
+            min-width: 250px;
             background: var(--white);
             padding: 20px;
             border-radius: 10px;
@@ -223,27 +204,28 @@
         .card:nth-child(3) { border-top-color: var(--green); }
 
         .card h3 {
-            font-size: 12px;
+            font-size: 13px;
             color: gray;
             text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .card p {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
         }
 
-        /* Tabs and Filters */
         .accounts-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: var(--white);
-            padding: 15px 20px;
+            padding: 15px;
             border-radius: 8px;
             box-shadow: var(--shadow);
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .tab-buttons {
@@ -252,14 +234,13 @@
         }
 
         .tab-btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             border: none;
             background-color: #e0e0e0;
             color: var(--text-dark);
             font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s;
         }
 
         .tab-btn.active {
@@ -269,18 +250,19 @@
 
         .date-filter {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .date-filter input[type="date"] {
-            padding: 8px;
+            padding: 6px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
 
         .date-filter button {
-            padding: 8px 15px;
+            padding: 7px 14px;
             background-color: var(--green);
             color: var(--white);
             border: none;
@@ -289,12 +271,11 @@
             font-weight: bold;
         }
 
-        /* Excel-like Table */
         .table-container {
             background: var(--white);
             border-radius: 8px;
             box-shadow: var(--shadow);
-            overflow: hidden;
+            overflow-x: auto;
             display: none;
         }
 
@@ -305,12 +286,14 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 600px;
         }
 
         th, td {
             padding: 12px 15px;
             text-align: left;
             border: 1px solid #e0e0e0;
+            font-size: 14px;
         }
 
         th {
@@ -319,19 +302,9 @@
             font-weight: 600;
         }
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        .amount-income { color: var(--green); font-weight: bold; }
-        .amount-expense { color: var(--saffron); font-weight: bold; }
-
-        /* =========================================
-           FORMS & UI ELEMENTS
-           ========================================= */
         .form-container {
             background: var(--white);
-            padding: 40px;
+            padding: 30px;
             border-radius: 10px;
             box-shadow: var(--shadow);
             max-width: 600px;
@@ -340,7 +313,7 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             text-align: left;
         }
         
@@ -349,11 +322,12 @@
             margin-bottom: 5px;
             font-weight: bold;
             color: var(--navy-blue);
+            font-size: 14px;
         }
         
         .form-group input, .form-group textarea {
             width: 100%;
-            padding: 12px;
+            padding: 10px 12px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 14px;
@@ -362,24 +336,18 @@
         .submit-btn {
             background-color: var(--navy-blue);
             color: white;
-            padding: 12px 25px;
+            padding: 12px;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 15px;
             cursor: pointer;
             width: 100%;
             font-weight: bold;
-            transition: background 0.3s;
         }
 
-        .submit-btn:hover {
-            background-color: var(--green);
-        }
-
-        /* Progress Bar for Form Submission */
         .progress-box {
             display: none;
-            margin-top: 20px;
+            margin-top: 18px;
             text-align: center;
         }
         
@@ -388,179 +356,141 @@
             background-color: #e0e0e0;
             border-radius: 5px;
             overflow: hidden;
-            height: 20px;
-            margin-bottom: 10px;
+            height: 18px;
+            margin-bottom: 8px;
         }
 
         .progress-fill {
             height: 100%;
             width: 0%;
             background-color: var(--green);
-            transition: width 0.5s ease;
+            transition: width 0.4s ease;
         }
 
-        /* =========================================
-           FOOTER
-           ========================================= */
         footer {
             background-color: var(--navy-blue);
             color: var(--white);
             text-align: center;
-            padding: 30px 20px;
+            padding: 25px 20px;
             margin-top: 40px;
             border-top: 4px solid var(--saffron);
         }
 
         .footer-address {
-            font-size: 16px;
-            margin-bottom: 15px;
-            line-height: 1.6;
+            font-size: 15px;
+            margin-bottom: 12px;
+            line-height: 1.5;
         }
 
         .copyright-warning {
             font-size: 12px;
-            color: #ccc;
+            color: #ddd;
             border-top: 1px solid rgba(255,255,255,0.2);
-            padding-top: 15px;
-            margin-top: 15px;
+            padding-top: 12px;
+            margin-top: 12px;
         }
-
-        /* Language toggle utility */
-        .bn-text { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- ================= NAVIGATION BAR ================= -->
     <header>
         <div class="logo-container">
             <div class="logo-icon"></div>
             <div class="logo-text">
-                <h1 class="en-text">Swadesh Jagaran</h1>
-                <h1 class="bn-text">স্বদেশ জাগরণ</h1>
-                <p class="en-text">Cultural & Traditional Movement</p>
-                <p class="bn-text">সাংস্কৃতিক ও ঐতিহ্যবাহী আন্দোলন</p>
+                <h1 id="site-title">Swadesh Jagaran</h1>
+                <p id="site-subtitle">Cultural & Traditional Movement</p>
             </div>
         </div>
         <nav>
             <ul>
-                <li><a onclick="navigateSPA('home')" id="nav-home" class="active en-text">Home</a><a onclick="navigateSPA('home')" class="active bn-text">হোম</a></li>
-                <li><a onclick="navigateSPA('about')" id="nav-about" class="en-text">About Us</a><a onclick="navigateSPA('about')" class="bn-text">আমাদের সম্পর্কে</a></li>
-                <li><a onclick="navigateSPA('gallery')" id="nav-gallery" class="en-text">Gallery</a><a onclick="navigateSPA('gallery')" class="bn-text">গ্যালারি</a></li>
-                <li><a onclick="navigateSPA('accounts')" id="nav-accounts" class="en-text">Transparency</a><a onclick="navigateSPA('accounts')" class="bn-text">হিসাব-নিকাশ</a></li>
-                <li><a onclick="navigateSPA('donate')" id="nav-donate" class="btn-donate en-text">Donate</a><a onclick="navigateSPA('donate')" class="btn-donate bn-text">দান করুন</a></li>
-                <li><a onclick="navigateSPA('join')" id="nav-join" class="btn-join en-text">Join Us</a><a onclick="navigateSPA('join')" class="btn-join bn-text">যুক্ত হোন</a></li>
-                <li><button class="lang-switch" onclick="toggleLanguage()">বাং/EN</button></li>
+                <li><a onclick="navigateSPA('home')" id="nav-home" class="active" data-en="Home" data-bn="হোম">Home</a></li>
+                <li><a onclick="navigateSPA('about')" id="nav-about" data-en="About Us" data-bn="আমাদের সম্পর্কে">About Us</a></li>
+                <li><a onclick="navigateSPA('gallery')" id="nav-gallery" data-en="Gallery" data-bn="গ্যালারি">Gallery</a></li>
+                <li><a onclick="navigateSPA('accounts')" id="nav-accounts" data-en="Transparency" data-bn="হিসাব-নিকাশ">Transparency</a></li>
+                <li><a onclick="navigateSPA('donate')" id="nav-donate" class="btn-donate" data-en="Donate" data-bn="দান করুন">Donate</a></li>
+                <li><a onclick="navigateSPA('join')" id="nav-join" class="btn-join" data-en="Join Us" data-bn="যুক্ত হোন">Join Us</a></li>
+                <li><button class="lang-switch" onclick="toggleLanguage()" id="lang-btn">বাংলা</button></li>
             </ul>
         </nav>
     </header>
 
-    <!-- ================= HOME SECTION ================= -->
+    <!-- HOME SECTION -->
     <section id="home" class="page-section active-section">
-        <!-- Dynamic Event Banner (Managed by Admin later) -->
-        <div class="event-banner" id="independence-banner">
-            <h3 class="en-text">🇮🇳 Celebrating 79 Years of Indian Independence 🇮🇳</h3>
-            <h3 class="bn-text">🇮🇳 ভারতের ৭৯ তম স্বাধীনতা দিবস উদযাপন 🇮🇳</h3>
-            
-            <p class="en-text" style="font-size: 18px; margin-bottom: 15px;">Join our special "Swadesh Jagaran" Art Competition on this 15th August.</p>
-            <p class="bn-text" style="font-size: 18px; margin-bottom: 15px;">আগামী ১৫ই আগস্ট উপলক্ষে আমাদের 'স্বদেশ জাগরণ'-এর আয়োজনে এক বিশেষ অঙ্কন প্রতিযোগিতায় অংশগ্রহণ করুন।</p>
-            
-            <p style="color: var(--green); font-weight: bold;" class="en-text">Let's color the spirit of freedom together!</p>
-            <p style="color: var(--green); font-weight: bold;" class="bn-text">আসুন একজোট হয়ে স্বাধীনতার রঙে রঙিন হই!</p>
+        <div class="event-banner">
+            <h3 data-en="🇮🇳 Celebrating 79 Years of Indian Independence 🇮🇳" data-bn="🇮🇳 ভারতের ৭৯ তম স্বাধীনতা দিবস উদযাপন 🇮🇳">🇮🇳 Celebrating 79 Years of Indian Independence 🇮🇳</h3>
+            <p style="font-size: 17px; margin-bottom: 10px;" data-en="Join our special 'Swadesh Jagaran' Art Competition on this 15th August. Admin will manage updates." data-bn="আগামী ১৫ই আগস্ট উপলক্ষে আমাদের 'স্বদেশ জাগরণ'-এর আয়োজনে এক বিশেষ অঙ্কন প্রতিযোগিতায় অংশগ্রহণ করুন। (অ্যাডমিন প্যানেل থেকে এটি পরবর্তীতে পরিবর্তন করা যাবে)">Join our special "Swadesh Jagaran" Art Competition on this 15th August.</p>
+            <p style="color: var(--green); font-weight: bold;" data-en="Let's color the spirit of freedom together!" data-bn="আসুন একজোট হয়ে স্বাধীনতার রঙে রঙিন হই!">Let's color the spirit of freedom together!</p>
         </div>
 
-        <h2 class="section-title en-text">Welcome to Swadesh Jagaran</h2>
-        <h2 class="section-title bn-text">স্বদেশ জাগরণে আপনাকে স্বাগতম</h2>
+        <h2 class="section-title" data-en="Welcome to Swadesh Jagaran" data-bn="স্বদেশ জাগরণে আপনাকে স্বাগতম">Welcome to Swadesh Jagaran</h2>
         <div style="text-align: center; color: gray;">
-            <p class="en-text">Explore our website through the menu above. Content will be loaded dynamically from the admin panel.</p>
-            <p class="bn-text">উপরের মেনু থেকে আমাদের ওয়েবসাইটটি দেখুন। সমস্ত তথ্য অ্যাডমিন প্যানেল থেকে স্বয়ংক্রিয়ভাবে আপডেট হবে।</p>
+            <p data-en="This placeholder text will be replaced automatically once data is added from the Admin panel." data-bn="অ্যাডমিন প্যানেল থেকে ডেটা যুক্ত হওয়ার পর এই লেখাটি স্বয়ংক্রিয়ভাবে পরিবর্তিত হয়ে যাবে।">This placeholder text will be replaced automatically once data is added from the Admin panel.</p>
         </div>
     </section>
 
-    <!-- ================= ABOUT US SECTION ================= -->
+    <!-- ABOUT SECTION -->
     <section id="about" class="page-section">
-        <h2 class="section-title en-text">About Us</h2>
-        <h2 class="section-title bn-text">আমাদের সম্পর্কে</h2>
-        <div style="text-align: center;">
-            <p class="en-text">Data waiting to be published by Admin.</p>
-            <p class="bn-text">অ্যাডমিন কর্তৃক তথ্য প্রকাশের অপেক্ষায়।</p>
+        <h2 class="section-title" data-en="About Us" data-bn="আমাদের সম্পর্কে">About Us</h2>
+        <div style="text-align: center; color: gray;">
+            <p data-en="Content managed by Admin will appear here dynamically in future." data-bn="ভবিষ্যতে অ্যাডমিন প্যানেল থেকে নিয়ন্ত্রित সমস্ত তথ্য এখানে ডাইনামিকালি প্রদর্শিত হবে।">Content managed by Admin will appear here dynamically in future.</p>
         </div>
     </section>
 
-    <!-- ================= GALLERY SECTION ================= -->
+    <!-- GALLERY SECTION -->
     <section id="gallery" class="page-section">
-        <h2 class="section-title en-text">Our Gallery</h2>
-        <h2 class="section-title bn-text">আমাদের গ্যালারি</h2>
-        <div style="text-align: center; color: gray;" id="dynamic-gallery-container">
-            <!-- Firebase images will be injected here -->
-            <p class="en-text">No images uploaded yet. Admin controls this section.</p>
-            <p class="bn-text">এখনো কোনো ছবি আপলোড করা হয়নি। অ্যাডমিন প্যানেল থেকে ছবি যোগ করা হবে।</p>
+        <h2 class="section-title" data-en="Our Gallery" data-bn="আমাদের গ্যালারি">Our Gallery</h2>
+        <div style="text-align: center; color: gray;">
+            <p data-en="No gallery images uploaded yet. Admin controls this section." data-bn="এখনো কোনো গ্যালারি ছবি আপলোড করা হয়নি। অ্যাডমিন প্যানেল থেকে এটি নিয়ন্ত্রিত হবে।">No gallery images uploaded yet. Admin controls this section.</p>
         </div>
     </section>
 
-    <!-- ================= ACCOUNTS SECTION ================= -->
+    <!-- ACCOUNTS SECTION -->
     <section id="accounts" class="page-section">
         <div class="accounts-header">
-            <div>
-                <h2 style="color: var(--navy-blue); margin-bottom: 5px;" class="en-text">Financial Transparency</h2>
-                <h2 style="color: var(--navy-blue); margin-bottom: 5px;" class="bn-text">স্বচ্ছ হিসাব-নিকাশ</h2>
-            </div>
-            <div class="current-balance-badge" id="display-balance">
-                Balance: 0.00 ৳
-            </div>
+            <h2 style="color: var(--navy-blue);" data-en="Financial Transparency" data-bn="স্বচ্ছ হিসাব-নিকাশ">Financial Transparency</h2>
+            <div class="current-balance-badge" id="display-balance" data-en="Balance: 0.00 ৳" data-bn="ব্যালেন্স: ০.০০ ৳">Balance: 0.00 ৳</div>
         </div>
 
         <div class="summary-cards">
             <div class="card">
-                <h3 class="en-text">Current Month Expense</h3>
-                <h3 class="bn-text">চলতি মাসের খরচ</h3>
-                <p id="display-monthly-expense">0.00 ৳</p>
+                <h3 data-en="Current Month Expense" data-bn="চলতি মাসের খরচ">Current Month Expense</h3>
+                <p>0.00 ৳</p>
             </div>
             <div class="card">
-                <h3 class="en-text">Total Yearly Expense</h3>
-                <h3 class="bn-text">মোট বাৎসরিক খরচ</h3>
-                <p id="display-yearly-expense">0.00 ৳</p>
+                <h3 data-en="Total Yearly Expense" data-bn="মোট বাৎসরিক খরচ">Total Yearly Expense</h3>
+                <p>0.00 ৳</p>
             </div>
             <div class="card">
-                <h3 class="en-text">Project Expense</h3>
-                <h3 class="bn-text">প্রজেক্ট খরচ</h3>
-                <p id="display-project-expense">0.00 ৳</p>
+                <h3 data-en="Project Expense" data-bn="প্রজেক্ট খরচ">Project Expense</h3>
+                <p>0.00 ৳</p>
             </div>
         </div>
 
         <div class="accounts-controls">
             <div class="tab-buttons">
-                <button class="tab-btn active en-text" id="btn-expense-tab" onclick="switchAccountTab('expense-table')">Transactions</button>
-                <button class="tab-btn active bn-text" onclick="switchAccountTab('expense-table')">লেনদেন ও খরচ</button>
-                
-                <button class="tab-btn en-text" id="btn-donor-tab" onclick="switchAccountTab('donor-table')">Our Donors</button>
-                <button class="tab-btn bn-text" onclick="switchAccountTab('donor-table')">সম্মানিত দাতাগণ</button>
+                <button class="tab-btn active" onclick="switchAccountTab('expense-table')" data-en="Transactions" data-bn="লেনদেন">Transactions</button>
+                <button class="tab-btn" onclick="switchAccountTab('donor-table')" data-en="Our Donors" data-bn="দাতাগণ">Our Donors</button>
             </div>
             <div class="date-filter">
-                <input type="date" id="filter-start-date">
-                <span style="font-weight: bold;">to</span>
-                <input type="date" id="filter-end-date">
-                <button onclick="applyDateFilter()" class="en-text">Search</button>
-                <button onclick="applyDateFilter()" class="bn-text">খুঁজুন</button>
-                <button onclick="resetFilter()" style="background-color: gray;" class="en-text">Reset</button>
-                <button onclick="resetFilter()" style="background-color: gray;" class="bn-text">মুছুন</button>
+                <input type="date">
+                <span style="font-weight: bold;" data-en="to" data-bn="থেকে">to</span>
+                <input type="date">
+                <button data-en="Search" data-bn="খুঁজুন">Search</button>
             </div>
         </div>
 
-        <!-- Tables -->
         <div class="table-container active-table" id="expense-table">
             <table>
                 <thead>
                     <tr>
-                        <th class="en-text">Date</th><th class="bn-text">তারিখ</th>
-                        <th class="en-text">Description</th><th class="bn-text">বিবরণ</th>
-                        <th class="en-text">Income (৳)</th><th class="bn-text">আয় (৳)</th>
-                        <th class="en-text">Expense (৳)</th><th class="bn-text">ব্যয় (৳)</th>
+                        <th data-en="Date" data-bn="তারিখ">Date</th>
+                        <th data-en="Description" data-bn="বিবরণ">Description</th>
+                        <th data-en="Income (৳)" data-bn="আয় (৳)">Income (৳)</th>
+                        <th data-en="Expense (৳)" data-bn="ব্যয় (৳)">Expense (৳)</th>
                     </tr>
                 </thead>
-                <tbody id="expense-table-body">
-                    <!-- Firebase Data will come here -->
-                    <tr><td colspan="4" style="text-align: center; color: gray;">No transaction data found. (Admin Controlled)</td></tr>
+                <tbody>
+                    <tr><td colspan="4" style="text-align: center; color: gray;" data-en="No transaction data found. (Admin Controlled)" data-bn="কোনো লেনদেনের ডেটা পাওয়া যায়নি। (অ্যাডমিন প্যানেল নিয়ন্ত্রিত)">No transaction data found. (Admin Controlled)</td></tr>
                 </tbody>
             </table>
         </div>
@@ -569,50 +499,47 @@
             <table>
                 <thead>
                     <tr>
-                        <th class="en-text">Date</th><th class="bn-text">তারিখ</th>
-                        <th class="en-text">Donor Name</th><th class="bn-text">দাতার নাম</th>
-                        <th class="en-text">Purpose</th><th class="bn-text">উদ্দেশ্য</th>
-                        <th class="en-text">Amount (৳)</th><th class="bn-text">পরিমাণ (৳)</th>
+                        <th data-en="Date" data-bn="তারিখ">Date</th>
+                        <th data-en="Donor Name" data-bn="দাতার নাম">Donor Name</th>
+                        <th data-en="Purpose" data-bn="উদ্দেশ্য">Purpose</th>
+                        <th data-en="Amount (৳)" data-bn="পরিমাণ (৳)">Amount (৳)</th>
                     </tr>
                 </thead>
-                <tbody id="donor-table-body">
-                    <!-- Firebase Data will come here -->
-                    <tr><td colspan="4" style="text-align: center; color: gray;">No donor data found. (Admin Controlled)</td></tr>
+                <tbody>
+                    <tr><td colspan="4" style="text-align: center; color: gray;" data-en="No donor data found. (Admin Controlled)" data-bn="কোনো দাতার ডেটা পাওয়া যায়নি। (অ্যাডমিন প্যানেল নিয়ন্ত্রিত)">No donor data found. (Admin Controlled)</td></tr>
                 </tbody>
             </table>
         </div>
     </section>
 
-    <!-- ================= DONATE SECTION ================= -->
+    <!-- DONATE SECTION -->
     <section id="donate" class="page-section">
-        <h2 class="section-title en-text">Donate for a Cause</h2>
-        <h2 class="section-title bn-text">দান করুন</h2>
+        <h2 class="section-title" data-en="Donate for a Cause" data-bn="দান করুন">Donate for a Cause</h2>
         <div class="form-container">
             <div class="form-group">
-                <label class="en-text">Full Name *</label><label class="bn-text">সম্পূর্ণ নাম *</label>
+                <label data-en="Full Name *" data-bn="সম্পূর্ণ নাম *">Full Name *</label>
                 <input type="text" id="donate-name" placeholder="Enter your name">
             </div>
             <div class="form-group">
-                <label class="en-text">Full Address *</label><label class="bn-text">সম্পূর্ণ ঠিকানা *</label>
+                <label data-en="Full Address *" data-bn="সম্পূর্ণ ঠিকানা *">Full Address *</label>
                 <textarea id="donate-address" rows="2" placeholder="Enter your full address"></textarea>
             </div>
             <div class="form-group">
-                <label class="en-text">WhatsApp Number *</label><label class="bn-text">হোয়াটসঅ্যাপ নম্বর *</label>
+                <label data-en="WhatsApp Number *" data-bn="হোয়াটসঅ্যাপ নম্বর *">WhatsApp Number *</label>
                 <input type="text" id="donate-wa" placeholder="Enter WhatsApp Number">
             </div>
             <div class="form-group">
-                <label class="en-text">Email Address (Optional)</label><label class="bn-text">ইমেইল ঠিকানা (ঐচ্ছিক)</label>
+                <label data-en="Email Address (Optional)" data-bn="ইমেইল ঠিকানা (ঐচ্ছিক)">Email Address (Optional)</label>
                 <input type="email" id="donate-email" placeholder="Enter Email">
             </div>
             <div class="form-group">
-                <label class="en-text">Donation Amount (৳) *</label><label class="bn-text">দানের পরিমাণ (৳) *</label>
+                <label data-en="Donation Amount (৳) *" data-bn="দানের পরিমাণ (৳) *">Donation Amount (৳) *</label>
                 <input type="number" id="donate-amount" placeholder="Enter Amount">
             </div>
             <button class="submit-btn" style="background-color: var(--green);" onclick="processForm('donate')">
-                <span class="en-text">Proceed to Donate</span><span class="bn-text">দান করতে এগিয়ে যান</span>
+                <span data-en="Proceed to Donate" data-bn="দান করতে এগিয়ে যান">Proceed to Donate</span>
             </button>
 
-            <!-- Progress UI -->
             <div class="progress-box" id="donate-progress-box">
                 <div class="progress-bar"><div class="progress-fill" id="donate-progress-fill"></div></div>
                 <p id="donate-progress-text" style="font-weight: bold; color: var(--green);">0%</p>
@@ -620,32 +547,30 @@
         </div>
     </section>
 
-    <!-- ================= JOIN MEMBERSHIP SECTION ================= -->
+    <!-- JOIN SECTION -->
     <section id="join" class="page-section">
-        <h2 class="section-title en-text">Join Swadesh Jagaran</h2>
-        <h2 class="section-title bn-text">স্বদেশ জাগরণে যুক্ত হোন</h2>
+        <h2 class="section-title" data-en="Join Swadesh Jagaran" data-bn="স্বদেশ জাগরণে যুক্ত হোন">Join Swadesh Jagaran</h2>
         <div class="form-container" style="border-top-color: var(--green);">
             <div class="form-group">
-                <label class="en-text">Full Name *</label><label class="bn-text">সম্পূর্ণ নাম *</label>
+                <label data-en="Full Name *" data-bn="সম্পূর্ণ নাম *">Full Name *</label>
                 <input type="text" id="join-name" placeholder="Enter your name">
             </div>
             <div class="form-group">
-                <label class="en-text">Full Address *</label><label class="bn-text">সম্পূর্ণ ঠিকানা *</label>
+                <label data-en="Full Address *" data-bn="সম্পূর্ণ ঠিকানা *">Full Address *</label>
                 <textarea id="join-address" rows="2" placeholder="Enter your full address"></textarea>
             </div>
             <div class="form-group">
-                <label class="en-text">WhatsApp Number *</label><label class="bn-text">হোয়াটসঅ্যাপ নম্বর *</label>
+                <label data-en="WhatsApp Number *" data-bn="হোয়াটসঅ্যাপ নম্বর *">WhatsApp Number *</label>
                 <input type="text" id="join-wa" placeholder="Enter WhatsApp Number">
             </div>
             <div class="form-group">
-                <label class="en-text">Email Address (Optional)</label><label class="bn-text">ইমেইল ঠিকানা (ঐচ্ছিক)</label>
+                <label data-en="Email Address (Optional)" data-bn="ইমেইল ঠিকানা (ঐচ্ছিক)">Email Address (Optional)</label>
                 <input type="email" id="join-email" placeholder="Enter Email">
             </div>
             <button class="submit-btn" onclick="processForm('join')">
-                <span class="en-text">Apply for Membership</span><span class="bn-text">সদস্যপদের জন্য আবেদন করুন</span>
+                <span data-en="Apply for Membership" data-bn="সদস্যপদের জন্য আবেদন করুন">Apply for Membership</span>
             </button>
 
-            <!-- Progress UI -->
             <div class="progress-box" id="join-progress-box">
                 <div class="progress-bar"><div class="progress-fill" id="join-progress-fill"></div></div>
                 <p id="join-progress-text" style="font-weight: bold; color: var(--green);">0%</p>
@@ -653,62 +578,46 @@
         </div>
     </section>
 
-    <!-- ================= FOOTER ================= -->
     <footer>
         <div class="footer-address">
-            <h3 class="en-text" style="color: var(--saffron); margin-bottom: 10px;">Official Address</h3>
-            <h3 class="bn-text" style="color: var(--saffron); margin-bottom: 10px;">অফিসিয়াল ঠিকানা</h3>
-            
-            <p class="en-text">Swadesh Jagaran<br>Howrah Jangalpur 711302<br>West Bengal, Howrah</p>
-            <p class="bn-text">স্বদেশ জাগরণ<br>হাওড়া জঙ্গলপুর ৭১১৩০২<br>ওয়েস্ট বেঙ্গল, হাওড়া</p>
-            
-            <!-- Dynamic placeholder for Admin to add more footer info later -->
-            <div id="dynamic-footer-info" style="margin-top: 10px;"></div>
+            <h3 style="color: var(--saffron); margin-bottom: 8px;" data-en="Official Address" data-bn="অফিসিয়াল ঠিকানা">Official Address</h3>
+            <p data-en="Swadesh Jagaran<br>Howrah Jangalpur 711302<br>West Bengal, Howrah" data-bn="স্বদেশ জাগরণ<br>হাওড়া জঙ্গলপুর ৭১১৩০২<br>ওয়েস্ট বেঙ্গল, হাওড়া">Swadesh Jagaran<br>Howrah Jangalpur 711302<br>West Bengal, Howrah</p>
         </div>
-        
         <div class="copyright-warning">
-            <p class="en-text">&copy; 2026 Swadesh Jagaran. All Rights Reserved. Copying content or source code from this website is strictly prohibited and protected by copyright laws.</p>
-            <p class="bn-text">&copy; ২০২৬ স্বদেশ জাগরণ। সর্বস্বত্ব সংরক্ষিত। এই ওয়েবসাইট থেকে কোনো তথ্য বা সোর্স কোড কপি করা সম্পূর্ণ বেআইনি এবং কপিরাইট আইন দ্বারা সুরক্ষিত।</p>
+            <p data-en="&copy; 2026 Swadesh Jagaran. All Rights Reserved. Copying content or source code from this website is strictly prohibited." data-bn="&copy; ২০২৬ স্বদেশ জাগরণ। সর্বস্বত্ব সংরক্ষিত। এই ওয়েবসাইট থেকে কোনো তথ্য বা সোর্স কোড কপি করা সম্পূর্ণ নিষিদ্ধ।">&copy; 2026 Swadesh Jagaran. All Rights Reserved. Copying content or source code from this website is strictly prohibited.</p>
         </div>
     </footer>
 
-    <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
-        // ================= ANTI-COPY PROTECTION =================
-        // Disable Right Click
+        // Anti-Copy Protection
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
-            alert(isEnglish ? "Copyright Warning: Copying content is strictly prohibited!" : "কপিরাইট সতর্কতা: এই ওয়েবসাইট থেকে কোনো তথ্য কপি করা নিষেধ!");
+            alert(currentLang === 'bn' ? "কপিরাইট সতর্কতা: এই ওয়েবসাইট থেকে কোনো তথ্য কপি করা নিষেধ!" : "Copyright Warning: Copying content is strictly prohibited!");
         });
 
-        // Disable Keyboard Shortcuts (Ctrl+C, Ctrl+U, Ctrl+S, etc)
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'p' || e.key === 'a')) {
                 e.preventDefault();
-                alert(isEnglish ? "Action Disabled: Copyright Protected." : "সতর্কতা: কপিরাইট আইনের কারণে এই অপশনটি বন্ধ রাখা হয়েছে।");
+                alert(currentLang === 'bn' ? "সতর্কতা: কপিরাইট আইনের কারণে এই অপশনটি বন্ধ রাখা হয়েছে।" : "Action Disabled: Copyright Protected.");
             }
         });
 
-        // ================= LANGUAGE TOGGLE =================
-        let isEnglish = true;
+        // Language Engine
+        let currentLang = 'en';
         function toggleLanguage() {
-            isEnglish = !isEnglish;
-            const enElements = document.querySelectorAll('.en-text');
-            const bnElements = document.querySelectorAll('.bn-text');
+            currentLang = currentLang === 'en' ? 'bn' : 'en';
+            document.getElementById('lang-btn').innerText = currentLang === 'en' ? 'বাংলা' : 'English';
             
-            if (isEnglish) {
-                enElements.forEach(el => el.style.display = '');
-                bnElements.forEach(el => el.style.display = 'none');
-            } else {
-                enElements.forEach(el => el.style.display = 'none');
-                bnElements.forEach(el => el.style.display = '');
-            }
+            document.querySelectorAll('[data-en]').forEach(el => {
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    // Placeholder translation if needed
+                } else {
+                    el.innerHTML = el.getAttribute(`data-${currentLang}`);
+                }
+            });
         }
-        // Initialize Language
-        toggleLanguage(); 
-        toggleLanguage(); // Double call to set default state based on CSS
 
-        // ================= SPA NAVIGATION =================
+        // SPA Navigation
         function navigateSPA(targetSectionId) {
             document.querySelectorAll('.page-section').forEach(section => {
                 section.classList.remove('active-section');
@@ -717,42 +626,26 @@
                 link.classList.remove('active');
             });
             document.getElementById(targetSectionId).classList.add('active-section');
-            
-            // Handle nav links for both languages
             document.querySelectorAll(`a[onclick="navigateSPA('${targetSectionId}')"]`).forEach(link => {
                 link.classList.add('active');
             });
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ================= ACCOUNTS (Empty for Admin) =================
-        // Real data will be fetched from Firebase Admin panel. 
-        let accountData = []; // Blank array. Admin adds data here.
-
-        function renderAccountsData(dataArray) {
-            if(dataArray.length === 0) return; // Keep placeholder if empty
-            // Future rendering logic goes here
-        }
-        
         function switchAccountTab(targetTableId) {
             document.getElementById('expense-table').classList.remove('active-table');
             document.getElementById('donor-table').classList.remove('active-table');
             document.getElementById(targetTableId).classList.add('active-table');
         }
 
-        function applyDateFilter() {
-            alert(isEnglish ? "Date filter will work once Admin uploads data." : "অ্যাডমিন প্যানেল থেকে ডেটা আপলোড হওয়ার পর এই ফিল্টারটি কাজ করবে।");
-        }
-        function resetFilter() {}
-
-        // ================= FORM SUBMISSION & WHATSAPP REDIRECT =================
+        // Form Process & WhatsApp Redirect
         function processForm(type) {
             const name = document.getElementById(`${type}-name`).value;
             const address = document.getElementById(`${type}-address`).value;
             const wa = document.getElementById(`${type}-wa`).value;
             
             if(!name || !address || !wa) {
-                alert(isEnglish ? "Please fill all required fields (*)!" : "দয়া করে সমস্ত আবশ্যক ঘরগুলো (*) পূরণ করুন!");
+                alert(currentLang === 'bn' ? "দয়া করে সমস্ত আবশ্যক ঘরগুলো (*) পূরণ করুন!" : "Please fill all required fields (*)!");
                 return;
             }
 
@@ -764,15 +657,14 @@
             let percentage = 0;
 
             const interval = setInterval(() => {
-                percentage += 20;
+                percentage += 25;
                 progressFill.style.width = percentage + '%';
-                progressText.innerText = percentage + '% ' + (isEnglish ? 'Processing...' : 'প্রসেস হচ্ছে...');
+                progressText.innerText = percentage + '% ' + (currentLang === 'bn' ? 'প্রসেস হচ্ছে...' : 'Processing...');
                 
                 if (percentage >= 100) {
                     clearInterval(interval);
-                    progressText.innerText = isEnglish ? '100% Successful! Redirecting...' : '১০০% সফল! হোয়াটসঅ্যাপে নিয়ে যাওয়া হচ্ছে...';
+                    progressText.innerText = currentLang === 'bn' ? '১০০% সফল! হোয়াটসঅ্যাপে নিয়ে যাওয়া হচ্ছে...' : '100% Successful! Redirecting...';
                     
-                    // Format message for WhatsApp
                     setTimeout(() => {
                         let msg = `*New ${type === 'donate' ? 'Donation' : 'Membership'} Request*\n\n`;
                         msg += `*Name:* ${name}\n`;
@@ -784,14 +676,11 @@
                             msg += `*Amount:* ${amount} ৳\n`;
                         }
                         
-                        // Replace with Admin's real WhatsApp number (include country code, no +)
                         const adminWhatsAppNumber = "919000000000"; 
-                        const waUrl = `https://wa.me/${adminWhatsAppNumber}?text=${encodeURIComponent(msg)}`;
-                        
-                        window.location.href = waUrl;
+                        window.location.href = `https://wa.me/${adminWhatsAppNumber}?text=${encodeURIComponent(msg)}`;
                     }, 1000);
                 }
-            }, 300); // Progress speed
+            }, 300);
         }
     </script>
 </body>
