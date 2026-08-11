@@ -1,559 +1,675 @@
 <!DOCTYPE html>
-<html lang="bn" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>স্বদেশ জাগরণ | Swadesh Jagaran</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- Firebase v10 Compat SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
-
+    <title>Swadesh Jagaran | Cultural & Traditional Movement</title>
     <style>
-        .hero-gradient {
-            background: linear-gradient(135deg, #FF6700 0%, #FFFFFF 50%, #046A38 100%);
+        /* =========================================
+           GLOBAL STYLES & INDIAN THEME VARIABLES
+           ========================================= */
+        :root {
+            --saffron: #FF9933;
+            --white: #FFFFFF;
+            --green: #138808;
+            --navy-blue: #000080;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .deep-tricolor {
-            background: linear-gradient(to right, #FF6700, #000080, #046A38);
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .tricolor-border {
-            border-image: linear-gradient(to right, #FF6700, #FFFFFF, #046A38) 1;
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            /* Padding top prevents header overlap */
+            padding-top: 80px; 
         }
-        @media print { html, body { display: none !important; } }
-        body { -webkit-user-select: none; user-select: none; }
+
+        /* =========================================
+           HEADER & NAVIGATION (SPA DESIGN)
+           ========================================= */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background-color: var(--white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            border-bottom: 4px solid transparent;
+            border-image: linear-gradient(to right, var(--saffron), var(--white), var(--green)) 1;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--saffron) 33%, var(--white) 33%, var(--white) 66%, var(--green) 66%);
+            border: 2px solid var(--navy-blue);
+        }
+
+        .logo-text h1 {
+            font-size: 22px;
+            color: var(--saffron);
+            margin: 0;
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            color: var(--green);
+            margin: 0;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 15px;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            color: var(--navy-blue);
+            background-color: rgba(0, 0, 128, 0.05);
+        }
+
+        .btn-donate {
+            background-color: var(--green);
+            color: var(--white) !important;
+            border-radius: 20px !important;
+            padding: 10px 20px !important;
+        }
+
+        .btn-join {
+            background-color: var(--saffron);
+            color: var(--white) !important;
+            border-radius: 20px !important;
+            padding: 10px 20px !important;
+        }
+
+        /* =========================================
+           SPA SECTION CONTAINERS
+           ========================================= */
+        .page-section {
+            display: none;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .page-section.active-section {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            text-align: center;
+            color: var(--navy-blue);
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        /* =========================================
+           ACCOUNTS & TRANSPARENCY SECTION
+           ========================================= */
+        .accounts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .current-balance-badge {
+            background-color: var(--navy-blue);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .summary-cards {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            flex: 1;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid;
+            text-align: center;
+        }
+
+        .card:nth-child(1) { border-top-color: var(--saffron); }
+        .card:nth-child(2) { border-top-color: var(--navy-blue); }
+        .card:nth-child(3) { border-top-color: var(--green); }
+
+        .card h3 {
+            font-size: 12px;
+            color: gray;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .card:nth-child(1) p { color: var(--saffron); }
+        .card:nth-child(2) p { color: var(--navy-blue); }
+        .card:nth-child(3) p { color: var(--green); }
+
+        /* Tabs and Filters */
+        .accounts-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--white);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background-color: #e0e0e0;
+            color: var(--text-dark);
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background-color: var(--navy-blue);
+            color: var(--white);
+        }
+
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .date-filter input[type="date"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .date-filter button {
+            padding: 8px 15px;
+            background-color: var(--green);
+            color: var(--white);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Excel-like Table */
+        .table-container {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: none;
+        }
+
+        .table-container.active-table {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #e0e0e0;
+        }
+
+        th {
+            background-color: var(--navy-blue);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .amount-income { color: var(--green); font-weight: bold; }
+        .amount-expense { color: var(--saffron); font-weight: bold; }
+
+        /* =========================================
+           OTHER SECTIONS (HOME, ABOUT, GALLERY, ETC)
+           ========================================= */
+        .placeholder-content {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-left: 5px solid var(--saffron);
+            border-right: 5px solid var(--green);
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .gallery-item {
+            background-color: var(--white);
+            height: 200px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: gray;
+            border-bottom: 4px solid var(--saffron);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--navy-blue);
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .submit-btn {
+            background-color: var(--saffron);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+
     </style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-900">
+<body>
 
-    <!-- Top Bar with Notice & Language Switcher -->
-    <div class="deep-tricolor text-white text-sm py-2 px-6 flex flex-col md:flex-row justify-between items-center gap-2 border-b-4 border-orange-600 shadow-inner">
-        <div class="flex items-center gap-4 overflow-hidden">
-            <span class="flex items-center gap-1"><i class="fa-solid fa-bullhorn text-yellow-300 animate-pulse"></i> <marquee scrollamount="4" id="topNoticeBar" class="w-72 md:w-96">আসন্ন ১৫ই আগস্ট ৭৯তম স্বাধীনতা দিবস উপলক্ষে স্বদেশ জাগরণের উদ্যোগে বিশেষ বসে আঁকো প্রতিযোগিতা অনুষ্ঠিত হবে।</marquee></span>
-        </div>
-        <div class="flex items-center gap-3">
-            <span class="text-xs uppercase tracking-wider text-gray-200" id="langLabel">ভাষা / Language:</span>
-            <button onclick="setLanguage('bn')" id="langBnBtn" class="px-3 py-1 bg-orange-600 rounded font-bold text-xs transition shadow">বাংলা</button>
-            <button onclick="setLanguage('en')" id="langEnBtn" class="px-3 py-1 bg-gray-800 rounded font-bold text-xs transition shadow">English</button>
-        </div>
-    </div>
-
-    <!-- Navigation Bar -->
-    <nav class="bg-white shadow-md sticky top-0 z-50 border-b tricolor-border">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full hero-gradient flex items-center justify-center font-black text-white text-2xl shadow-lg border-2 border-orange-600">ส</div>
-                <div>
-                    <h1 class="font-extrabold text-2xl tracking-wide text-orange-700" id="brandTitle">স্বদেশ জাগরণ</h1>
-                    <p class="text-xs font-semibold text-green-700" id="brandSub">সাংস্কৃতিক ও ঐতিহ্যবাহী আন্দোলন</p>
-                </div>
-            </div>
-            <div class="hidden md:flex items-center gap-6 font-bold text-gray-800">
-                <a href="#home" class="hover:text-orange-600 transition" id="navHome">হোম</a>
-                <a href="#about" class="hover:text-orange-600 transition" id="navAbout">আমাদের সম্পর্কে</a>
-                <a href="#gallery" class="hover:text-orange-600 transition" id="navGallery">গ্যালারি</a>
-                <a href="#accounts" class="hover:text-orange-600 transition" id="navAccounts">স্বচ্ছতা ও হিসাব</a>
-                <button onclick="openDonationModal()" class="bg-gradient-to-r from-green-600 to-emerald-700 text-white px-4 py-2 rounded-full shadow hover:opacity-90 transition text-sm" id="navDonate">ডোনেশন করুন</button>
-                <button onclick="openMembershipModal()" class="bg-gradient-to-r from-orange-600 to-red-600 text-white px-5 py-2 rounded-full shadow-lg hover:opacity-90 transition" id="navReg">মেম্বারশিপ নিন</button>
+    <!-- ================= NAVIGATION BAR ================= -->
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon"></div>
+            <div class="logo-text">
+                <h1>Swadesh Jagaran</h1>
+                <p>Cultural & Traditional Movement</p>
             </div>
         </div>
-    </nav>
+        <nav>
+            <ul>
+                <li><a onclick="navigateSPA('home')" id="nav-home" class="active">Home</a></li>
+                <li><a onclick="navigateSPA('about')" id="nav-about">About Us</a></li>
+                <li><a onclick="navigateSPA('gallery')" id="nav-gallery">Gallery</a></li>
+                <li><a onclick="navigateSPA('accounts')" id="nav-accounts">Transparency</a></li>
+                <li><a onclick="navigateSPA('donate')" id="nav-donate" class="btn-donate">Donate</a></li>
+                <li><a onclick="navigateSPA('join')" id="nav-join" class="btn-join">Join Membership</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <!-- Hero Section (Home) -->
-    <section id="home" class="hero-gradient py-24 text-center text-gray-900 relative">
-        <div class="max-w-5xl mx-auto px-6 bg-white/90 backdrop-blur-md p-12 rounded-3xl shadow-2xl border-4 border-orange-500">
-            <div class="inline-block bg-orange-100 text-orange-800 px-4 py-1 rounded-full text-sm font-bold mb-4 shadow" id="heroBadge">৭৯তম স্বাধীনতা দিবস স্পেশাল - ২০২৬</div>
-            <h2 class="text-4xl md:text-6xl font-black mb-6 text-orange-800" id="heroTitle">ঐতিহ্য রক্ষা, ভবিষ্যৎ গঠন</h2>
-            <p class="text-lg md:text-xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed" id="heroDesc">আসন্ন ১৫ই আগস্ট আমাদের দেশের ৭৯তম স্বাধীনতা দিবস উদযাপনে বিশেষ বসে আঁকো প্রতিযোগিতা ও দেশীয় সংস্কৃতির প্রসার। আধুনিক স্বচ্ছতা ও প্রযুক্তির সাথে দেশীয় ঐতিহ্য ও সমাজকল্যাণ।</p>
-            <div class="flex justify-center gap-4 flex-wrap">
-                <button onclick="openMembershipModal()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg transition text-lg" id="btnJoin">সদস্য হোন</button>
-                <button onclick="openDonationModal()" class="bg-green-700 hover:bg-green-800 text-white font-bold px-8 py-3 rounded-xl shadow-lg transition text-lg" id="btnDonateNow">সহযোগিতা / ডোনেশন</button>
-            </div>
+    <!-- ================= HOME SECTION ================= -->
+    <section id="home" class="page-section active-section">
+        <h2 class="section-title">Welcome to Swadesh Jagaran</h2>
+        <div class="placeholder-content">
+            <h3 style="color: var(--saffron);">Embracing Our Culture & Tradition</h3>
+            <p style="margin-top: 15px; line-height: 1.6;">Welcome to the official portal of Swadesh Jagaran. This is the Home section. All other sections are completely hidden to prevent overlap and ensure a smooth, lag-free experience on all devices.</p>
         </div>
     </section>
 
-    <!-- About Us Section -->
-    <section id="about" class="py-20 max-w-7xl mx-auto px-6 bg-white rounded-3xl my-10 shadow-lg border border-orange-200">
-        <div class="grid md:grid-cols-2 gap-12 items-center">
+    <!-- ================= ABOUT US SECTION ================= -->
+    <section id="about" class="page-section">
+        <h2 class="section-title">About Us</h2>
+        <div class="placeholder-content">
+            <h3 style="color: var(--navy-blue);">Who We Are</h3>
+            <p style="margin-top: 15px; line-height: 1.6;">Here, you will only see the About Us details. The layout is strictly contained within this section, eliminating any margin or overlap issues with the Gallery or other components.</p>
+        </div>
+    </section>
+
+    <!-- ================= GALLERY SECTION ================= -->
+    <section id="gallery" class="page-section">
+        <h2 class="section-title">Our Gallery</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">Image / Video 1</div>
+            <div class="gallery-item">Image / Video 2</div>
+            <div class="gallery-item">Image / Video 3</div>
+            <div class="gallery-item">Image / Video 4</div>
+        </div>
+    </section>
+
+    <!-- ================= ACCOUNTS & TRANSPARENCY SECTION ================= -->
+    <section id="accounts" class="page-section">
+        <div class="accounts-header">
             <div>
-                <h3 class="text-3xl font-black mb-6 text-orange-700 border-l-8 border-green-700 pl-4" id="aboutTitle">আমাদের সম্পর্কে ও কার্যক্রম</h3>
-                <p class="text-gray-700 mb-4 leading-relaxed text-lg" id="aboutDesc1">স্বদেশ জাগরণ হলো একটি নিবেদিতপ্রাণ আন্দোলন। আমাদের যোগাযোগ অফিস বা তথ্য জানার জন্য ইমেইল করুন: <strong class="text-blue-700">info@swadeshjagaran.org</strong>। দেশের কৃষ্টি, কালচার, এবং গ্রামীণ ঐতিহ্যবাহী খেলাধুলা বাঁচিয়ে রাখতে আমরা প্রতিনিয়ত কাজ করে যাচ্ছি।</p>
-                <p class="text-gray-700 mb-6 leading-relaxed" id="aboutDesc2">আগামী ১৫ই আগস্ট আমাদের বড় আয়োজনে ছোটদের জন্য বসে আঁকো প্রতিযোগিতা, সাংস্কৃতিক অনুষ্ঠান এবং সমাজকল্যাণমূলক কর্মকাণ্ড পরিচালিত হবে। প্রতিটি পদক্ষেপে ১০০% আর্থিক স্বচ্ছতা আমাদের মূল অঙ্গীকার।</p>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-orange-50 p-4 rounded-xl border-l-4 border-orange-600 shadow">
-                        <h4 class="font-bold text-orange-800 text-lg" id="aboutBox1Title">সাংস্কৃতিক বিকাশ</h4>
-                        <p class="text-xs text-gray-600" id="aboutBox1Desc">ঐতিহ্যবাহী অনুষ্ঠান ও প্রতিযোগিতার আয়োজন।</p>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-xl border-l-4 border-green-700 shadow">
-                        <h4 class="font-bold text-green-800 text-lg" id="aboutBox2Title">স্বচ্ছ সমাজসেবা</h4>
-                        <p class="text-xs text-gray-600" id="aboutBox2Desc">জনকল্যাণে সম্পূর্ণ প্রকাশ্য হিসাব-নিকাশ।</p>
-                    </div>
-                </div>
+                <h2 style="color: var(--navy-blue); margin-bottom: 5px;">Financial Transparency & Accounts</h2>
+                <p style="color: gray; font-size: 14px;">Complete breakdown of monthly, yearly, and project-wise expenses and donations.</p>
             </div>
-            <div class="bg-gradient-to-br from-orange-500 to-green-700 p-2 rounded-2xl shadow-2xl">
-                <div class="bg-white p-8 rounded-xl text-center">
-                    <i class="fa-solid fa-hands-holding-child text-6xl text-orange-600 mb-4"></i>
-                    <h4 class="text-2xl font-bold text-gray-800 mb-2" id="aboutCardTitle">আমাদের মিশন ও ভিশন</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed" id="aboutCardDesc">নতুন প্রজন্মকে দেশের শিকড়ের সাথে যুক্ত করা এবং স্বনির্ভর সমাজ গড়ে তোলা আমাদের মূল লক্ষ্য।</p>
-                </div>
+            <div class="current-balance-badge" id="display-balance">
+                Current Balance: 0.00 ৳
             </div>
+        </div>
+
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Current Month Expense</h3>
+                <p id="display-monthly-expense">0.00 ৳</p>
+            </div>
+            <div class="card">
+                <h3>Total Yearly Expense</h3>
+                <p id="display-yearly-expense">0.00 ৳</p>
+            </div>
+            <div class="card">
+                <h3>August 15 Project Expense</h3>
+                <p id="display-project-expense">0.00 ৳</p>
+            </div>
+        </div>
+
+        <div class="accounts-controls">
+            <div class="tab-buttons">
+                <button class="tab-btn active" id="btn-expense-tab" onclick="switchAccountTab('expense-table')">Transaction & Expenses</button>
+                <button class="tab-btn" id="btn-donor-tab" onclick="switchAccountTab('donor-table')">Our Respected Donors</button>
+            </div>
+            <div class="date-filter">
+                <label style="font-size: 12px; font-weight: bold; color: var(--navy-blue);">Filter by Date:</label>
+                <input type="date" id="filter-start-date">
+                <span style="font-weight: bold;">to</span>
+                <input type="date" id="filter-end-date">
+                <button onclick="applyDateFilter()">Search</button>
+                <button onclick="resetFilter()" style="background-color: gray;">Reset</button>
+            </div>
+        </div>
+
+        <!-- Expense & Transaction Table -->
+        <div class="table-container active-table" id="expense-table">
+            <h3 style="padding: 15px; color: var(--navy-blue); background-color: #f8f9fa; border-bottom: 1px solid #ddd; text-align: center;">Account Statement & Expenses</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description (Program/Item)</th>
+                        <th>Income (৳)</th>
+                        <th>Expense (৳)</th>
+                    </tr>
+                </thead>
+                <tbody id="expense-table-body">
+                    <!-- Rows will be injected by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Donors Table -->
+        <div class="table-container" id="donor-table">
+            <h3 style="padding: 15px; color: var(--navy-blue); background-color: #f8f9fa; border-bottom: 1px solid #ddd; text-align: center;">Donation Details</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Donor Name</th>
+                        <th>Donation Purpose</th>
+                        <th>Amount (৳)</th>
+                    </tr>
+                </thead>
+                <tbody id="donor-table-body">
+                    <!-- Rows will be injected by JavaScript -->
+                </tbody>
+            </table>
         </div>
     </section>
 
-    <!-- Gallery Section -->
-    <section id="gallery" class="py-20 bg-gray-100 border-y border-gray-300 my-12">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-12">
-                <h3 class="text-4xl font-black mb-2 text-gray-900" id="galleryTitle">আমাদের গ্যালারি</h3>
-                <p class="text-gray-600" id="gallerySub">আমাদের বিভিন্ন প্রজেক্ট ও অনুষ্ঠানের মুহূর্তসমূহ</p>
+    <!-- ================= DONATE SECTION ================= -->
+    <section id="donate" class="page-section">
+        <h2 class="section-title">Donate for a Cause</h2>
+        <div class="placeholder-content" style="max-width: 500px; margin: 0 auto;">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" placeholder="Enter your name">
             </div>
-            <div id="publicGalleryGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Dynamically loaded from Admin -->
+            <div class="form-group">
+                <label>WhatsApp Number (For OTP)</label>
+                <input type="text" placeholder="Enter WhatsApp Number">
             </div>
+            <div class="form-group">
+                <label>Donation Amount (৳)</label>
+                <input type="number" placeholder="Enter Amount">
+            </div>
+            <button class="submit-btn" style="background-color: var(--green);">Proceed to Donate</button>
         </div>
     </section>
 
-    <!-- Accounts & Transparency Section -->
-    <section id="accounts" class="py-20 max-w-7xl mx-auto px-6 my-12">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
-            <div>
-                <h3 class="text-4xl font-black text-gray-900" id="accTitle">আর্থিক স্বচ্ছতা ও হিসাব</h3>
-                <p class="text-gray-600" id="accSub">মাসিক, বাৎসরিক এবং প্রজেক্ট অনুযায়ী সম্পূর্ণ খরচ ও ডোনেশনের বিবরণ</p>
+    <!-- ================= JOIN MEMBERSHIP SECTION ================= -->
+    <section id="join" class="page-section">
+        <h2 class="section-title">Join Swadesh Jagaran</h2>
+        <div class="placeholder-content" style="max-width: 500px; margin: 0 auto;">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" placeholder="Enter your name">
             </div>
-            <div class="bg-blue-900 text-white px-8 py-3 rounded-2xl font-bold shadow-xl text-xl border-2 border-orange-500">
-                <span id="accBalanceLabel">বর্তমান ব্যালেন্স:</span> <span id="publicBalance">০.০০</span> ৳
+            <div class="form-group">
+                <label>WhatsApp Number (For OTP Verification)</label>
+                <input type="text" placeholder="Enter WhatsApp Number">
             </div>
-        </div>
-
-        <!-- Expense Summary Cards -->
-        <div class="grid md:grid-cols-3 gap-6 mb-10">
-            <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-orange-600">
-                <h4 class="font-bold text-gray-500 text-sm uppercase" id="monthlyExpLabel">চলতি মাসের খরচ</h4>
-                <p class="text-3xl font-black text-orange-600 mt-2" id="monthlyExpenseVal">০.০০ ৳</p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-blue-600">
-                <h4 class="font-bold text-gray-500 text-sm uppercase" id="yearlyExpLabel">বাৎসরিক মোট খরচ</h4>
-                <p class="text-3xl font-black text-blue-700 mt-2" id="yearlyExpenseVal">০.০০ ৳</p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-green-600">
-                <h4 class="font-bold text-gray-500 text-sm uppercase" id="eventExpLabel">১৫ই আগস্ট প্রজেক্ট খরচ</h4>
-                <p class="text-3xl font-black text-green-700 mt-2" id="eventExpenseVal">০.০০ ৳</p>
-            </div>
-        </div>
-
-        <!-- Tally Table -->
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border mb-16">
-            <div class="bg-gray-900 text-white p-4 font-bold text-lg" id="tableHeaderTitle">লেনদেন ও হিসাবের বিবরণী</div>
-            <div class="overflow-x-auto">
-                <table class="w-full border-collapse">
-                    <thead>
-                        <tr class="bg-gray-800 text-white text-sm">
-                            <th class="p-4 border text-center" id="thDate">তারিখ</th>
-                            <th class="p-4 border text-left" id="thDesc">বিবরণ</th>
-                            <th class="p-4 border text-right" id="thIncome">আয় (জমা)</th>
-                            <th class="p-4 border text-right" id="thExpense">ব্যয় (খরচ)</th>
-                            <th class="p-4 border text-right" id="thBalance">ব্যালেন্স</th>
-                        </tr>
-                    </thead>
-                    <tbody id="publicFinanceBody">
-                        <!-- Loaded via JS -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Donators Section -->
-        <div class="mb-16">
-            <h3 class="text-3xl font-black mb-8 text-center text-gray-900" id="donorTitle">আমাদের সম্মানিত ডোনারবৃন্দ</h3>
-            <div id="approvedDonorsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Loaded via Admin Approval -->
-            </div>
-        </div>
-
-        <!-- Approved Members Section -->
-        <div>
-            <h3 class="text-3xl font-black mb-8 text-center text-gray-900" id="memberTitle">আমাদের অনুমোদিত সদস্যবৃন্দ</h3>
-            <div id="approvedMembersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Loaded via Admin Approval -->
-            </div>
+            <button class="submit-btn">Apply for Membership</button>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-10 text-center border-t-8 border-orange-600">
-        <div class="max-w-7xl mx-auto px-6">
-            <p class="font-bold text-lg mb-2">স্বদেশ জাগরণ (Swadesh Jagaran)</p>
-            <p class="text-sm text-gray-400 mb-4">সব স্বত্ব সংরক্ষিত - ২০২৬ | Developed for Cultural & Social Welfare</p>
-            <div class="text-xs text-orange-400 font-mono tracking-widest">MADE WITH INDIAN PRIDE</div>
-        </div>
-    </footer>
-
-    <!-- Membership Modal with WhatsApp OTP -->
-    <div id="membershipModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md relative border-t-8 border-orange-600 m-4">
-            <button onclick="closeMembershipModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-2xl font-black mb-2 text-gray-900" id="modalRegTitle">সদস্যপদ রেজিস্ট্রেশন ফরম</h3>
-            <p class="text-sm text-gray-600 mb-6" id="modalRegSub">সঠিক তথ্য দিয়ে ফরমটি পূরণ করুন। WhatsApp OTP ভেরিফিকেশন প্রয়োজন।</p>
-            
-            <form id="membershipForm" onsubmit="sendMembershipOTP(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1" id="labelFullName">পূর্ণ নাম</label>
-                    <input type="text" id="mName" required class="w-full p-3 border-2 rounded-xl focus:outline-none focus:border-orange-600" placeholder="আপনার নাম লিখুন">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1" id="labelWhatsApp">WhatsApp মোবাইল নম্বর</label>
-                    <input type="tel" id="mPhone" required class="w-full p-3 border-2 rounded-xl focus:outline-none focus:border-orange-600" placeholder="১০ ডিজিটের নম্বর">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1" id="labelAddress">ঠিকানা / এলাকা</label>
-                    <input type="text" id="mAddress" required class="w-full p-3 border-2 rounded-xl focus:outline-none focus:border-orange-600" placeholder="আপনার ঠিকানা">
-                </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white font-bold p-3 rounded-xl shadow-lg hover:opacity-90 transition text-lg" id="btnSendOTP">WhatsApp OTP পাঠান</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Donation Modal -->
-    <div id="donationModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md relative border-t-8 border-green-700 m-4">
-            <button onclick="closeDonationModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-2xl font-black mb-2 text-gray-900" id="modalDonTitle">ডোনেশন বা সহযোগিতা ফরম</h3>
-            <p class="text-sm text-gray-600 mb-6" id="modalDonSub">স্বদেশ জাগরণের কার্যক্রমে আপনার আর্থিক সহযোগিতা প্রদান করুন।</p>
-            
-            <form id="donationForm" onsubmit="submitDonation(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1" id="labelDonName">আপনার নাম</label>
-                    <input type="text" id="dName" required class="w-full p-3 border-2 rounded-xl focus:outline-none focus:border-green-600" placeholder="নাম লিখুন">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1" id="labelDonPhone">WhatsApp মোবাইল নম্বর</label>
-                    <input type="tel" id="dPhone" required class="w-full p-3 border-2 rounded-xl focus:outline-none focus:border-green-600" placeholder="নম্বর লিখুন">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1" id="labelDonAmount">টাকার পরিমাণ (₹)</label>
-                    <input type="number" id="dAmount" required class="w-full p-3 border-2 rounded-xl focus:outline-none focus:border-green-600" placeholder="উদাহরণ: 1000">
-                </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-emerald-800 text-white font-bold p-3 rounded-xl shadow-lg hover:opacity-90 transition text-lg" id="btnDonSubmit">ডোনেশন জমা দিন</button>
-            </form>
-        </div>
-    </div>
-
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCg5ttOQHcdqupwlD9lDam6IFfh6P1mdos",
-            authDomain: "swadeshjagaran.firebaseapp.com",
-            projectId: "swadeshjagaran",
-            storageBucket: "swadeshjagaran.firebasestorage.app",
-            messagingSenderId: "955311438612",
-            appId: "1:955311438612:web:089ee627987ee0b5562001",
-            measurementId: "G-WC17FQTESH"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        // 1. SPA NAVIGATION LOGIC (Ensures zero overlap, one section at a time)
+        function navigateSPA(targetSectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(section => {
+                section.classList.remove('active-section');
+            });
 
-        // Language Engine
-        let currentLang = 'bn';
-        const langData = {
-            bn: {
-                brandTitle: "স্বদেশ জাগরণ",
-                brandSub: "সাংস্কৃতিক ও ঐতিহ্যবাহী আন্দোলন",
-                navHome: "হোম",
-                navAbout: "আমাদের সম্পর্কে",
-                navGallery: "গ্যালারি",
-                navAccounts: "স্বচ্ছতা ও হিসাব",
-                navDonate: "ডোনেশন করুন",
-                navReg: "মেম্বারশিপ নিন",
-                heroBadge: "৭৯তম স্বাধীনতা দিবস স্পেশাল - ২০২৬",
-                heroTitle: "ঐতিহ্যের সুরক্ষা, প্রগতির দিশা",
-                heroDesc: "আগামী ১৫ই আগস্ট আমাদের দেশের ৭৯তম স্বাধীনতা দিবস উদযাপনে বিশেষ বসে আঁকো প্রতিযোগিতা ও দেশীয় সংস্কৃতির প্রসার। আধুনিক স্বচ্ছতা ও প্রযুক্তির সাথে দেশীয় ঐতিহ্য ও সমাজকল্যাণ।",
-                btnJoin: "সদস্য হোন",
-                btnDonateNow: "সহযোগিতা / ডোনেশন",
-                aboutTitle: "আমাদের সম্পর্কে ও কার্যক্রম",
-                aboutDesc1: "স্বদেশ জাগরণ হলো একটি নিবেদিতপ্রাণ আন্দোলন। আমাদের যোগাযোগ অফিস বা তথ্য জানার জন্য ইমেইল করুন: info@swadeshjagaran.org। দেশের কৃষ্টি, কালচার, এবং গ্রামীণ ঐতিহ্যবাহী খেলাধুলা বাঁচিয়ে রাখতে আমরা প্রতিনিয়ত কাজ করে যাচ্ছি।",
-                aboutDesc2: "আগামী ১৫ই আগস্ট আমাদের বড় আয়োজনে ছোটদের জন্য বসে আঁকো প্রতিযোগিতা, সাংস্কৃতিক অনুষ্ঠান এবং সমাজকল্যাণমূলক কর্মকাণ্ড পরিচালিত হবে। প্রতিটি পদক্ষেপে ১০০% আর্থিক স্বচ্ছতা আমাদের মূল অঙ্গীকার।",
-                aboutBox1Title: "সাংস্কৃতিক বিকাশ",
-                aboutBox1Desc: "ঐতিহ্যবাহী অনুষ্ঠান ও প্রতিযোগিতার আয়োজন।",
-                aboutBox2Title: "স্বচ্ছ সমাজসেবা",
-                aboutBox2Desc: "জনকল্যাণে সম্পূর্ণ প্রকাশ্য হিসাব-নিকাশ।",
-                aboutCardTitle: "আমাদের মিশন ও ভিশন",
-                aboutCardDesc: "নতুন প্রজন্মকে দেশের শিকড়ের সাথে যুক্ত করা এবং স্বনির্ভর সমাজ গড়ে তোলা আমাদের মূল লক্ষ্য।",
-                galleryTitle: "আমাদের গ্যালারি",
-                gallerySub: "আমাদের বিভিন্ন প্রজেক্ট ও অনুষ্ঠানের মুহূর্তসমূহ",
-                accTitle: "আর্থিক স্বচ্ছতা ও হিসাব",
-                accSub: "মাসিক, বাৎসরিক এবং প্রজেক্ট অনুযায়ী সম্পূর্ণ খরচ ও ডোনেশনের বিবরণ",
-                accBalanceLabel: "বর্তমান ব্যালেন্স:",
-                monthlyExpLabel: "চলতি মাসের খরচ",
-                yearlyExpLabel: "বাৎসরিক মোট খরচ",
-                eventExpLabel: "১৫ই আগস্ট প্রজেক্ট খরচ",
-                tableHeaderTitle: "লেনদেন ও হিসাবের বিবরণী",
-                thDate: "তারিখ",
-                thDesc: "বিবরণ",
-                thIncome: "আয় (জমা)",
-                thExpense: "ব্যয় (খরচ)",
-                thBalance: "ব্যালেন্স",
-                donorTitle: "আমাদের সম্মানিত ডোনারবৃন্দ",
-                memberTitle: "আমাদের অনুমোদিত সদস্যবৃন্দ",
-                modalRegTitle: "সদস্যপদ রেজিস্ট্রেশন ফরম",
-                modalRegSub: "সঠিক তথ্য দিয়ে ফরমটি পূরণ করুন। WhatsApp OTP ভেরিফিকেশন প্রয়োজন।",
-                labelFullName: "পূর্ণ নাম",
-                labelWhatsApp: "WhatsApp মোবাইল নম্বর",
-                labelAddress: "ঠিকানা / এলাকা",
-                btnSendOTP: "WhatsApp OTP পাঠান",
-                modalDonTitle: "ডোনেশন বা সহযোগিতা ফরম",
-                modalDonSub: "স্বদেশ জাগরণের কার্যক্রমে আপনার আর্থিক সহযোগিতা প্রদান করুন।",
-                labelDonName: "আপনার নাম",
-                labelDonPhone: "WhatsApp মোবাইল নম্বর",
-                labelDonAmount: "টাকার পরিমাণ (₹)",
-                btnDonSubmit: "ডোনেশন জমা দিন"
-            },
-            en: {
-                brandTitle: "Swadesh Jagaran",
-                brandSub: "Cultural & Traditional Movement",
-                navHome: "Home",
-                navAbout: "About Us",
-                navGallery: "Gallery",
-                navAccounts: "Transparency",
-                navDonate: "Donate",
-                navReg: "Join Membership",
-                heroBadge: "79th Independence Day Special - 2026",
-                heroTitle: "Preserving Heritage, Inspiring Future",
-                heroDesc: "Special drawing competition and cultural events celebrating the 79th Independence Day on August 15th. Embracing native sports and social development with complete transparency.",
-                btnJoin: "Become a Member",
-                btnDonateNow: "Support / Donate",
-                aboutTitle: "About Us & Our Mission",
-                aboutDesc1: "Swadesh Jagaran is a dedicated movement. For contact or queries, email us at: info@swadeshjagaran.org. We continuously work to preserve indigenous culture, heritage, and rural traditional sports.",
-                aboutDesc2: "On upcoming August 15th, we are organizing a grand drawing competition for children, cultural programs, and social welfare activities with 100% financial transparency.",
-                aboutBox1Title: "Cultural Growth",
-                aboutBox1Desc: "Organizing traditional events & competitions.",
-                aboutBox2Title: "Transparent Service",
-                aboutBox2Desc: "Complete public accountability for social welfare.",
-                aboutCardTitle: "Our Mission & Vision",
-                aboutCardDesc: "Connecting the new generation to our roots and building a self-reliant society.",
-                galleryTitle: "Our Gallery",
-                gallerySub: "Moments from our various projects and events",
-                accTitle: "Financial Transparency & Accounts",
-                accSub: "Complete breakdown of monthly, yearly, and project-wise expenses and donations",
-                accBalanceLabel: "Current Balance:",
-                monthlyExpLabel: "Current Month Expense",
-                yearlyExpLabel: "Total Yearly Expense",
-                eventExpLabel: "August 15 Project Expense",
-                tableHeaderTitle: "Transaction & Account Statement",
-                thDate: "Date",
-                thDesc: "Description",
-                thIncome: "Income",
-                thExpense: "Expense",
-                thBalance: "Balance",
-                donorTitle: "Our Respected Donors",
-                memberTitle: "Our Approved Members",
-                modalRegTitle: "Membership Registration Form",
-                modalRegSub: "Fill up the form with valid details. WhatsApp OTP verification required.",
-                labelFullName: "Full Name",
-                labelWhatsApp: "WhatsApp Mobile Number",
-                labelAddress: "Address / Location",
-                btnSendOTP: "Send WhatsApp OTP",
-                modalDonTitle: "Donation Support Form",
-                modalDonSub: "Contribute financially to support Swadesh Jagaran activities.",
-                labelDonName: "Your Name",
-                labelDonPhone: "WhatsApp Mobile Number",
-                labelDonAmount: "Amount (₹)",
-                btnDonSubmit: "Submit Donation"
-            }
-        };
+            // Remove active class from all nav links
+            const navLinks = document.querySelectorAll('nav ul li a');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
 
-        function setLanguage(lang) {
-            currentLang = lang;
-            document.getElementById('langBnBtn').className = lang === 'bn' ? 'px-3 py-1 bg-orange-600 rounded font-bold text-xs transition shadow' : 'px-3 py-1 bg-gray-800 rounded font-bold text-xs transition shadow';
-            document.getElementById('langEnBtn').className = lang === 'en' ? 'px-3 py-1 bg-orange-600 rounded font-bold text-xs transition shadow' : 'px-3 py-1 bg-gray-800 rounded font-bold text-xs transition shadow';
+            // Show target section and highlight nav link
+            document.getElementById(targetSectionId).classList.add('active-section');
+            document.getElementById('nav-' + targetSectionId).classList.add('active');
+            
+            // Scroll to top automatically
+            window.scrollTo(0, 0);
+        }
 
-            const d = langData[lang];
-            for (let key in d) {
-                const el = document.getElementById(key);
-                if (el) el.innerText = d[key];
+        // 2. ACCOUNTS DATA & LOGIC (Ready to be connected to Firebase Admin)
+        
+        // This array structure represents your database. Admin actions will update this.
+        const accountData = [
+            { date: '2026-08-01', type: 'income', description: 'Monthly Subscription', donorName: 'Rahul Roy', purpose: 'General Fund', income: 5000, expense: 0 },
+            { date: '2026-08-05', type: 'expense', description: 'Office Electricity Bill', donorName: '-', purpose: '-', income: 0, expense: 1200 },
+            { date: '2026-08-10', type: 'income', description: 'Donation for Aug 15', donorName: 'Amit Sharma', purpose: 'Aug 15 Project', income: 10000, expense: 0 },
+            { date: '2026-08-12', type: 'expense', description: 'Stage Setup (Aug 15)', donorName: '-', purpose: 'Aug 15 Project', income: 0, expense: 4500 },
+            { date: '2026-08-13', type: 'income', description: 'Donation', donorName: 'Priya Das', purpose: 'General Fund', income: 2000, expense: 0 },
+            { date: '2026-07-25', type: 'expense', description: 'Website Server Cost', donorName: '-', purpose: 'IT Maintenance', income: 0, expense: 2500 }
+        ];
+
+        // Function to render tables based on data array
+        function renderAccountsData(dataArray) {
+            const expenseTableBody = document.getElementById('expense-table-body');
+            const donorTableBody = document.getElementById('donor-table-body');
+            
+            expenseTableBody.innerHTML = '';
+            donorTableBody.innerHTML = '';
+
+            let totalIncome = 0;
+            let totalExpense = 0;
+            let projectExpense = 0;
+
+            // Sort data chronologically descending
+            const sortedData = [...dataArray].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sortedData.forEach(item => {
+                // Calculate Summary Totals
+                totalIncome += item.income;
+                totalExpense += item.expense;
+                if(item.purpose === 'Aug 15 Project' && item.expense > 0) {
+                    projectExpense += item.expense;
+                }
+
+                // Inject into Expense/Transaction Table
+                const expenseRow = document.createElement('tr');
+                expenseRow.innerHTML = `
+                    <td>${item.date}</td>
+                    <td>${item.description}</td>
+                    <td class="amount-income">${item.income > 0 ? '+' + item.income : '-'}</td>
+                    <td class="amount-expense">${item.expense > 0 ? '-' + item.expense : '-'}</td>
+                `;
+                expenseTableBody.appendChild(expenseRow);
+
+                // Inject into Donor Table ONLY if it's an income/donation
+                if (item.income > 0) {
+                    const donorRow = document.createElement('tr');
+                    donorRow.innerHTML = `
+                        <td>${item.date}</td>
+                        <td style="font-weight: bold; color: var(--navy-blue);">${item.donorName}</td>
+                        <td>${item.purpose}</td>
+                        <td class="amount-income">${item.income}</td>
+                    `;
+                    donorTableBody.appendChild(donorRow);
+                }
+            });
+
+            // Update Summary Cards
+            const currentBalance = totalIncome - totalExpense;
+            document.getElementById('display-balance').innerText = `Current Balance: ${currentBalance.toLocaleString('en-IN')} ৳`;
+            document.getElementById('display-yearly-expense').innerText = `${totalExpense.toLocaleString('en-IN')} ৳`;
+            document.getElementById('display-project-expense').innerText = `${projectExpense.toLocaleString('en-IN')} ৳`;
+            
+            // For Monthly Expense, we calculate dynamically based on current month in real app.
+            // Here, assigning total expense as mock monthly for display.
+            document.getElementById('display-monthly-expense').innerText = `${totalExpense.toLocaleString('en-IN')} ৳`;
+        }
+
+        // 3. TABS SWITCHING INSIDE ACCOUNTS
+        function switchAccountTab(targetTableId) {
+            // Hide all tables
+            document.getElementById('expense-table').classList.remove('active-table');
+            document.getElementById('donor-table').classList.remove('active-table');
+            
+            // Remove active style from buttons
+            document.getElementById('btn-expense-tab').classList.remove('active');
+            document.getElementById('btn-donor-tab').classList.remove('active');
+
+            // Show target
+            document.getElementById(targetTableId).classList.add('active-table');
+            
+            if(targetTableId === 'expense-table') {
+                document.getElementById('btn-expense-tab').classList.add('active');
+            } else {
+                document.getElementById('btn-donor-tab').classList.add('active');
             }
         }
 
-        // Modals
-        function openMembershipModal() { document.getElementById('membershipModal').classList.remove('hidden'); }
-        function closeMembershipModal() { document.getElementById('membershipModal').classList.add('hidden'); }
-        function openDonationModal() { document.getElementById('donationModal').classList.remove('hidden'); }
-        function closeDonationModal() { document.getElementById('donationModal').classList.add('hidden'); }
+        // 4. DATE FILTER LOGIC
+        function applyDateFilter() {
+            const startDateStr = document.getElementById('filter-start-date').value;
+            const endDateStr = document.getElementById('filter-end-date').value;
 
-        // WhatsApp OTP & Membership
-        function sendMembershipOTP(e) {
-            e.preventDefault();
-            const name = document.getElementById('mName').value;
-            const phone = document.getElementById('mPhone').value;
-            const address = document.getElementById('mAddress').value;
+            if(!startDateStr || !endDateStr) {
+                alert("Please select both Start Date and End Date to filter.");
+                return;
+            }
 
-            closeMembershipModal();
+            const startDate = new Date(startDateStr);
+            const endDate = new Date(endDateStr);
+            // Include end date fully
+            endDate.setHours(23, 59, 59, 999);
 
-            Swal.fire({
-                title: currentLang === 'bn' ? 'WhatsApp OTP পাঠানো হচ্ছে...' : 'Sending WhatsApp OTP...',
-                text: currentLang === 'bn' ? 'আপনার নম্বরে ওটিপি পাঠানো হয়েছে' : 'OTP sent to your number',
-                timer: 2000,
-                timerProgressBar: true,
-                didOpen: () => { Swal.showLoading(); }
-            }).then(() => {
-                Swal.fire({
-                    title: currentLang === 'bn' ? 'OTP কোড দিন' : 'Enter OTP Code',
-                    input: 'text',
-                    inputPlaceholder: currentLang === 'bn' ? '৪ ডিজিটের ওটিপি লিখুন (যাচাইয়ের জন্য 1234 দিন)' : 'Enter 4-digit OTP (enter 1234)',
-                    confirmButtonText: currentLang === 'bn' ? 'যাচাই করুন' : 'Verify',
-                    allowOutsideClick: false
-                }).then((result) => {
-                    if (result.value) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: currentLang === 'bn' ? 'যাচাই সফল ও আবেদন জমা হয়েছে!' : 'Verification Successful!',
-                            text: currentLang === 'bn' ? 'এডমিন অনুমোদন করলে আপনার নাম মেইন পেজে শো করবে।' : 'Pending admin approval.'
-                        });
-
-                        db.collection('members').add({
-                            name: name,
-                            phone: phone,
-                            address: address,
-                            status: 'pending',
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        document.getElementById('membershipForm').reset();
-                    }
-                });
+            const filteredData = accountData.filter(item => {
+                const itemDate = new Date(item.date);
+                return itemDate >= startDate && itemDate <= endDate;
             });
+
+            renderAccountsData(filteredData);
         }
 
-        // Donation Submission
-        function submitDonation(e) {
-            e.preventDefault();
-            const name = document.getElementById('dName').value;
-            const phone = document.getElementById('dPhone').value;
-            const amount = parseFloat(document.getElementById('dAmount').value);
-
-            closeDonationModal();
-
-            Swal.fire({
-                icon: 'success',
-                title: currentLang === 'bn' ? 'ডোনেশন ফরম জমা হয়েছে' : 'Donation Form Submitted',
-                text: currentLang === 'bn' ? 'এডমিন যাচাই করে আপনার নাম ও ছবি ডোনার তালিকায় যুক্ত করবেন।' : 'Pending admin approval.'
-            });
-
-            db.collection('donors').add({
-                name: name,
-                phone: phone,
-                amount: amount,
-                status: 'pending',
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            document.getElementById('donationForm').reset();
+        function resetFilter() {
+            document.getElementById('filter-start-date').value = '';
+            document.getElementById('filter-end-date').value = '';
+            // Render original data
+            renderAccountsData(accountData);
         }
 
-        // Firestore Loaders
-        window.addEventListener('DOMContentLoaded', () => {
-            // Finance & Tally & Expense Summary
-            db.collection('finance').orderBy('date', 'asc').onSnapshot(snapshot => {
-                const tbody = document.getElementById('publicFinanceBody');
-                tbody.innerHTML = '';
-                let runningBalance = 0;
-                let mExpense = 0;
-                let yExpense = 0;
-                let eventExpense = 0;
+        // Initialize Data on Page Load
+        window.onload = () => {
+            renderAccountsData(accountData);
+        };
 
-                const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
-
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    let inAmt = data.type === 'income' ? data.amount : 0;
-                    let outAmt = data.type === 'expense' ? data.amount : 0;
-
-                    if (data.type === 'income') runningBalance += data.amount;
-                    else {
-                        runningBalance -= data.amount;
-                        yExpense += data.amount;
-                        if (data.date && data.date.startsWith(currentMonth)) mExpense += data.amount;
-                        if (data.details && (data.details.includes('১৫ই আগস্ট') || data.details.includes('August 15'))) eventExpense += data.amount;
-                    }
-
-                    tbody.innerHTML += `
-                        <tr class="border-b hover:bg-gray-50 text-sm">
-                            <td class="p-3 text-center font-mono">${data.date}</td>
-                            <td class="p-3 font-semibold">${data.details}</td>
-                            <td class="p-3 text-right text-green-700 font-mono font-bold">${inAmt > 0 ? inAmt.toFixed(2) + ' ৳' : '-'}</td>
-                            <td class="p-3 text-right text-red-600 font-mono font-bold">${outAmt > 0 ? outAmt.toFixed(2) + ' ৳' : '-'}</td>
-                            <td class="p-3 text-right font-bold font-mono text-blue-900">${runningBalance.toFixed(2)} ৳</td>
-                        </tr>
-                    `;
-                });
-                document.getElementById('publicBalance').innerText = runningBalance.toFixed(2);
-                document.getElementById('monthlyExpenseVal').innerText = mExpense.toFixed(2) + ' ৳';
-                document.getElementById('yearlyExpenseVal').innerText = yExpense.toFixed(2) + ' ৳';
-                document.getElementById('eventExpenseVal').innerText = eventExpense.toFixed(2) + ' ৳';
-            });
-
-            // Gallery
-            db.collection('gallery').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-                const grid = document.getElementById('publicGalleryGrid');
-                grid.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    grid.innerHTML += `
-                        <div class="bg-white rounded-2xl shadow-lg overflow-hidden border">
-                            <img src="${data.url}" class="w-full h-52 object-cover">
-                            <div class="p-4 text-center font-bold text-gray-800">${data.caption}</div>
-                        </div>
-                    `;
-                });
-            });
-
-            // Approved Members
-            db.collection('members').onSnapshot(snapshot => {
-                const grid = document.getElementById('approvedMembersGrid');
-                grid.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    if (data.status === 'approved') {
-                        grid.innerHTML += `
-                            <div class="bg-white p-5 rounded-2xl shadow-md border-l-8 border-orange-600 flex items-center gap-4">
-                                <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-700 font-bold text-xl"><i class="fa-solid fa-user-check"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-lg text-gray-900">${data.name}</h4>
-                                    <p class="text-xs text-gray-500"><i class="fa-solid fa-location-dot mr-1"></i> ${data.address}</p>
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-            });
-
-            // Approved Donors
-            db.collection('donors').onSnapshot(snapshot => {
-                const grid = document.getElementById('approvedDonorsGrid');
-                grid.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    if (data.status === 'approved') {
-                        grid.innerHTML += `
-                            <div class="bg-white p-5 rounded-2xl shadow-md border-l-8 border-green-700 flex items-center justify-between">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold text-xl"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-                                    <div>
-                                        <h4 class="font-bold text-lg text-gray-900">${data.name}</h4>
-                                        <p class="text-xs text-green-700 font-bold">সহযোগিতা: ₹${data.amount}</p>
-                                    </div>
-                                </div>
-                                <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full">Donor</span>
-                            </div>
-                        `;
-                    }
-                });
-            });
-        });
     </script>
 </body>
 </html>
