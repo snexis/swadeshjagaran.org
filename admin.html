@@ -123,11 +123,13 @@
             width: 100%; padding: 12px 16px; border: 1.5px solid var(--border-color); 
             border-radius: 8px; font-size: 14px; background: #fafbfc; color: #2c3e50; transition: all 0.3s;
         }
+        .form-group input[type="color"] { padding: 5px; height: 45px; cursor: pointer; }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { 
             border-color: var(--saffron); background: #fff; box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.15); outline: none; 
         }
+        .form-row { display: flex; gap: 15px; }
+        .form-row .form-group { flex: 1; }
 
-        /* Password Wrapper for Eye Icon */
         .password-wrapper { position: relative; display: flex; align-items: center; }
         .password-wrapper input { padding-right: 45px; }
         .eye-icon { 
@@ -186,25 +188,19 @@
             border: 2px dashed var(--saffron); border-radius: 8px; background: #fafbfc; transition: all 0.3s;
         }
 
-        /* --- MOBILE RESPONSIVE FIXES (Works on all Devices) --- */
         @media (max-width: 768px) {
             sidebar { transform: translateX(-100%); }
             sidebar.mobile-open { transform: translateX(0); }
             .main-wrapper { margin-left: 0; width: 100%; }
-            
             .hamburger-btn { display: block; }
             .header-content { padding: 12px 15px; }
             .header-title { font-size: 16px; }
             .lang-btn { padding: 6px 12px; font-size: 12px; }
-            
             .container { padding: 15px; }
             .card { padding: 15px; margin-bottom: 15px; }
-            
             .dashboard-widgets { grid-template-columns: 1fr; }
-            
+            .form-row { flex-direction: column; gap: 0; }
             .login-container { margin: 30px auto; padding: 20px; }
-            
-            /* Add overlay for mobile sidebar */
             .sidebar-overlay {
                 display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
                 background: rgba(0,0,0,0.5); z-index: 99;
@@ -225,16 +221,17 @@
         <span id="sidebarBrandText">স্বদেশ জাগরণ</span>
     </div>
     <ul class="sidebar-menu">
-        <li class="active" onclick="switchTab('dashboard', this)"><a href="#">🏠 <span data-translate="menuDashboard">Dashboard</span></a></li>
+        <li class="active" onclick="switchTab('dashboard', this)"><a href="#">🏠 <span>Dashboard</span></a></li>
+        <li onclick="switchTab('website-builder', this)"><a href="#">🌍 <span>Website Builder (CMS)</span></a></li>
         <li onclick="switchTab('visitors', this)"><a href="#">📊 <span>Visitor Logs</span></a></li>
-        <li onclick="switchTab('notices', this)"><a href="#">📢 <span data-translate="menuNotice">Publish Notice</span></a></li>
-        <li onclick="switchTab('finances', this)"><a href="#">💰 <span data-translate="menuFinance">Income & Expense</span></a></li>
-        <li onclick="switchTab('gallery', this)"><a href="#">🖼️ <span data-translate="menuGallery">Gallery Media</span></a></li>
-        <li onclick="switchTab('members', this)"><a href="#">👥 <span data-translate="menuMembers">Members List</span></a></li>
-        <li onclick="switchTab('settings', this)"><a href="#">⚙️ <span data-translate="menuSettings">Settings & Security</span></a></li>
+        <li onclick="switchTab('notices', this)"><a href="#">📢 <span>Publish Notice</span></a></li>
+        <li onclick="switchTab('finances', this)"><a href="#">💰 <span>Income & Expense</span></a></li>
+        <li onclick="switchTab('gallery', this)"><a href="#">🖼️ <span>Gallery Media</span></a></li>
+        <li onclick="switchTab('members', this)"><a href="#">👥 <span>Members List</span></a></li>
+        <li onclick="switchTab('settings', this)"><a href="#">⚙️ <span>Settings & Security</span></a></li>
     </ul>
     <div class="sidebar-footer">
-        <button class="btn btn-danger" style="width: 100%;" onclick="logoutAdmin()" data-translate="btnLogout">Logout</button>
+        <button class="btn btn-danger" style="width: 100%;" onclick="logoutAdmin()">Logout</button>
     </div>
 </sidebar>
 
@@ -245,7 +242,7 @@
         <div class="header-content">
             <div class="header-left">
                 <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
-                <div class="header-title" data-translate="adminPortalTitle">অ্যাডমিন প্যানেল</div>
+                <div class="header-title">অ্যাডমিন প্যানেল</div>
             </div>
             <div class="header-actions">
                 <button class="lang-btn" onclick="toggleLanguage()">বাংলা / English</button>
@@ -254,22 +251,22 @@
     </header>
 
     <div class="container">
-        <!-- Login Section (With Smart Logic & Eye Button) -->
+        <!-- Login Section (With Eye Button) -->
         <div id="loginSection" class="login-container">
-            <h2 style="text-align: center; border: none; color: #1b4d3e;" data-translate="loginHeading">Admin Login</h2>
+            <h2 style="text-align: center; border: none; color: #1b4d3e;">Admin Login</h2>
             <form id="loginForm">
                 <div class="form-group">
-                    <label data-translate="lblEmail">Admin ID / Username</label>
+                    <label>Admin ID / Username</label>
                     <input type="text" id="adminUsername" placeholder="Enter 'admin'" required>
                 </div>
                 <div class="form-group">
-                    <label data-translate="lblPassword">Password</label>
+                    <label>Password</label>
                     <div class="password-wrapper">
                         <input type="password" id="adminPassword" required>
                         <span class="eye-icon" onclick="togglePasswordVisibility('adminPassword', this)">👁️</span>
                     </div>
                 </div>
-                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;" data-translate="btnLogin">Secure Login</button>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Secure Login</button>
             </form>
             <p id="loginMsg" class="msg" style="text-align: center; margin-top: 15px;"></p>
         </div>
@@ -283,70 +280,127 @@
                     <div class="widget-card">
                         <div class="widget-icon">⏱️</div>
                         <div class="widget-info">
-                            <h4 data-translate="widgetClockTitle">Live Time</h4>
+                            <h4>Live Time</h4>
                             <div class="widget-value" id="liveClockDisplay">00:00:00 AM</div>
                         </div>
                     </div>
                     <div class="widget-card green">
                         <div class="widget-icon">🌐</div>
                         <div class="widget-info">
-                            <h4 data-translate="widgetVisitorTitle">Total Visitors</h4>
+                            <h4>Total Visitors</h4>
                             <div class="widget-value" id="visitorCountDisplay">Loading...</div>
                         </div>
                     </div>
                     <div class="widget-card blue">
                         <div class="widget-icon">👥</div>
                         <div class="widget-info">
-                            <h4 data-translate="widgetMemberTitle">Total Members</h4>
+                            <h4>Total Members</h4>
                             <div class="widget-value" id="dashMemberCountDisplay">0</div>
                         </div>
                     </div>
                 </div>
-
                 <div class="card">
-                    <h2 data-translate="welcomeAdmin">Welcome to Admin Dashboard</h2>
-                    <p data-translate="welcomeSub">Select an option from the left sidebar to manage notices, finances, gallery items, and member registrations easily.</p>
+                    <h2>Welcome to Admin Dashboard</h2>
+                    <p>Select an option from the left sidebar to manage website, notices, finances, gallery, and members easily.</p>
                 </div>
             </div>
 
-            <!-- Tab 2: Visitors Logs -->
+            <!-- Tab 2: NEW! WordPress like Website Builder (CMS) -->
+            <div id="sec-website-builder" class="admin-section">
+                <div class="card">
+                    <h2>🌍 Website Builder & Theme Control (CMS)</h2>
+                    <p style="font-size: 13px; color: #7f8c8d; margin-bottom: 20px;">Control exactly what is shown on the main website. Toggle sections on/off, change colors, and update header/footer texts instantly.</p>
+                    
+                    <form id="cmsForm">
+                        <h3 style="font-size: 15px; color: var(--saffron); margin-bottom: 10px;">🎨 Theme Colors</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Website Primary Color</label>
+                                <input type="color" id="cmsPrimaryColor" value="#138808">
+                            </div>
+                            <div class="form-group">
+                                <label>Website Background Color</label>
+                                <input type="color" id="cmsBgColor" value="#f8f9fa">
+                            </div>
+                        </div>
+
+                        <h3 style="font-size: 15px; color: var(--saffron); margin: 20px 0 10px 0;">📝 Header & Footer Text</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Header / Website Title</label>
+                                <input type="text" id="cmsHeaderTitle" placeholder="e.g. Swadesh Jagaran" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Footer Copyright Text</label>
+                                <input type="text" id="cmsFooterText" placeholder="e.g. © 2026 All Rights Reserved." required>
+                            </div>
+                        </div>
+
+                        <h3 style="font-size: 15px; color: var(--saffron); margin: 20px 0 10px 0;">👁️ Toggle Website Sections (Show / Hide)</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Show Notice Board Section?</label>
+                                <select id="cmsShowNotices">
+                                    <option value="true">Yes, Show It</option>
+                                    <option value="false">No, Hide It</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Show Gallery Section?</label>
+                                <select id="cmsShowGallery">
+                                    <option value="true">Yes, Show It</option>
+                                    <option value="false">No, Hide It</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Show Members List on Main Page?</label>
+                                <select id="cmsShowMembers">
+                                    <option value="true">Yes, Show It</option>
+                                    <option value="false">No, Hide It</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Show Income/Expense on Main Page?</label>
+                                <select id="cmsShowFinance">
+                                    <option value="true">Yes, Show It</option>
+                                    <option value="false">No, Hide It</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn" style="width: 100%; margin-top: 15px;" id="btnSaveCms">Save Website Settings</button>
+                    </form>
+                    <p id="cmsMsg" class="msg" style="color: #138808; text-align: center;"></p>
+                </div>
+            </div>
+
+            <!-- Tab 3: Visitors Logs -->
             <div id="sec-visitors" class="admin-section">
                 <div class="card">
                     <h2>Visitor Tracking & Analytics Logs</h2>
                     <div class="table-responsive">
                         <table>
-                            <thead>
-                                <tr>
-                                    <th>Timestamp</th>
-                                    <th>IP Address</th>
-                                    <th>Location / Country</th>
-                                </tr>
-                            </thead>
+                            <thead><tr><th>Timestamp</th><th>IP Address</th><th>Location / Country</th></tr></thead>
                             <tbody id="visitorTableBody"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Tab 3: Publish & Manage Notice -->
+            <!-- Tab 4: Publish & Manage Notice -->
             <div id="sec-notices" class="admin-section">
                 <div class="card" style="max-width: 800px; margin: 0 auto 25px auto;">
-                    <h2 data-translate="noticeHeading">Publish Notice</h2>
+                    <h2>Publish Notice</h2>
                     <form id="noticeForm">
                         <input type="hidden" id="editNoticeId">
-                        <div class="form-group">
-                            <label data-translate="lblDate">Date</label>
-                            <input type="date" id="noticeDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label data-translate="lblNoticeText">Notice Description</label>
-                            <textarea id="noticeText" rows="3" required></textarea>
-                        </div>
-                        <button type="submit" class="btn" id="btnSaveNotice" data-translate="btnPublishNotice">Add Notice</button>
+                        <div class="form-group"><label>Date</label><input type="date" id="noticeDate" required></div>
+                        <div class="form-group"><label>Notice Description</label><textarea id="noticeText" rows="3" required></textarea></div>
+                        <button type="submit" class="btn" id="btnSaveNotice">Add Notice</button>
                     </form>
                     <p id="noticeMsg" class="msg" style="color: #138808;"></p>
                 </div>
-
                 <div class="card">
                     <h2>Active Notices Management</h2>
                     <div class="table-responsive">
@@ -358,36 +412,25 @@
                 </div>
             </div>
 
-            <!-- Tab 4: Income & Expense -->
+            <!-- Tab 5: Income & Expense -->
             <div id="sec-finances" class="admin-section">
                 <div class="card" style="max-width: 800px; margin: 0 auto 25px auto;">
-                    <h2 data-translate="financeHeading">Income & Expense Records</h2>
+                    <h2>Income & Expense Records</h2>
                     <form id="financeForm">
                         <input type="hidden" id="editFinanceId">
-                        <div class="form-group">
-                            <label data-translate="lblDate">Date</label>
-                            <input type="date" id="finDate" required>
+                        <div class="form-row">
+                            <div class="form-group"><label>Date</label><input type="date" id="finDate" required></div>
+                            <div class="form-group">
+                                <label>Transaction Type</label>
+                                <select id="finType"><option value="Income">Income</option><option value="Expense">Expense</option></select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label data-translate="lblDescription">Description</label>
-                            <input type="text" id="finDesc" required>
-                        </div>
-                        <div class="form-group">
-                            <label data-translate="lblType">Transaction Type</label>
-                            <select id="finType">
-                                <option value="Income" data-translate="optIncome">Income</option>
-                                <option value="Expense" data-translate="optExpense">Expense</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label data-translate="lblAmount">Amount</label>
-                            <input type="number" id="finAmount" required>
-                        </div>
-                        <button type="submit" class="btn" id="btnSaveFinance" data-translate="btnSaveFinance">Save Record</button>
+                        <div class="form-group"><label>Description</label><input type="text" id="finDesc" required></div>
+                        <div class="form-group"><label>Amount</label><input type="number" id="finAmount" required></div>
+                        <button type="submit" class="btn" id="btnSaveFinance">Save Record</button>
                     </form>
                     <p id="finMsg" class="msg" style="color: #138808;"></p>
                 </div>
-
                 <div class="card">
                     <h2>Transactions History Management</h2>
                     <div class="table-responsive">
@@ -399,30 +442,26 @@
                 </div>
             </div>
 
-            <!-- Tab 5: Gallery Media -->
+            <!-- Tab 6: Gallery Media -->
             <div id="sec-gallery" class="admin-section">
                 <div class="card" style="max-width: 800px; margin: 0 auto 25px auto;">
-                    <h2 data-translate="galleryHeading">Add Gallery Media</h2>
+                    <h2>Add Gallery Media</h2>
                     <form id="galleryForm">
                         <div class="form-group">
-                            <label data-translate="lblMediaType">Media Type</label>
-                            <select id="galleryType">
-                                <option value="image" data-translate="optImage">Image</option>
-                                <option value="video" data-translate="optVideo">Video</option>
-                            </select>
+                            <label>Media Type</label>
+                            <select id="galleryType"><option value="image">Image</option><option value="video">Video</option></select>
                         </div>
                         <div class="form-group">
-                            <label data-translate="lblMediaFile">Upload Media (Select or Drag & Drop)</label>
+                            <label>Upload Media (Select or Drag & Drop)</label>
                             <div id="dropZone" class="drop-zone">
-                                <span class="drop-zone__prompt" data-translate="dropPrompt" id="dropZonePromptText">Click or Drop file here</span>
+                                <span class="drop-zone__prompt" id="dropZonePromptText">Click or Drop file here</span>
                                 <input type="file" id="galleryFile" class="drop-zone__input" accept="image/*,video/*" required>
                             </div>
                         </div>
-                        <button type="submit" class="btn" data-translate="btnAddToGallery" id="btnUploadGallery">Add to Gallery</button>
+                        <button type="submit" class="btn" id="btnUploadGallery">Add to Gallery</button>
                     </form>
                     <p id="galleryMsg" class="msg" style="color: #138808;"></p>
                 </div>
-
                 <div class="card">
                     <h2>Gallery Media Library</h2>
                     <div class="table-responsive">
@@ -434,57 +473,36 @@
                 </div>
             </div>
 
-            <!-- Tab 6: Members List -->
+            <!-- Tab 7: Members List -->
             <div id="sec-members" class="admin-section">
                 <div class="card" style="max-width: 800px; margin: 0 auto 25px auto;">
-                    <h2 data-translate="addMemberHeading">Add New Member</h2>
+                    <h2>Add New Member</h2>
                     <form id="memberForm">
-                        <div class="form-group">
-                            <label data-translate="thName">Member Name</label>
-                            <input type="text" id="memberName" required>
+                        <div class="form-row">
+                            <div class="form-group"><label>Member Name</label><input type="text" id="memberName" required></div>
+                            <div class="form-group"><label>Email Address</label><input type="email" id="memberEmail" required></div>
                         </div>
-                        <div class="form-group">
-                            <label data-translate="thEmail">Email Address</label>
-                            <input type="email" id="memberEmail" required>
+                        <div class="form-row">
+                            <div class="form-group"><label>Phone Number</label><input type="text" id="memberPhone" required></div>
+                            <div class="form-group"><label>Address</label><input type="text" id="memberAddress" required></div>
                         </div>
-                        <div class="form-group">
-                            <label data-translate="thPhone">Phone Number</label>
-                            <input type="text" id="memberPhone" required>
-                        </div>
-                        <div class="form-group">
-                            <label data-translate="thAddress">Address</label>
-                            <input type="text" id="memberAddress" required>
-                        </div>
-                        <div class="form-group">
-                            <label data-translate="lblMemberPhoto">Member Photo (Select Image)</label>
-                            <input type="file" id="memberPhotoFile" accept="image/*" required>
-                        </div>
-                        <button type="submit" class="btn" id="btnSaveMember" data-translate="btnSaveMember">Add Member</button>
+                        <div class="form-group"><label>Member Photo (Select Image)</label><input type="file" id="memberPhotoFile" accept="image/*" required></div>
+                        <button type="submit" class="btn" id="btnSaveMember">Add Member</button>
                     </form>
                     <p id="memberMsg" class="msg" style="color: #138808;"></p>
                 </div>
-
                 <div class="card">
-                    <h2 data-translate="membersHeading">Registered Members List (Total: <span id="totalMembersCount">0</span>)</h2>
+                    <h2>Registered Members List (Total: <span id="totalMembersCount">0</span>)</h2>
                     <div class="table-responsive">
                         <table>
-                            <thead>
-                                <tr>
-                                    <th data-translate="thPhoto">Photo</th>
-                                    <th data-translate="thName">Member Name</th>
-                                    <th data-translate="thEmail">Email Address</th>
-                                    <th data-translate="thPhone">Phone Number</th>
-                                    <th data-translate="thAddress">Address</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
+                            <thead><tr><th>Photo</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Action</th></tr></thead>
                             <tbody id="membersTableBody"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Tab 7: Settings & Password Change (With Eye Buttons) -->
+            <!-- Tab 8: Settings & Password Change (With Eye Buttons) -->
             <div id="sec-settings" class="admin-section">
                 <div class="card" style="max-width: 650px; margin: 0 auto 25px auto;">
                     <h2>Security: Change Admin Password</h2>
@@ -497,25 +515,25 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label data-translate="lblNewPassword">New Password</label>
+                            <label>New Password</label>
                             <div class="password-wrapper">
                                 <input type="password" id="newPassword" required>
                                 <span class="eye-icon" onclick="togglePasswordVisibility('newPassword', this)">👁️</span>
                             </div>
                         </div>
-                        <button type="submit" class="btn" data-translate="btnUpdatePassword">Update Password Securely</button>
+                        <button type="submit" class="btn">Update Password Securely</button>
                     </form>
                     <p id="passMsg" class="msg" style="color: #138808;"></p>
                 </div>
 
                 <div class="card" style="max-width: 650px; margin: 0 auto;">
-                    <h2 data-translate="logoHeading">Website / Portal Logo Management</h2>
+                    <h2>Website / Portal Logo Management</h2>
                     <form id="logoForm">
                         <div class="form-group">
-                            <label data-translate="lblLogoFile">Select Logo Image from Device</label>
+                            <label>Select Logo Image from Device</label>
                             <input type="file" id="logoFileInput" accept="image/*" required>
                         </div>
-                        <button type="submit" class="btn" id="btnUpdateLogo" data-translate="btnUpdateLogo">Upload & Update Logo</button>
+                        <button type="submit" class="btn" id="btnUpdateLogo">Upload & Update Logo</button>
                     </form>
                     <p id="logoMsg" class="msg" style="color: #138808;"></p>
                 </div>
@@ -580,70 +598,6 @@
         }
     }
 
-    // Translation Logic
-    let currentLang = 'en';
-    const translations = {
-        en: {
-            adminPortalTitle: "Admin Panel", menuDashboard: "Dashboard", menuNotice: "Publish Notice",
-            menuFinance: "Income & Expense", menuGallery: "Gallery Media", menuMembers: "Members List",
-            menuSettings: "Settings & Security", btnLogout: "Logout", loginHeading: "Admin Login",
-            lblEmail: "Admin ID / Username", lblPassword: "Password", btnLogin: "Secure Login",
-            widgetClockTitle: "Live Time", widgetVisitorTitle: "Total Visitors", widgetMemberTitle: "Total Members",
-            welcomeAdmin: "Welcome to Admin Dashboard", welcomeSub: "Select an option from the left sidebar to manage easily.",
-            noticeHeading: "Publish Notice", lblDate: "Date", lblNoticeText: "Notice Description",
-            btnPublishNotice: "Add Notice", financeHeading: "Income & Expense", lblDescription: "Description",
-            lblType: "Transaction Type", optIncome: "Income", optExpense: "Expense", lblAmount: "Amount",
-            btnSaveFinance: "Save Record", galleryHeading: "Add Gallery Media", lblMediaType: "Media Type",
-            optImage: "Image", optVideo: "Video", lblMediaFile: "Upload Media", dropPrompt: "Click or Drop file here",
-            btnAddToGallery: "Add to Gallery", addMemberHeading: "Add New Member", lblMemberPhoto: "Member Photo",
-            btnSaveMember: "Add Member", passHeading: "Change Password", lblNewPassword: "New Password",
-            btnUpdatePassword: "Update Password Securely", passSuccess: "Password updated successfully!",
-            logoHeading: "Portal Logo", lblLogoFile: "Select Logo", btnUpdateLogo: "Upload Logo",
-            logoSuccess: "Logo updated successfully!", membersHeading: "Registered Members (Total: ",
-            thPhoto: "Photo", thName: "Name", thEmail: "Email", thPhone: "Phone", thAddress: "Address",
-            noticeSuccess: "Notice saved!", financeSuccess: "Record saved!", gallerySuccess: "Media uploaded!",
-            memberSuccess: "Member added!", uploadingMsg: "Uploading... Please wait."
-        },
-        bn: {
-            adminPortalTitle: "অ্যাডমিন প্যানেল", menuDashboard: "ড্যাশবোর্ড", menuNotice: "নোটিশ প্রকাশ",
-            menuFinance: "আয় ও ব্যয়", menuGallery: "গ্যালারি মিডিয়া", menuMembers: "সদস্য তালিকা",
-            menuSettings: "সেটিংস ও নিরাপত্তা", btnLogout: "লগআউট", loginHeading: "অ্যাডমিন লগইন",
-            lblEmail: "অ্যাডমিন আইডি / ইউজারনেম", lblPassword: "পাসওয়ার্ড", btnLogin: "লগইন করুন",
-            widgetClockTitle: "বর্তমান সময়", widgetVisitorTitle: "মোট ভিজিটর", widgetMemberTitle: "মোট সদস্য",
-            welcomeAdmin: "অ্যাডমিন ড্যাশবোর্ডে স্বাগতম", welcomeSub: "বাম দিকের মেনু থেকে অপশন নির্বাচন করে কাজ পরিচালনা করুন।",
-            noticeHeading: "নতুন নোটিশ প্রকাশ", lblDate: "তারিখ", lblNoticeText: "নোটিশের বিবরণ",
-            btnPublishNotice: "নোটিশ সেভ করুন", financeHeading: "আয় ও ব্যয়ের হিসাব", lblDescription: "বিবরণ",
-            lblType: "লেনদেনের ধরন", optIncome: "আয় (Income)", optExpense: "ব্যয় (Expense)", lblAmount: "টাকার পরিমাণ",
-            btnSaveFinance: "হিসাব সেভ করুন", galleryHeading: "গ্যালারিতে মিডিয়া যোগ করুন", lblMediaType: "মিডিয়ার ধরন",
-            optImage: "ছবি (Image)", optVideo: "ভিডিও (Video)", lblMediaFile: "ফাইল নির্বাচন করুন", dropPrompt: "এখানে ক্লিক করে ফাইল দিন",
-            btnAddToGallery: "গ্যালারিতে আপলোড করুন", addMemberHeading: "নতুন সদস্য যোগ করুন", lblMemberPhoto: "সদস্যের ছবি",
-            btnSaveMember: "সদস্য সেভ করুন", passHeading: "পাসওয়ার্ড পরিবর্তন করুন", lblNewPassword: "নতুন পাসওয়ার্ড",
-            btnUpdatePassword: "পাসওয়ার্ড আপডেট করুন", passSuccess: "পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!",
-            logoHeading: "লোগো পরিবর্তন", lblLogoFile: "লোগোর ছবি নির্বাচন করুন", btnUpdateLogo: "লোগো আপডেট করুন",
-            logoSuccess: "লোগো সফলভাবে পরিবর্তন হয়েছে!", membersHeading: "নিবন্ধিত সদস্যদের তালিকা (মোট: ",
-            thPhoto: "ছবি", thName: "সদস্যের নাম", thEmail: "ইমেইল", thPhone: "ফোন নম্বর", thAddress: "ঠিকানা",
-            noticeSuccess: "নোটিশ সফলভাবে সেভ হয়েছে!", financeSuccess: "হিসাব সফলভাবে সেভ হয়েছে!", gallerySuccess: "মিডিয়া আপলোড হয়েছে!",
-            memberSuccess: "সদস্য সফলভাবে যোগ করা হয়েছে!", uploadingMsg: "আপলোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।"
-        }
-    };
-
-    function toggleLanguage() {
-        currentLang = currentLang === 'en' ? 'bn' : 'en';
-        document.querySelectorAll('[data-translate]').forEach(element => {
-            const key = element.getAttribute('data-translate');
-            if (translations[currentLang][key]) {
-                if(key === 'membersHeading') {
-                    const count = document.getElementById("totalMembersCount").innerText;
-                    element.innerHTML = translations[currentLang][key] + '<span id="totalMembersCount">' + count + '</span>)';
-                } else {
-                    element.innerText = translations[currentLang][key];
-                }
-            }
-        });
-        const dropPrompt = document.getElementById("dropZonePromptText");
-        if(dropPrompt) dropPrompt.innerText = translations[currentLang].dropPrompt;
-    }
-
     function startLiveClock() {
         setInterval(() => {
             const now = new Date();
@@ -656,9 +610,7 @@
     }
 
     function switchTab(tabId, el) {
-        // Close sidebar on mobile after click
         if (window.innerWidth <= 768) toggleSidebar(); 
-
         document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active-section'));
         const target = document.getElementById('sec-' + tabId);
         if(target) target.classList.add('active-section');
@@ -670,9 +622,10 @@
         if(tabId === 'finances') loadFinancesList();
         if(tabId === 'gallery') loadGalleryList();
         if(tabId === 'members') loadMembersList();
+        if(tabId === 'website-builder') loadCMSConfig();
     }
 
-    // --- SMART LOGIN & AUTO-REGISTRATION LOGIC ---
+    // Login
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         e.preventDefault();
         let username = document.getElementById('adminUsername').value.trim();
@@ -683,7 +636,7 @@
         msgEl.innerText = "Checking credentials...";
 
         if (username.toLowerCase() === 'admin' && !username.includes('@')) {
-            username = 'admin@swadeshjagaran.com'; // Auto convert for Firebase
+            username = 'admin@swadeshjagaran.com';
         }
 
         auth.signInWithEmailAndPassword(username, password)
@@ -718,13 +671,55 @@
             document.getElementById('appSidebar').classList.remove('hidden');
             document.getElementById('appHeader').classList.remove('hidden');
             document.getElementById('dashboardSection').classList.remove('hidden');
-            loadPortalLogo(); loadVisitorsCount(); loadDashboardStats(); loadMembersList();
+            loadPortalLogo(); loadVisitorsCount(); loadDashboardStats(); loadMembersList(); loadCMSConfig();
         } else {
             document.getElementById('loginSection').classList.remove('hidden');
             document.getElementById('appSidebar').classList.add('hidden');
             document.getElementById('appHeader').classList.add('hidden');
             document.getElementById('dashboardSection').classList.add('hidden');
         }
+    });
+
+    // --- NEW: CMS / WEBSITE BUILDER LOGIC ---
+    function loadCMSConfig() {
+        db.collection("settings").doc("websiteConfig").get().then((doc) => {
+            if(doc.exists) {
+                const data = doc.data();
+                document.getElementById('cmsHeaderTitle').value = data.headerTitle || '';
+                document.getElementById('cmsFooterText').value = data.footerText || '';
+                document.getElementById('cmsPrimaryColor').value = data.primaryColor || '#138808';
+                document.getElementById('cmsBgColor').value = data.bgColor || '#f8f9fa';
+                document.getElementById('cmsShowNotices').value = data.showNotices !== undefined ? String(data.showNotices) : "true";
+                document.getElementById('cmsShowGallery').value = data.showGallery !== undefined ? String(data.showGallery) : "true";
+                document.getElementById('cmsShowMembers').value = data.showMembers !== undefined ? String(data.showMembers) : "true";
+                document.getElementById('cmsShowFinance').value = data.showFinance !== undefined ? String(data.showFinance) : "true";
+            }
+        });
+    }
+
+    document.getElementById('cmsForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const msg = document.getElementById('cmsMsg');
+        msg.style.color = "#4b6584"; msg.innerText = "Saving Website Settings...";
+
+        const dataToSave = {
+            headerTitle: document.getElementById('cmsHeaderTitle').value,
+            footerText: document.getElementById('cmsFooterText').value,
+            primaryColor: document.getElementById('cmsPrimaryColor').value,
+            bgColor: document.getElementById('cmsBgColor').value,
+            showNotices: document.getElementById('cmsShowNotices').value === "true",
+            showGallery: document.getElementById('cmsShowGallery').value === "true",
+            showMembers: document.getElementById('cmsShowMembers').value === "true",
+            showFinance: document.getElementById('cmsShowFinance').value === "true",
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        db.collection("settings").doc("websiteConfig").set(dataToSave, { merge: true }).then(() => {
+            msg.style.color = "#138808"; msg.innerText = "Settings Saved Successfully! Main website will now update.";
+            setTimeout(() => msg.innerText = "", 4000);
+        }).catch(err => {
+            msg.style.color = "#d32f2f"; msg.innerText = "Error: " + err.message;
+        });
     });
 
     // Database Load Functions
@@ -766,9 +761,9 @@
         const id = document.getElementById('editNoticeId').value, data = { date: document.getElementById('noticeDate').value, text: document.getElementById('noticeText').value }, msg = document.getElementById('noticeMsg');
         const promise = id ? db.collection("notices").doc(id).update(data) : db.collection("notices").add({...data, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
         promise.then(() => {
-            msg.innerText = translations[currentLang].noticeSuccess;
+            msg.innerText = "Notice Saved!";
             document.getElementById('noticeForm').reset(); document.getElementById('editNoticeId').value = "";
-            document.getElementById('btnSaveNotice').innerText = translations[currentLang].btnPublishNotice;
+            document.getElementById('btnSaveNotice').innerText = "Add Notice";
             loadNoticesList(); setTimeout(() => msg.innerText = "", 3000);
         });
     });
@@ -798,9 +793,9 @@
         const data = { date: document.getElementById('finDate').value, description: document.getElementById('finDesc').value, type: document.getElementById('finType').value, amount: parseFloat(document.getElementById('finAmount').value) };
         const promise = id ? db.collection("finances").doc(id).update(data) : db.collection("finances").add({...data, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
         promise.then(() => {
-            msg.innerText = translations[currentLang].financeSuccess;
+            msg.innerText = "Record Saved!";
             document.getElementById('financeForm').reset(); document.getElementById('editFinanceId').value = "";
-            document.getElementById('btnSaveFinance').innerText = translations[currentLang].btnSaveFinance;
+            document.getElementById('btnSaveFinance').innerText = "Save Record";
             loadFinancesList(); setTimeout(() => msg.innerText = "", 3000);
         });
     });
@@ -829,12 +824,12 @@
         e.preventDefault();
         const type = document.getElementById('galleryType').value, fileInput = document.getElementById('galleryFile'), msg = document.getElementById('galleryMsg'), btn = document.getElementById('btnUploadGallery');
         if(!fileInput.files.length) return;
-        btn.disabled = true; msg.style.color = "#4b6584"; msg.innerText = translations[currentLang].uploadingMsg;
+        btn.disabled = true; msg.style.color = "#4b6584"; msg.innerText = "Uploading...";
         try {
             const url = await uploadToImgBB(fileInput.files[0]);
             await db.collection("gallery").add({ type, url, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-            msg.style.color = "#138808"; msg.innerText = translations[currentLang].gallerySuccess;
-            document.getElementById('galleryForm').reset(); document.getElementById('dropZonePromptText').innerText = translations[currentLang].dropPrompt;
+            msg.style.color = "#138808"; msg.innerText = "Upload Success!";
+            document.getElementById('galleryForm').reset(); document.getElementById('dropZonePromptText').innerText = "Click or Drop file here";
             loadGalleryList(); setTimeout(() => msg.innerText = "", 3000);
         } catch (err) { msg.style.color = "#d32f2f"; msg.innerText = "Error: " + err.message; }
         btn.disabled = false;
@@ -856,11 +851,11 @@
         const data = { name: document.getElementById('memberName').value, email: document.getElementById('memberEmail').value, phone: document.getElementById('memberPhone').value, address: document.getElementById('memberAddress').value };
         const fileInput = document.getElementById('memberPhotoFile'), msg = document.getElementById('memberMsg'), btn = document.getElementById('btnSaveMember');
         if(!fileInput.files.length) return;
-        btn.disabled = true; msg.style.color = "#4b6584"; msg.innerText = translations[currentLang].uploadingMsg;
+        btn.disabled = true; msg.style.color = "#4b6584"; msg.innerText = "Uploading...";
         try {
             data.photoUrl = await uploadToImgBB(fileInput.files[0]);
             await db.collection("members").add({...data, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
-            msg.style.color = "#138808"; msg.innerText = translations[currentLang].memberSuccess;
+            msg.style.color = "#138808"; msg.innerText = "Member Added!";
             document.getElementById('memberForm').reset(); loadMembersList(); loadDashboardStats();
             setTimeout(() => msg.innerText = "", 3000);
         } catch (err) { msg.style.color = "#d32f2f"; msg.innerText = "Error: " + err.message; }
@@ -891,7 +886,7 @@
                 const credential = firebase.auth.EmailAuthProvider.credential(user.email, oldPass);
                 await user.reauthenticateWithCredential(credential);
                 await user.updatePassword(newPass);
-                msg.style.color = "#138808"; msg.innerText = translations[currentLang].passSuccess;
+                msg.style.color = "#138808"; msg.innerText = "Password updated securely!";
                 document.getElementById('changePasswordForm').reset(); setTimeout(() => msg.innerText = "", 4000);
             } catch (error) { msg.style.color = "#d32f2f"; msg.innerText = "Error: " + error.message; }
         }
@@ -901,11 +896,11 @@
         e.preventDefault();
         const fileInput = document.getElementById('logoFileInput'), msg = document.getElementById('logoMsg'), btn = document.getElementById('btnUpdateLogo');
         if(!fileInput.files.length) return;
-        btn.disabled = true; msg.style.color = "#4b6584"; msg.innerText = translations[currentLang].uploadingMsg;
+        btn.disabled = true; msg.style.color = "#4b6584"; msg.innerText = "Uploading...";
         try {
             const logoUrl = await uploadToImgBB(fileInput.files[0]);
             await db.collection("settings").doc("portalConfig").set({ logoUrl }, { merge: true });
-            msg.style.color = "#138808"; msg.innerText = translations[currentLang].logoSuccess;
+            msg.style.color = "#138808"; msg.innerText = "Logo updated successfully!";
             document.getElementById('logoForm').reset(); loadPortalLogo(); setTimeout(() => msg.innerText = "", 3000);
         } catch (err) { msg.style.color = "#d32f2f"; msg.innerText = "Error: " + err.message; }
         btn.disabled = false;
