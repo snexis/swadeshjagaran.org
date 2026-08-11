@@ -8,7 +8,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
-    <!-- ImgBB API Integration with User API Key -->
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         :root {
@@ -72,6 +71,7 @@
             list-style: none;
             padding: 20px 0;
             flex-grow: 1;
+            overflow-y: auto;
         }
 
         .sidebar-menu li {
@@ -208,17 +208,20 @@
             box-shadow: 0 6px 18px rgba(27, 77, 62, 0.3);
             transform: translateY(-1px);
         }
-        .btn:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
+        .btn:disabled { background: #cccccc; cursor: not-allowed; box-shadow: none; }
         
         .btn-danger { 
             background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%); 
             box-shadow: 0 4px 10px rgba(211, 47, 47, 0.2);
-            padding: 10px 18px;
+            padding: 8px 14px;
             font-size: 13px;
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+            padding: 8px 14px;
+            font-size: 13px;
+            color: #fff;
         }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; }
@@ -282,10 +285,7 @@
             background: #fafbfc;
             transition: all 0.3s;
         }
-        .drop-zone--over {
-            border-style: solid;
-            background: rgba(255, 153, 51, 0.1);
-        }
+        .drop-zone--over { border-style: solid; background: rgba(255, 153, 51, 0.1); }
         .drop-zone__input { display: none; }
     </style>
 </head>
@@ -298,24 +298,13 @@
         <span id="sidebarBrandText">স্বদেশ জাগরণ</span>
     </div>
     <ul class="sidebar-menu">
-        <li class="active" onclick="switchTab('dashboard', this)">
-            <a href="#">📊 <span data-translate="menuDashboard">Dashboard</span></a>
-        </li>
-        <li onclick="switchTab('notices', this)">
-            <a href="#">📢 <span data-translate="menuNotice">Publish Notice</span></a>
-        </li>
-        <li onclick="switchTab('finances', this)">
-            <a href="#">💰 <span data-translate="menuFinance">Income & Expense</span></a>
-        </li>
-        <li onclick="switchTab('gallery', this)">
-            <a href="#">🖼️ <span data-translate="menuGallery">Gallery Media</span></a>
-        </li>
-        <li onclick="switchTab('members', this)">
-            <a href="#">👥 <span data-translate="menuMembers">Members List</span></a>
-        </li>
-        <li onclick="switchTab('settings', this)">
-            <a href="#">⚙️ <span data-translate="menuSettings">Settings & Logo</span></a>
-        </li>
+        <li class="active" onclick="switchTab('dashboard', this)"><a href="#">📊 <span data-translate="menuDashboard">Dashboard</span></a></li>
+        <li onclick="switchTab('visitors', this)"><a href="#">🌐 <span>Visitor Logs</span></a></li>
+        <li onclick="switchTab('notices', this)"><a href="#">📢 <span data-translate="menuNotice">Publish Notice</span></a></li>
+        <li onclick="switchTab('finances', this)"><a href="#">💰 <span data-translate="menuFinance">Income & Expense</span></a></li>
+        <li onclick="switchTab('gallery', this)"><a href="#">🖼️ <span data-translate="menuGallery">Gallery Media</span></a></li>
+        <li onclick="switchTab('members', this)"><a href="#">👥 <span data-translate="menuMembers">Members List</span></a></li>
+        <li onclick="switchTab('settings', this)"><a href="#">⚙️ <span data-translate="menuSettings">Settings & Security</span></a></li>
     </ul>
     <div class="sidebar-footer">
         <button class="btn btn-danger" style="width: 100%;" onclick="logoutAdmin()" data-translate="btnLogout">Logout</button>
@@ -366,7 +355,7 @@
                         </div>
                     </div>
                     <div class="widget-card green">
-                        <div class="widget-icon">👁️</div>
+                        <div class="widget-icon">🌐</div>
                         <div class="widget-info">
                             <h4 data-translate="widgetVisitorTitle">Total Visitors</h4>
                             <div class="widget-value" id="visitorCountDisplay">Loading...</div>
@@ -387,30 +376,61 @@
                 </div>
             </div>
 
-            <!-- Tab 2: Publish Notice -->
+            <!-- Tab 2: Visitors Logs -->
+            <div id="sec-visitors" class="admin-section">
+                <div class="card">
+                    <h2>Visitor Tracking & Analytics Logs</h2>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>IP Address</th>
+                                    <th>Location / Country</th>
+                                </tr>
+                            </thead>
+                            <tbody id="visitorTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Publish & Manage Notice -->
             <div id="sec-notices" class="admin-section">
-                <div class="card" style="max-width: 700px; margin: 0 auto;">
+                <div class="card" style="max-width: 800px; margin: 0 auto 25px auto;">
                     <h2 data-translate="noticeHeading">Publish Notice</h2>
                     <form id="noticeForm">
+                        <input type="hidden" id="editNoticeId">
                         <div class="form-group">
                             <label data-translate="lblDate">Date</label>
                             <input type="date" id="noticeDate" required>
                         </div>
                         <div class="form-group">
                             <label data-translate="lblNoticeText">Notice Description</label>
-                            <textarea id="noticeText" rows="5" required></textarea>
+                            <textarea id="noticeText" rows="4" required></textarea>
                         </div>
-                        <button type="submit" class="btn" data-translate="btnPublishNotice">Add Notice</button>
+                        <button type="submit" class="btn" id="btnSaveNotice" data-translate="btnPublishNotice">Add Notice</button>
                     </form>
                     <p id="noticeMsg" class="msg" style="color: #138808;"></p>
                 </div>
+
+                <div class="card">
+                    <h2>Active Notices Management</h2>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>Date</th><th>Description</th><th>Actions</th></tr></thead>
+                            <tbody id="noticesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            <!-- Tab 3: Income & Expense -->
+            <!-- Tab 4: Income & Expense -->
             <div id="sec-finances" class="admin-section">
-                <div class="card" style="max-width: 700px; margin: 0 auto;">
+                <div class="card" style="max-width: 800px; margin: 0 auto 25px auto;">
                     <h2 data-translate="financeHeading">Income & Expense Records</h2>
                     <form id="financeForm">
+                        <input type="hidden" id="editFinanceId">
                         <div class="form-group">
                             <label data-translate="lblDate">Date</label>
                             <input type="date" id="finDate" required>
@@ -430,15 +450,25 @@
                             <label data-translate="lblAmount">Amount</label>
                             <input type="number" id="finAmount" required>
                         </div>
-                        <button type="submit" class="btn" data-translate="btnSaveFinance">Save Record</button>
+                        <button type="submit" class="btn" id="btnSaveFinance" data-translate="btnSaveFinance">Save Record</button>
                     </form>
                     <p id="finMsg" class="msg" style="color: #138808;"></p>
                 </div>
+
+                <div class="card">
+                    <h2>Transactions History Management</h2>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Amount</th><th>Actions</th></tr></thead>
+                            <tbody id="financesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            <!-- Tab 4: Gallery Media (ImgBB Integration) -->
+            <!-- Tab 5: Gallery Media (ImgBB Integration & Delete) -->
             <div id="sec-gallery" class="admin-section">
-                <div class="card" style="max-width: 700px; margin: 0 auto;">
+                <div class="card" style="max-width: 800px; margin: 0 auto 25px auto;">
                     <h2 data-translate="galleryHeading">Add Gallery Media</h2>
                     <form id="galleryForm">
                         <div class="form-group">
@@ -459,11 +489,21 @@
                     </form>
                     <p id="galleryMsg" class="msg" style="color: #138808;"></p>
                 </div>
+
+                <div class="card">
+                    <h2>Gallery Media Library Management</h2>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>Preview</th><th>Type</th><th>Actions</th></tr></thead>
+                            <tbody id="galleryTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            <!-- Tab 5: Members List & Add Member Form -->
+            <!-- Tab 6: Members List & Add Member Form -->
             <div id="sec-members" class="admin-section">
-                <div class="card" style="max-width: 700px; margin: 0 auto 25px auto;">
+                <div class="card" style="max-width: 800px; margin: 0 auto 25px auto;">
                     <h2 data-translate="addMemberHeading">Add New Member</h2>
                     <form id="memberForm">
                         <div class="form-group">
@@ -502,6 +542,7 @@
                                     <th data-translate="thEmail">Email Address</th>
                                     <th data-translate="thPhone">Phone Number</th>
                                     <th data-translate="thAddress">Address</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="membersTableBody"></tbody>
@@ -510,21 +551,25 @@
                 </div>
             </div>
 
-            <!-- Tab 6: Settings & Logo Management -->
+            <!-- Tab 7: Settings, Re-authentication Password & Logo -->
             <div id="sec-settings" class="admin-section">
-                <div class="card" style="max-width: 650px; margin: 0 auto;">
-                    <h2 data-translate="passHeading">Change Admin Password</h2>
+                <div class="card" style="max-width: 650px; margin: 0 auto 25px auto;">
+                    <h2>Security: Change Admin Password (Re-authentication)</h2>
                     <form id="changePasswordForm">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" id="oldPassword" required>
+                        </div>
                         <div class="form-group">
                             <label data-translate="lblNewPassword">New Password</label>
                             <input type="password" id="newPassword" required>
                         </div>
-                        <button type="submit" class="btn" data-translate="btnUpdatePassword">Update Password</button>
+                        <button type="submit" class="btn" data-translate="btnUpdatePassword">Update Password Securely</button>
                     </form>
                     <p id="passMsg" class="msg" style="color: #138808;"></p>
                 </div>
 
-                <div class="card" style="max-width: 650px; margin: 20px auto 0 auto;">
+                <div class="card" style="max-width: 650px; margin: 0 auto;">
                     <h2 data-translate="logoHeading">Website / Portal Logo Management</h2>
                     <form id="logoForm">
                         <div class="form-group">
@@ -542,7 +587,6 @@
 </div>
 
 <script>
-    // Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyCg5ttOQHcdqupwlD9lDam6IFfh6P1mdos",
         authDomain: "swadeshjagaran.firebaseapp.com",
@@ -556,19 +600,15 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // User's ImgBB API Key Integrated
     const IMGBB_API_KEY = "1ac8ffb755062be25a1eb4b957f12e09";
 
-    // Helper Function to Upload Image directly to ImgBB
     async function uploadToImgBB(file) {
         const formData = new FormData();
         formData.append("image", file);
-        
         const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
             method: "POST",
             body: formData
         });
-        
         const data = await response.json();
         if (data && data.success) {
             return data.data.url;
@@ -577,7 +617,6 @@
         }
     }
 
-    // Language Dictionary
     let currentLang = 'en';
     const translations = {
         en: {
@@ -587,7 +626,7 @@
             menuFinance: "Income & Expense",
             menuGallery: "Gallery Media",
             menuMembers: "Members List",
-            menuSettings: "Settings & Logo",
+            menuSettings: "Settings & Security",
             btnLogout: "Logout",
             loginHeading: "Admin Login",
             lblEmail: "Admin ID / Username",
@@ -622,7 +661,7 @@
             passHeading: "Change Admin Password",
             lblNewPassword: "New Password",
             btnUpdatePassword: "Update Password",
-            passSuccess: "Password updated successfully!",
+            passSuccess: "Password updated securely with re-authentication!",
             logoHeading: "Portal Logo Management",
             lblLogoFile: "Select Logo Image from Device",
             btnUpdateLogo: "Upload & Update Logo",
@@ -633,69 +672,69 @@
             thEmail: "Email Address",
             thPhone: "Phone Number",
             thAddress: "Address",
-            noticeSuccess: "Notice published successfully!",
+            noticeSuccess: "Notice saved successfully!",
             financeSuccess: "Record saved successfully!",
-            gallerySuccess: "Media uploaded and added successfully!",
-            memberSuccess: "Member added successfully with photo!",
+            gallerySuccess: "Media uploaded successfully!",
+            memberSuccess: "Member added successfully!",
             uploadingMsg: "Uploading to ImgBB... Please wait."
         },
         bn: {
-            adminPortalTitle: "🇮🇳 অ্যাডমিন কন্ট্রোল প্যানেল",
+            adminPortalTitle: "🇮🇳 স্বদেশ জাগরণ কন্ট্রোল প্যানেল",
             menuDashboard: "ড্যাশবোর্ড",
             menuNotice: "নোটিশ প্রকাশ",
-            menuFinance: "আয় ও ব্যয়",
-            menuGallery: "গ্যালারি মিডিয়া",
-            menuMembers: "সদস্যদের তালিকা",
-            menuSettings: "সেটিংস ও লোগো",
+            menuFinance: "আয় ও খরচ",
+            menuGallery: "গ্যালারি মিডিয়া",
+            menuMembers: "সদস্য তালিকা",
+            menuSettings: "সেটিংস ও নিরাপত্তা",
             btnLogout: "লগআউট",
             loginHeading: "অ্যাডমিন লগইন",
             lblEmail: "অ্যাডমিন আইডি / ইউজারনেম",
-            lblPassword: "পাসওয়ার্ড",
+            lblPassword: "পাসওয়ার্ড",
             btnLogin: "লগইন করুন",
-            widgetClockTitle: "লাইভ সময়",
+            widgetClockTitle: "লাইভ সময়",
             widgetVisitorTitle: "মোট ভিজিটর",
             widgetMemberTitle: "মোট সদস্য",
             welcomeAdmin: "অ্যাডমিন ড্যাশবোর্ডে স্বাগতম",
-            welcomeSub: "নোটিশ, হিসাব, গ্যালারি এবং সদস্যদের তালিকা পরিচালনা করতে বাম পাশের মেনু থেকে যেকোনো একটি অপশন বেছে নিন।",
+            welcomeSub: "নোটিশ, হিসাব, গ্যালারি এবং সদস্য ব্যবস্থাপনা করতে বামের মেনু থেকে যেকোনো একটি অপশন বেছে নিন।",
             noticeHeading: "নোটিশ প্রকাশ করুন",
             lblDate: "তারিখ",
             lblNoticeText: "নোটিশের বিবরণ",
-            btnPublishNotice: "নোটিশ যোগ করুন",
-            financeHeading: "আয় ও ব্যয়ের হিসাব",
+            btnPublishNotice: "নোটিশ সেভ করুন",
+            financeHeading: "আয় ও খরচের হিসাব",
             lblDescription: "বিবরণ",
-            lblType: "খাতের ধরণ",
-            optIncome: "আয় (Income)",
-            optExpense: "ব্যয় (Expense)",
+            lblType: "লেনদেনের ধরন",
+            optIncome: "আয় (Income)",
+            optExpense: "খরচ (Expense)",
             lblAmount: "টাকার পরিমাণ",
-            btnSaveFinance: "হিসাব সংরক্ষণ করুন",
-            galleryHeading: "গ্যালারি মিডিয়া যোগ করুন",
-            lblMediaType: "ফাইলের ধরণ",
+            btnSaveFinance: "হিসাব সেভ করুন",
+            galleryHeading: "গ্যালারি মিডিয়া যুক্ত করুন",
+            lblMediaType: "মিডিয়ার ধরন",
             optImage: "ছবি (Image)",
             optVideo: "ভিডিও (Video)",
-            lblMediaFile: "মিডিয়া আপলোড করুন (ফাইল সিলেক্ট বা Drag & Drop)",
-            dropPrompt: "এখানে ফাইল টেনে আনুন বা ক্লিক করে ফাইল খুঁজুন",
-            btnAddToGallery: "গ্যালারিতে যুক্ত করুন",
+            lblMediaFile: "ফাইল আপলোড করুন (ড্র্যাগ বা ব্রাউজ করুন)",
+            dropPrompt: "এখানে ফাইল ড্র্যাগ করুন অথবা ক্লিক করে ব্রাউজ করুন",
+            btnAddToGallery: "গ্যালারিতে যোগ করুন",
             addMemberHeading: "নতুন সদস্য যোগ করুন",
             lblMemberPhoto: "সদস্যের ছবি",
-            btnSaveMember: "সদস্য যুক্ত করুন",
-            passHeading: "অ্যাডমিন পাসওয়ার্ড পরিবর্তন করুন",
-            lblNewPassword: "নতুন পাসওয়ার্ড",
-            btnUpdatePassword: "পাসওয়ার্ড আপডেট করুন",
-            passSuccess: "পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!",
-            logoHeading: "পোর্টাল লোগো ম্যানেজমেন্ট",
+            btnSaveMember: "সদস্য যোগ করুন",
+            passHeading: "পাসওয়ার্ড পরিবর্তন করুন",
+            lblNewPassword: "নতুন পাসওয়ার্ড",
+            btnUpdatePassword: "পাসওয়ার্ড আপডেট করুন",
+            passSuccess: "নিরাপত্তার সাথে পাসওয়ার্ড আপডেট করা হয়েছে!",
+            logoHeading: "লোগো ম্যানেজমেন্ট",
             lblLogoFile: "ডিভাইস থেকে লোগো ছবি সিলেক্ট করুন",
-            btnUpdateLogo: "লোগো আপলোড ও আপডেট করুন",
-            logoSuccess: "লোগো সফলভাবে আপলোড এবং আপডেট হয়েছে!",
-            membersHeading: "নিবন্ধিত সদস্যদের তালিকা (মোট: ",
+            btnUpdateLogo: "আপলোড ও আপডেট লোগো",
+            logoSuccess: "লোগো সফলভাবে আপডেট হয়েছে!",
+            membersHeading: "নিবন্ধিত সদস্য তালিকা (মোট: ",
             thPhoto: "ছবি",
             thName: "সদস্যের নাম",
             thEmail: "ইমেইল ঠিকানা",
             thPhone: "ফোন নম্বর",
             thAddress: "ঠিকানা",
-            noticeSuccess: "নোটিশ সফলভাবে প্রকাশিত হয়েছে!",
-            financeSuccess: "হিসাব সফলভাবে সংরক্ষণ করা হয়েছে!",
-            gallerySuccess: "মিডিয়া সফলভাবে আপলোড এবং যুক্ত করা হয়েছে!",
-            memberSuccess: "সদস্যের ছবিসহ সফলভাবে তালিকাভুক্ত করা হয়েছে!",
+            noticeSuccess: "নোটিশ সফলভাবে সংরক্ষিত হয়েছে!",
+            financeSuccess: "হিসাব সফলভাবে সংরক্ষিত হয়েছে!",
+            gallerySuccess: "মিডিয়া সফলভাবে আপলোড হয়েছে!",
+            memberSuccess: "সদস্য সফলভাবে যোগ হয়েছে!",
             uploadingMsg: "আপলোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।"
         }
     };
@@ -717,7 +756,6 @@
                 }
             }
         });
-        
         const fileInput = document.getElementById("galleryFile");
         if (fileInput && !fileInput.files.length) {
             const dropPrompt = document.getElementById("dropZonePromptText");
@@ -725,7 +763,6 @@
         }
     }
 
-    // Live Digital Clock Function
     function startLiveClock() {
         function updateClock() {
             const now = new Date();
@@ -735,38 +772,37 @@
             const ampm = hours >= 12 ? 'PM' : 'AM';
             hours = hours % 12;
             hours = hours ? hours : 12;
-            const timeString = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
             const clockEl = document.getElementById('liveClockDisplay');
-            if(clockEl) clockEl.innerText = timeString;
+            if(clockEl) clockEl.innerText = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
         }
         updateClock();
         setInterval(updateClock, 1000);
     }
 
-    // Tab Switching Function
     function switchTab(tabId, el) {
         document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active-section'));
         const target = document.getElementById('sec-' + tabId);
         if(target) target.classList.add('active-section');
-
         document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
         if(el) el.classList.add('active');
+
+        if(tabId === 'visitors') loadVisitorsLogs();
+        if(tabId === 'notices') loadNoticesList();
+        if(tabId === 'finances') loadFinancesList();
+        if(tabId === 'gallery') loadGalleryList();
+        if(tabId === 'members') loadMembersList();
     }
 
-    // Admin Login Handler with Auto Email Conversion
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         e.preventDefault();
         let username = document.getElementById('adminUsername').value.trim();
         const password = document.getElementById('adminPassword').value;
-
         if (username.toLowerCase() === 'admin' && !username.includes('@')) {
             username = 'admin@swadeshjagaran.com';
         }
-
         auth.signInWithEmailAndPassword(username, password)
             .then((userCredential) => {
                 document.getElementById('loginMsg').innerText = "";
-                checkAuthState(userCredential.user);
             })
             .catch((error) => {
                 document.getElementById('loginMsg').innerText = "Login Failed: " + error.message;
@@ -774,9 +810,7 @@
     });
 
     function logoutAdmin() {
-        auth.signOut().then(() => {
-            location.reload();
-        });
+        auth.signOut().then(() => location.reload());
     }
 
     auth.onAuthStateChanged((user) => {
@@ -797,89 +831,132 @@
         }
     });
 
-    function checkAuthState(user) {
-        if (user) {
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('appSidebar').classList.remove('hidden');
-            document.getElementById('appHeader').classList.remove('hidden');
-            document.getElementById('dashboardSection').classList.remove('hidden');
-        }
-    }
-
     function loadPortalLogo() {
         db.collection("settings").doc("portalConfig").get().then((doc) => {
             if(doc.exists && doc.data().logoUrl) {
-                const url = doc.data().logoUrl;
                 const logoImg = document.getElementById('sidebarLogoImg');
-                if(logoImg) logoImg.src = url;
+                if(logoImg) logoImg.src = doc.data().logoUrl;
             }
         });
     }
 
     function loadVisitorsCount() {
-        db.collection("stats").doc("visitors").get().then((doc) => {
+        db.collection("visitors").get().then((snap) => {
             const visitorDisplay = document.getElementById('visitorCountDisplay');
-            if(doc.exists && visitorDisplay) {
-                visitorDisplay.innerText = doc.data().count || 0;
-            } else if(visitorDisplay) {
-                visitorDisplay.innerText = "0";
-            }
+            if(visitorDisplay) visitorDisplay.innerText = snap.size;
         });
     }
 
     function loadDashboardStats() {
         db.collection("members").get().then((snapshot) => {
-            const count = snapshot.size;
             const memberDisplay = document.getElementById('dashMemberCountDisplay');
-            if(memberDisplay) memberDisplay.innerText = count;
+            if(memberDisplay) memberDisplay.innerText = snapshot.size;
         });
     }
 
+    // Visitor Logs Loader
+    function loadVisitorsLogs() {
+        db.collection("visitors").orderBy("timestamp", "desc").limit(50).get().then((snap) => {
+            let html = "";
+            snap.forEach(doc => {
+                const d = doc.data();
+                html += `<tr><td>${d.timestamp ? new Date(d.timestamp.toDate()).toLocaleString() : 'N/A'}</td><td>${d.ip || 'Unknown'}</td><td>${d.country || 'Local/Unknown'}</td></tr>`;
+            });
+            document.getElementById('visitorTableBody').innerHTML = html;
+        });
+    }
+
+    // Notices Management (Add & Edit)
     document.getElementById('noticeForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const date = document.getElementById('noticeDate').value;
-        const text = document.getElementById('noticeText').value;
+        const id = document.getElementById('editNoticeId').value;
+        const data = {
+            date: document.getElementById('noticeDate').value,
+            text: document.getElementById('noticeText').value
+        };
         const msg = document.getElementById('noticeMsg');
 
-        db.collection("notices").add({
-            date: date,
-            text: text,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
+        const promise = id ? db.collection("notices").doc(id).update(data) : db.collection("notices").add({...data, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+        
+        promise.then(() => {
             msg.innerText = translations[currentLang].noticeSuccess;
             document.getElementById('noticeForm').reset();
+            document.getElementById('editNoticeId').value = "";
+            document.getElementById('btnSaveNotice').innerText = translations[currentLang].btnPublishNotice;
+            loadNoticesList();
             setTimeout(() => msg.innerText = "", 4000);
-        }).catch(err => {
-            msg.style.color = "#d32f2f";
-            msg.innerText = "Error: " + err.message;
         });
     });
 
+    function loadNoticesList() {
+        db.collection("notices").orderBy("date", "desc").get().then((snap) => {
+            let html = "";
+            snap.forEach(doc => {
+                const d = doc.data();
+                html += `<tr><td>${d.date}</td><td>${d.text}</td><td>
+                    <button class="btn btn-warning" onclick="editNotice('${doc.id}', '${d.date}', '${encodeURIComponent(d.text)}')">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteDoc('notices', '${doc.id}', loadNoticesList)">Delete</button>
+                </td></tr>`;
+            });
+            document.getElementById('noticesTableBody').innerHTML = html;
+        });
+    }
+
+    function editNotice(id, date, text) {
+        document.getElementById('editNoticeId').value = id;
+        document.getElementById('noticeDate').value = date;
+        document.getElementById('noticeText').value = decodeURIComponent(text);
+        document.getElementById('btnSaveNotice').innerText = "Update Notice";
+    }
+
+    // Finances Management (Add & Edit)
     document.getElementById('financeForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const date = document.getElementById('finDate').value;
-        const desc = document.getElementById('finDesc').value;
-        const type = document.getElementById('finType').value;
-        const amount = parseFloat(document.getElementById('finAmount').value);
+        const id = document.getElementById('editFinanceId').value;
+        const data = {
+            date: document.getElementById('finDate').value,
+            description: document.getElementById('finDesc').value,
+            type: document.getElementById('finType').value,
+            amount: parseFloat(document.getElementById('finAmount').value)
+        };
         const msg = document.getElementById('finMsg');
 
-        db.collection("finances").add({
-            date: date,
-            description: desc,
-            type: type,
-            amount: amount,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
+        const promise = id ? db.collection("finances").doc(id).update(data) : db.collection("finances").add({...data, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+
+        promise.then(() => {
             msg.innerText = translations[currentLang].financeSuccess;
             document.getElementById('financeForm').reset();
+            document.getElementById('editFinanceId').value = "";
+            document.getElementById('btnSaveFinance').innerText = translations[currentLang].btnSaveFinance;
+            loadFinancesList();
             setTimeout(() => msg.innerText = "", 4000);
-        }).catch(err => {
-            msg.style.color = "#d32f2f";
-            msg.innerText = "Error: " + err.message;
         });
     });
 
-    // Gallery Form Handler (ImgBB Upload)
+    function loadFinancesList() {
+        db.collection("finances").orderBy("date", "desc").get().then((snap) => {
+            let html = "";
+            snap.forEach(doc => {
+                const d = doc.data();
+                html += `<tr><td>${d.date}</td><td>${d.description}</td><td>${d.type}</td><td>₹${d.amount}</td><td>
+                    <button class="btn btn-warning" onclick="editFinance('${doc.id}', '${d.date}', '${encodeURIComponent(d.description)}', '${d.type}', ${d.amount})">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteDoc('finances', '${doc.id}', loadFinancesList)">Delete</button>
+                </td></tr>`;
+            });
+            document.getElementById('financesTableBody').innerHTML = html;
+        });
+    }
+
+    function editFinance(id, date, desc, type, amount) {
+        document.getElementById('editFinanceId').value = id;
+        document.getElementById('finDate').value = date;
+        document.getElementById('finDesc').value = decodeURIComponent(desc);
+        document.getElementById('finType').value = type;
+        document.getElementById('finAmount').value = amount;
+        document.getElementById('btnSaveFinance').innerText = "Update Record";
+    }
+
+    // Gallery Management (Upload & Delete)
     document.getElementById('galleryForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const type = document.getElementById('galleryType').value;
@@ -888,24 +965,19 @@
         const btn = document.getElementById('btnUploadGallery');
 
         if(fileInput.files.length === 0) return;
-        const file = fileInput.files[0];
         btn.disabled = true;
-        msg.style.color = "#1b4d3e";
         msg.innerText = translations[currentLang].uploadingMsg;
 
         try {
-            const downloadURL = await uploadToImgBB(file);
+            const url = await uploadToImgBB(fileInput.files[0]);
             await db.collection("gallery").add({
-                type: type,
-                url: downloadURL,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                type, url, createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-
-            msg.style.color = "#138808";
             msg.innerText = translations[currentLang].gallerySuccess;
             document.getElementById('galleryForm').reset();
             document.getElementById('dropZonePromptText').innerText = translations[currentLang].dropPrompt;
             btn.disabled = false;
+            loadGalleryList();
             setTimeout(() => msg.innerText = "", 4000);
         } catch (err) {
             msg.style.color = "#d32f2f";
@@ -914,7 +986,20 @@
         }
     });
 
-    // Member Form Handler (ImgBB Upload)
+    function loadGalleryList() {
+        db.collection("gallery").orderBy("createdAt", "desc").get().then((snap) => {
+            let html = "";
+            snap.forEach(doc => {
+                const d = doc.data();
+                html += `<tr><td><img src="${d.url}" class="member-avatar"></td><td>${d.type}</td><td>
+                    <button class="btn btn-danger" onclick="deleteDoc('gallery', '${doc.id}', loadGalleryList)">Delete</button>
+                </td></tr>`;
+            });
+            document.getElementById('galleryTableBody').innerHTML = html;
+        });
+    }
+
+    // Members Management (Add & Delete)
     document.getElementById('memberForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const name = document.getElementById('memberName').value;
@@ -926,23 +1011,14 @@
         const btn = document.getElementById('btnSaveMember');
 
         if(photoInput.files.length === 0) return;
-        let file = photoInput.files[0];
         btn.disabled = true;
-        msg.style.color = "#1b4d3e";
         msg.innerText = translations[currentLang].uploadingMsg;
 
         try {
-            const downloadURL = await uploadToImgBB(file);
+            const photoUrl = await uploadToImgBB(photoInput.files[0]);
             await db.collection("members").add({
-                name: name,
-                email: email,
-                phone: phone,
-                address: address,
-                photoUrl: downloadURL,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                name, email, phone, address, photoUrl, createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-
-            msg.style.color = "#138808";
             msg.innerText = translations[currentLang].memberSuccess;
             document.getElementById('memberForm').reset();
             btn.disabled = false;
@@ -961,8 +1037,7 @@
             const tbody = document.getElementById('membersTableBody');
             const totalCountEl = document.getElementById('totalMembersCount');
             if(tbody) tbody.innerHTML = "";
-            let count = snapshot.size;
-            if(totalCountEl) totalCountEl.innerText = count;
+            if(totalCountEl) totalCountEl.innerText = snapshot.size;
 
             snapshot.forEach(doc => {
                 const data = doc.data();
@@ -974,6 +1049,7 @@
                             <td>${data.email || ''}</td>
                             <td>${data.phone || ''}</td>
                             <td>${data.address || ''}</td>
+                            <td><button class="btn btn-danger" onclick="deleteDoc('members', '${doc.id}', loadMembersList)">Delete</button></td>
                         </tr>
                     `;
                 }
@@ -981,25 +1057,37 @@
         });
     }
 
-    document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+    // Generic Delete Helper
+    function deleteDoc(collection, id, callback) {
+        if(confirm("Are you sure you want to delete this item?")) {
+            db.collection(collection).doc(id).delete().then(() => callback());
+        }
+    }
+
+    // Re-authentication Password Update
+    document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        const newPassword = document.getElementById('newPassword').value;
+        const oldPass = document.getElementById('oldPassword').value;
+        const newPass = document.getElementById('newPassword').value;
         const msg = document.getElementById('passMsg');
         const user = auth.currentUser;
 
         if (user) {
-            user.updatePassword(newPassword).between ? "" : user.updatePassword(newPassword).then(() => {
+            try {
+                const credential = firebase.auth.EmailAuthProvider.credential(user.email, oldPass);
+                await user.reauthenticateWithCredential(credential);
+                await user.updatePassword(newPass);
                 msg.innerText = translations[currentLang].passSuccess;
                 document.getElementById('changePasswordForm').reset();
                 setTimeout(() => msg.innerText = "", 4000);
-            }).catch((error) => {
+            } catch (error) {
                 msg.style.color = "#d32f2f";
                 msg.innerText = "Error: " + error.message;
-            });
+            }
         }
     });
 
-    // Logo Management Form Handler (ImgBB Upload)
+    // Logo Management
     document.getElementById('logoForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const logoFileInput = document.getElementById('logoFileInput');
@@ -1007,18 +1095,12 @@
         const btn = document.getElementById('btnUpdateLogo');
 
         if(logoFileInput.files.length === 0) return;
-        const file = logoFileInput.files[0];
         btn.disabled = true;
-        msg.style.color = "#1b4d3e";
         msg.innerText = translations[currentLang].uploadingMsg;
 
         try {
-            const downloadURL = await uploadToImgBB(file);
-            await db.collection("settings").doc("portalConfig").set({
-                logoUrl: downloadURL
-            }, { merge: true });
-
-            msg.style.color = "#138808";
+            const logoUrl = await uploadToImgBB(logoFileInput.files[0]);
+            await db.collection("settings").doc("portalConfig").set({ logoUrl }, { merge: true });
             msg.innerText = translations[currentLang].logoSuccess;
             document.getElementById('logoForm').reset();
             btn.disabled = false;
@@ -1035,15 +1117,8 @@
     if(dropZone) {
         const fileInput = document.getElementById("galleryFile");
         dropZone.addEventListener("click", () => fileInput.click());
-        dropZone.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            dropZone.classList.add("drop-zone--over");
-        });
-        ["dragleave", "dragend"].forEach(type => {
-            dropZone.addEventListener(type, () => {
-                dropZone.classList.remove("drop-zone--over");
-            });
-        });
+        dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("drop-zone--over"); });
+        ["dragleave", "dragend"].forEach(type => { dropZone.addEventListener(type, () => dropZone.classList.remove("drop-zone--over")); });
         dropZone.addEventListener("drop", (e) => {
             e.preventDefault();
             if (e.dataTransfer.files.length) {
@@ -1053,9 +1128,7 @@
             dropZone.classList.remove("drop-zone--over");
         });
         fileInput.addEventListener("change", () => {
-            if (fileInput.files.length) {
-                document.getElementById("dropZonePromptText").innerText = fileInput.files[0].name;
-            }
+            if (fileInput.files.length) document.getElementById("dropZonePromptText").innerText = fileInput.files[0].name;
         });
     }
 
