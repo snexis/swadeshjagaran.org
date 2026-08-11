@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="bn" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -109,10 +109,12 @@
     </section>
 
     <!-- Gallery Section -->
-    <section id="gallery" class="py-20 bg-gray-100 border-y border-gray-300">
+    <section id="gallery" class="py-20 bg-gray-100 border-y border-gray-300 my-12">
         <div class="max-w-7xl mx-auto px-6">
-            <h3 class="text-4xl font-black mb-4 text-center text-gray-900" id="galleryTitle">আমাদের গ্যালারি</h3>
-            <p class="text-center text-gray-600 mb-12" id="gallerySub">আমাদের বিভিন্ন প্রজেক্ট ও অনুষ্ঠানের মুহূর্তসমূহ</p>
+            <div class="text-center mb-12">
+                <h3 class="text-4xl font-black mb-2 text-gray-900" id="galleryTitle">আমাদের গ্যালারি</h3>
+                <p class="text-gray-600" id="gallerySub">আমাদের বিভিন্ন প্রজেক্ট ও অনুষ্ঠানের মুহূর্তসমূহ</p>
+            </div>
             <div id="publicGalleryGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <!-- Dynamically loaded from Admin -->
             </div>
@@ -120,7 +122,7 @@
     </section>
 
     <!-- Accounts & Transparency Section -->
-    <section id="accounts" class="py-20 max-w-7xl mx-auto px-6">
+    <section id="accounts" class="py-20 max-w-7xl mx-auto px-6 my-12">
         <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
             <div>
                 <h3 class="text-4xl font-black text-gray-900" id="accTitle">আর্থিক স্বচ্ছতা ও হিসাব</h3>
@@ -150,32 +152,38 @@
         <!-- Tally Table -->
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden border mb-16">
             <div class="bg-gray-900 text-white p-4 font-bold text-lg" id="tableHeaderTitle">লেনদেন ও হিসাবের বিবরণী</div>
-            <table class="w-full border-collapse">
-                <thead>
-                    <tr class="bg-gray-800 text-white text-sm">
-                        <th class="p-4 border" id="thDate">তারিখ</th>
-                        <th class="p-4 border" id="thDesc">বিবরণ</th>
-                        <th class="p-4 border text-right" id="thIncome">আয় (জমা)</th>
-                        <th class="p-4 border text-right" id="thExpense">ব্যয় (খরচ)</th>
-                        <th class="p-4 border text-right" id="thBalance">ব্যালেন্স</th>
-                    </tr>
-                </thead>
-                <tbody id="publicFinanceBody">
-                    <!-- Loaded via JS -->
-                </tbody>
-            </table>
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-800 text-white text-sm">
+                            <th class="p-4 border text-center" id="thDate">তারিখ</th>
+                            <th class="p-4 border text-left" id="thDesc">বিবরণ</th>
+                            <th class="p-4 border text-right" id="thIncome">আয় (জমা)</th>
+                            <th class="p-4 border text-right" id="thExpense">ব্যয় (খরচ)</th>
+                            <th class="p-4 border text-right" id="thBalance">ব্যালেন্স</th>
+                        </tr>
+                    </thead>
+                    <tbody id="publicFinanceBody">
+                        <!-- Loaded via JS -->
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Donators Section -->
-        <h3 class="text-3xl font-black mb-8 text-center text-gray-900" id="donorTitle">আমাদের সম্মানিত ডোনারবৃন্দ</h3>
-        <div id="approvedDonorsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-            <!-- Loaded via Admin Approval -->
+        <div class="mb-16">
+            <h3 class="text-3xl font-black mb-8 text-center text-gray-900" id="donorTitle">আমাদের সম্মানিত ডোনারবৃন্দ</h3>
+            <div id="approvedDonorsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Loaded via Admin Approval -->
+            </div>
         </div>
 
         <!-- Approved Members Section -->
-        <h3 class="text-3xl font-black mb-8 text-center text-gray-900" id="memberTitle">আমাদের অনুমোদিত সদস্যবৃন্দ</h3>
-        <div id="approvedMembersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Loaded via Admin Approval -->
+        <div>
+            <h3 class="text-3xl font-black mb-8 text-center text-gray-900" id="memberTitle">আমাদের অনুমোদিত সদস্যবৃন্দ</h3>
+            <div id="approvedMembersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Loaded via Admin Approval -->
+            </div>
         </div>
     </section>
 
@@ -190,7 +198,7 @@
 
     <!-- Membership Modal with WhatsApp OTP -->
     <div id="membershipModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md relative border-t-8 border-orange-600">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md relative border-t-8 border-orange-600 m-4">
             <button onclick="closeMembershipModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
             <h3 class="text-2xl font-black mb-2 text-gray-900" id="modalRegTitle">সদস্যপদ রেজিস্ট্রেশন ফরম</h3>
             <p class="text-sm text-gray-600 mb-6" id="modalRegSub">সঠিক তথ্য দিয়ে ফরমটি পূরণ করুন। WhatsApp OTP ভেরিফিকেশন প্রয়োজন।</p>
@@ -215,7 +223,7 @@
 
     <!-- Donation Modal -->
     <div id="donationModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md relative border-t-8 border-green-700">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md relative border-t-8 border-green-700 m-4">
             <button onclick="closeDonationModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
             <h3 class="text-2xl font-black mb-2 text-gray-900" id="modalDonTitle">ডোনেশন বা সহযোগিতা ফরম</h3>
             <p class="text-sm text-gray-600 mb-6" id="modalDonSub">স্বদেশ জাগরণের কার্যক্রমে আপনার আর্থিক সহযোগিতা প্রদান করুন।</p>
