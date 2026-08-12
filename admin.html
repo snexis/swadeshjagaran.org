@@ -1,1 +1,832 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্বদেশ জাগরণ - অ্যাডমিন প্যানেল</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Browser Image Compression -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
 
+    <!-- Firebase v10 Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        /* Security & Screenshot Prevention */
+        @media print { html, body { display: none !important; } }
+        body { -webkit-user-select: none; -ms-user-select: none; user-select: none; transition: background 0.5s ease; }
+        img { pointer-events: none; -webkit-user-drag: none; user-select: none; }
+
+        /* Custom Scrollbar for clean look */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* Tally Style Table */
+        .tally-table th { background-color: #2c3e50; color: #ffffff; border: 1px solid #34495e; padding: 10px; text-align: center; }
+        .tally-table td { border: 1px solid #bdc3c7; padding: 8px; color: #2c3e50; }
+        .tally-table tr:nth-child(even) { background-color: #f9f9f9; }
+        .tally-table tr:hover { background-color: #f1c40f; color: #000; }
+        .tally-amount { text-align: right; font-family: monospace; font-size: 1.1rem; }
+        
+        .hidden-section { display: none !important; }
+        
+        /* Dynamic Background Layer */
+        #dynamicBg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-size: cover; background-position: center; opacity: 0.1;
+        }
+    </style>
+</head>
+<body id="mainBody" class="font-sans bg-gray-50 text-gray-800">
+
+    <div id="dynamicBg"></div>
+
+    <!-- Universal Language Toggle (Top Right) -->
+    <div class="fixed top-4 right-4 z-50 bg-white p-2 rounded shadow-lg border-2 border-orange-400 flex gap-2">
+        <button onclick="changeLanguage('bn')" class="px-3 py-1 bg-green-600 text-white rounded font-bold hover:bg-green-700 transition">বাংলা</button>
+        <button onclick="changeLanguage('en')" class="px-3 py-1 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 transition">ENG</button>
+    </div>
+
+    <!-- Login Section (Patriotic Theme: Orange, White, Green) -->
+    <div id="loginSection" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-200 via-white to-green-200">
+        <div class="bg-white p-10 rounded-xl shadow-2xl w-full max-w-md text-center border-t-8 border-orange-500 border-b-8 border-green-600 relative overflow-hidden">
+            <!-- Ashoka Chakra Watermark -->
+            <i class="fa-solid fa-dharmachakra absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-9xl text-blue-100 opacity-50 z-0"></i>
+            
+            <h2 class="text-3xl font-bold mb-2 text-gray-800 relative z-10 lang-text" data-bn="স্বদেশ জাগরণ" data-en="Swadesh Jagaran">স্বদেশ জাগরণ</h2>
+            <h3 class="text-xl font-semibold mb-8 text-blue-700 relative z-10 lang-text" data-bn="নিরাপদ অ্যাডমিন প্যানেল" data-en="Secure Admin Panel">নিরাপদ অ্যাডমিন প্যানেল</h3>
+            
+            <div class="relative z-10">
+                <input type="text" id="adminCode" class="w-full p-4 mb-4 border-2 border-gray-300 rounded focus:outline-none focus:border-orange-500 font-bold" data-placeholder-bn="সিক্রেট কোড দিন" data-placeholder-en="Enter Secret Code" placeholder="সিক্রেট কোড দিন">
+                
+                <input type="password" id="adminPassword" class="w-full p-4 mb-6 border-2 border-gray-300 rounded focus:outline-none focus:border-green-600 font-bold" data-placeholder-bn="পাসওয়ার্ড দিন" data-placeholder-en="Enter Password" placeholder="পাসওয়ার্ড দিন">
+                
+                <button onclick="loginAdmin()" class="w-full bg-blue-700 text-white p-4 rounded text-lg font-bold hover:bg-blue-800 transition duration-300 shadow-lg lang-text" data-bn="লগইন করুন" data-en="Login">লগইন করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Section -->
+    <div id="dashboardSection" class="hidden-section flex h-screen overflow-hidden bg-gray-100/90 backdrop-blur-sm">
+        
+        <!-- Sidebar Navigation -->
+        <div class="w-72 bg-gray-900 text-white flex flex-col shadow-2xl border-r border-gray-700 relative">
+            <div class="p-6 bg-gray-950 text-center border-b border-orange-500">
+                <h2 class="font-bold text-2xl tracking-wide lang-text text-orange-400" data-bn="স্বদেশ জাগরণ" data-en="Swadesh Jagaran">স্বদেশ জাগরণ</h2>
+                <p class="text-xs text-green-400 mt-1 lang-text" data-bn="কন্ট্রোল রুম" data-en="Control Room">কন্ট্রোল রুম</p>
+            </div>
+            
+            <nav class="flex-1 overflow-y-auto pt-4 pb-20">
+                <!-- Dropdown / Toggle Menu Structure -->
+                <div class="mb-2">
+                    <button onclick="toggleMenu('menu-finance')" class="w-full flex justify-between items-center p-4 hover:bg-gray-800 focus:bg-gray-800 transition border-l-4 border-transparent hover:border-orange-500">
+                        <span class="font-semibold"><i class="fa-solid fa-file-invoice-dollar mr-3 text-orange-400"></i><span class="lang-text" data-bn="হিসাবনিকাশ (Finance)" data-en="Accounts & Finance">হিসাবনিকাশ (Finance)</span></span>
+                        <i class="fa-solid fa-chevron-down text-sm text-gray-400"></i>
+                    </button>
+                    <div id="menu-finance" class="hidden-section bg-gray-800 pl-10 pr-4 py-2">
+                        <button onclick="switchTab('tab-finance')" class="w-full text-left py-2 hover:text-orange-400 transition lang-text text-sm" data-bn="আর্থিক বিবরণী দেখুন" data-en="View Statements">আর্থিক বিবরণী দেখুন</button>
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <button onclick="toggleMenu('menu-cms')" class="w-full flex justify-between items-center p-4 hover:bg-gray-800 focus:bg-gray-800 transition border-l-4 border-transparent hover:border-blue-500">
+                        <span class="font-semibold"><i class="fa-solid fa-sliders mr-3 text-blue-400"></i><span class="lang-text" data-bn="ওয়েবসাইট কন্ট্রোল (CMS)" data-en="Website Control (CMS)">ওয়েবসাইট কন্ট্রোল (CMS)</span></span>
+                        <i class="fa-solid fa-chevron-down text-sm text-gray-400"></i>
+                    </button>
+                    <div id="menu-cms" class="hidden-section bg-gray-800 pl-10 pr-4 py-2">
+                        <button onclick="switchTab('tab-cms-layout')" class="w-full text-left py-2 hover:text-blue-400 transition lang-text text-sm border-b border-gray-700 mb-1" data-bn="সেকশন অন/অফ" data-en="Toggle Sections">সেকশন অন/অফ</button>
+                        <button onclick="switchTab('tab-cms-theme')" class="w-full text-left py-2 hover:text-blue-400 transition lang-text text-sm" data-bn="থিম ও কালার সেটিং" data-en="Theme & Colors">থিম ও কালার সেটিং</button>
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <button onclick="toggleMenu('menu-gallery')" class="w-full flex justify-between items-center p-4 hover:bg-gray-800 focus:bg-gray-800 transition border-l-4 border-transparent hover:border-pink-500">
+                        <span class="font-semibold"><i class="fa-solid fa-images mr-3 text-pink-400"></i><span class="lang-text" data-bn="ডিজিটাল গ্যালারি" data-en="Digital Gallery">ডিজিটাল গ্যালারি</span></span>
+                        <i class="fa-solid fa-chevron-down text-sm text-gray-400"></i>
+                    </button>
+                    <div id="menu-gallery" class="hidden-section bg-gray-800 pl-10 pr-4 py-2">
+                        <button onclick="switchTab('tab-gallery')" class="w-full text-left py-2 hover:text-pink-400 transition lang-text text-sm" data-bn="ছবি আপলোড ও পরিচালনা" data-en="Upload & Manage Photos">ছবি আপলোড ও পরিচালনা</button>
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <button onclick="toggleMenu('menu-security')" class="w-full flex justify-between items-center p-4 hover:bg-gray-800 focus:bg-gray-800 transition border-l-4 border-transparent hover:border-red-500">
+                        <span class="font-semibold"><i class="fa-solid fa-shield-halved mr-3 text-red-400"></i><span class="lang-text" data-bn="নিরাপত্তা ও ফায়ারওয়াল" data-en="Security & Firewall">নিরাপত্তা ও ফায়ারওয়াল</span></span>
+                        <i class="fa-solid fa-chevron-down text-sm text-gray-400"></i>
+                    </button>
+                    <div id="menu-security" class="hidden-section bg-gray-800 pl-10 pr-4 py-2">
+                        <button onclick="switchTab('tab-security')" class="w-full text-left py-2 hover:text-red-400 transition lang-text text-sm" data-bn="ভিজিটর ট্র্যাকিং ও আইপি ব্লক" data-en="Visitor Tracking & IP Block">ভিজিটর ট্র্যাকিং ও আইপি ব্লক</button>
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <button onclick="toggleMenu('menu-settings')" class="w-full flex justify-between items-center p-4 hover:bg-gray-800 focus:bg-gray-800 transition border-l-4 border-transparent hover:border-green-500">
+                        <span class="font-semibold"><i class="fa-solid fa-gear mr-3 text-green-400"></i><span class="lang-text" data-bn="অ্যাডমিন সেটিংস" data-en="Admin Settings">অ্যাডমিন সেটিংস</span></span>
+                        <i class="fa-solid fa-chevron-down text-sm text-gray-400"></i>
+                    </button>
+                    <div id="menu-settings" class="hidden-section bg-gray-800 pl-10 pr-4 py-2">
+                        <button onclick="switchTab('tab-settings-password')" class="w-full text-left py-2 hover:text-green-400 transition lang-text text-sm" data-bn="পাসওয়ার্ড পরিবর্তন" data-en="Change Password">পাসওয়ার্ড পরিবর্তন</button>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="absolute bottom-0 w-full p-4 bg-gray-950 border-t border-gray-800">
+                <button onclick="logoutAdmin()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded font-bold transition flex items-center justify-center">
+                    <i class="fa-solid fa-power-off mr-2"></i> <span class="lang-text" data-bn="লগআউট" data-en="Logout">লগআউট</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-y-auto p-8 relative">
+            
+            <!-- Welcome Screen (Default) -->
+            <div id="tab-welcome" class="tab-content flex flex-col items-center justify-center h-full text-center">
+                <i class="fa-solid fa-shield-cat text-6xl text-gray-300 mb-4"></i>
+                <h2 class="text-4xl font-bold text-gray-700 mb-2 lang-text" data-bn="স্বাগতম, অ্যাডমিন" data-en="Welcome, Admin">স্বাগতম, অ্যাডমিন</h2>
+                <p class="text-gray-500 lang-text" data-bn="বাঁদিকের মেনু থেকে আপনার কাজ নির্বাচন করুন।" data-en="Select your task from the left menu.">বাঁদিকের মেনু থেকে আপনার কাজ নির্বাচন করুন।</p>
+            </div>
+
+            <!-- Finance Tab -->
+            <div id="tab-finance" class="tab-content hidden-section">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 border-l-4 border-orange-500 pl-3 lang-text" data-bn="আর্থিক বিবরণী" data-en="Financial Statement">আর্থিক বিবরণী</h2>
+                    <div class="text-xl font-bold bg-white text-gray-800 py-2 px-6 rounded-full shadow-md border border-gray-200">
+                        <span class="lang-text text-gray-500 text-sm block" data-bn="বর্তমান ব্যালেন্স" data-en="Current Balance">বর্তমান ব্যালেন্স</span>
+                        <span id="currentBalance" class="text-2xl text-blue-700">0.00</span> <span class="text-sm">৳</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6 grid grid-cols-1 md:grid-cols-5 gap-4 items-end border-t-4 border-blue-500">
+                    <div class="col-span-1">
+                        <label class="block text-gray-600 font-bold mb-2 text-sm lang-text" data-bn="তারিখ" data-en="Date">তারিখ</label>
+                        <input type="date" id="finDate" class="w-full p-2.5 border rounded focus:border-blue-500 outline-none">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-gray-600 font-bold mb-2 text-sm lang-text" data-bn="বিবরণ" data-en="Details">বিবরণ</label>
+                        <input type="text" id="finDetails" class="w-full p-2.5 border rounded focus:border-blue-500 outline-none" data-placeholder-bn="কি বাবদ আয় বা ব্যয় হলো..." data-placeholder-en="Reason for income/expense..." placeholder="কি বাবদ আয় বা ব্যয় হলো...">
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-gray-600 font-bold mb-2 text-sm lang-text" data-bn="ধরন" data-en="Type">ধরন</label>
+                        <select id="finType" class="w-full p-2.5 border rounded bg-white outline-none">
+                            <option value="income" class="lang-text" data-bn="আয় (Income)" data-en="Income">আয় (Income)</option>
+                            <option value="expense" class="lang-text" data-bn="ব্যয় (Expense)" data-en="Expense">ব্যয় (Expense)</option>
+                        </select>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-gray-600 font-bold mb-2 text-sm lang-text" data-bn="টাকার পরিমাণ" data-en="Amount">টাকার পরিমাণ</label>
+                        <input type="number" id="finAmount" placeholder="0.00" class="w-full p-2.5 border rounded focus:border-blue-500 outline-none">
+                    </div>
+                    <div class="col-span-1 md:col-span-5 text-right mt-2">
+                        <button onclick="addFinanceEntry()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-8 rounded shadow transition lang-text" data-bn="এন্ট্রি যুক্ত করুন" data-en="Add Entry">এন্ট্রি যুক্ত করুন</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <table class="w-full tally-table">
+                        <thead>
+                            <tr>
+                                <th class="lang-text" data-bn="তারিখ" data-en="Date">তারিখ</th>
+                                <th class="lang-text" data-bn="বিবরণ" data-en="Details">বিবরণ</th>
+                                <th class="lang-text" data-bn="আয় (Income)" data-en="Income">আয় (Income)</th>
+                                <th class="lang-text" data-bn="ব্যয় (Expense)" data-en="Expense">ব্যয় (Expense)</th>
+                                <th class="lang-text" data-bn="উদ্বৃত্ত (Balance)" data-en="Balance">উদ্বৃত্ত (Balance)</th>
+                                <th class="lang-text" data-bn="পদক্ষেপ" data-en="Action">পদক্ষেপ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="financeTableBody">
+                            <!-- JS Data -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- CMS Layout Control Tab -->
+            <div id="tab-cms-layout" class="tab-content hidden-section">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 border-l-4 border-blue-500 pl-3 lang-text" data-bn="ওয়েবসাইট সেকশন কন্ট্রোল" data-en="Website Section Control">ওয়েবসাইট সেকশন কন্ট্রোল</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md max-w-3xl">
+                    <p class="text-gray-500 mb-6 text-sm lang-text" data-bn="যে সেকশনগুলো সাধারণ মানুষকে দেখাতে চান, সেগুলো অন রাখুন। বাকিগুলো অফ করে দিন।" data-en="Toggle switches to show or hide specific sections on the live website.">যে সেকশনগুলো সাধারণ মানুষকে দেখাতে চান, সেগুলো অন রাখুন। বাকিগুলো অফ করে দিন।</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Toggle items generated by JS to keep it clean -->
+                        <div class="flex justify-between items-center p-4 bg-gray-50 border rounded-lg hover:shadow-md transition">
+                            <span class="font-bold text-gray-700 lang-text" data-bn="হেডার (লোগো ও মেনু)" data-en="Header (Logo & Menu)">হেডার (লোগো ও মেনু)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="secHeader" class="sr-only peer" onchange="saveCMSLayout()">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex justify-between items-center p-4 bg-gray-50 border rounded-lg hover:shadow-md transition">
+                            <span class="font-bold text-gray-700 lang-text" data-bn="বডি (মূল কনটেন্ট)" data-en="Body (Main Content)">বডি (মূল কনটেন্ট)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="secBody" class="sr-only peer" onchange="saveCMSLayout()">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex justify-between items-center p-4 bg-gray-50 border rounded-lg hover:shadow-md transition">
+                            <span class="font-bold text-gray-700 lang-text" data-bn="ফুটার (যোগাযোগ ও লিংক)" data-en="Footer (Contact & Links)">ফুটার (যোগাযোগ ও লিংক)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="secFooter" class="sr-only peer" onchange="saveCMSLayout()">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex justify-between items-center p-4 bg-gray-50 border rounded-lg hover:shadow-md transition">
+                            <span class="font-bold text-gray-700 lang-text" data-bn="গ্যালারি সেকশন" data-en="Gallery Section">গ্যালারি সেকশন</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="secGallery" class="sr-only peer" onchange="saveCMSLayout()">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-4 bg-gray-50 border rounded-lg hover:shadow-md transition">
+                            <span class="font-bold text-gray-700 lang-text" data-bn="নতুন ইউজার রেজিস্ট্রেশন" data-en="New User Registration">নতুন ইউজার রেজিস্ট্রেশন</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="secRegistration" class="sr-only peer" onchange="saveCMSLayout()">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CMS Theme Control Tab -->
+            <div id="tab-cms-theme" class="tab-content hidden-section">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 border-l-4 border-blue-500 pl-3 lang-text" data-bn="থিম ও ব্যাকগ্রাউন্ড সেটিংস" data-en="Theme & Background Settings">থিম ও ব্যাকগ্রাউন্ড সেটিংস</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md max-w-2xl border-t-4 border-indigo-500">
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-bold mb-2 lang-text" data-bn="ওয়েবসাইটের পেজ কালার" data-en="Website Page Color">ওয়েবসাইটের পেজ কালার</label>
+                        <div class="flex gap-4 items-center">
+                            <input type="color" id="themeColor" class="w-16 h-12 p-1 border rounded cursor-pointer">
+                            <span class="text-sm text-gray-500 lang-text" data-bn="রং নির্বাচন করুন" data-en="Select a color">রং নির্বাচন করুন</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-bold mb-2 lang-text" data-bn="লগইন ও অ্যাডমিন পেজের ব্যাকগ্রাউন্ড ইমেজ (URL)" data-en="Login & Admin Background Image (URL)">লগইন ও অ্যাডমিন পেজের ব্যাকগ্রাউন্ড ইমেজ (URL)</label>
+                        <input type="text" id="themeBgUrl" class="w-full p-3 border rounded focus:border-indigo-500 outline-none" data-placeholder-bn="ইমেজ লিংক দিন (যেমন: https://...)" data-placeholder-en="Image URL (e.g. https://...)" placeholder="ইমেজ লিংক দিন (যেমন: https://...)">
+                        <p class="text-xs text-orange-600 mt-2 font-bold lang-text" data-bn="* বর্তমান ডিফল্ট থিম: ভারতীয় পতাকার রং" data-en="* Current default theme: Indian Flag Colors">* বর্তমান ডিফল্ট থিম: ভারতীয় পতাকার রং</p>
+                    </div>
+
+                    <button onclick="saveThemeSettings()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded shadow transition w-full lang-text" data-bn="থিম সেভ করুন ও প্রয়োগ করুন" data-en="Save & Apply Theme">থিম সেভ করুন ও প্রয়োগ করুন</button>
+                </div>
+            </div>
+
+            <!-- Security & IP Block Tab -->
+            <div id="tab-security" class="tab-content hidden-section">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 border-l-4 border-red-500 pl-3 lang-text" data-bn="ফায়ারওয়াল ও নিরাপত্তা" data-en="Firewall & Security">ফায়ারওয়াল ও নিরাপত্তা</h2>
+                    <span class="bg-red-100 text-red-800 px-4 py-2 rounded-full font-bold shadow-sm border border-red-200 text-sm animate-pulse">
+                        <i class="fa-solid fa-shield-virus mr-2"></i> <span class="lang-text" data-bn="অ্যান্টি-হ্যাকিং সিস্টেম অ্যাক্টিভ" data-en="Anti-Hacking System Active">অ্যান্টি-হ্যাকিং সিস্টেম অ্যাক্টিভ</span>
+                    </span>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-red-600">
+                    <p class="text-gray-600 mb-4 text-sm lang-text" data-bn="সন্দেহজনক ইউজারদের আইপি লগ নিচে দেওয়া হলো। এক ক্লিকে ব্লক বা আনব্লক করতে পারেন।" data-en="Logs of suspicious visitors. Block or unblock with one click.">সন্দেহজনক ইউজারদের আইপি লগ নিচে দেওয়া হলো। এক ক্লিকে ব্লক বা আনব্লক করতে পারেন।</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse bg-white">
+                            <thead>
+                                <tr class="bg-gray-800 text-white">
+                                    <th class="p-4 border font-semibold lang-text" data-bn="আইপি অ্যাড্রেস (IP)" data-en="IP Address">আইপি অ্যাড্রেস (IP)</th>
+                                    <th class="p-4 border font-semibold lang-text" data-bn="শেষ ভিজিটের সময়" data-en="Last Visit Time">শেষ ভিজিটের সময়</th>
+                                    <th class="p-4 border font-semibold lang-text" data-bn="বর্তমান অবস্থা" data-en="Current Status">বর্তমান অবস্থা</th>
+                                    <th class="p-4 border font-semibold text-center lang-text" data-bn="কন্ট্রোল প্যানেল" data-en="Control Panel">কন্ট্রোল প্যানেল</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ipTableBody">
+                                <!-- JS Data -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gallery Tab -->
+            <div id="tab-gallery" class="tab-content hidden-section">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 border-l-4 border-pink-500 pl-3 lang-text" data-bn="ডিজিটাল গ্যালারি পরিচালনা" data-en="Digital Gallery Management">ডিজিটাল গ্যালারি পরিচালনা</h2>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md mb-8 border-t-4 border-pink-500 max-w-2xl">
+                    <p class="text-sm text-gray-500 mb-4 lang-text" data-bn="ছবি স্বয়ংক্রিয়ভাবে ছোট (Compress) হয়ে দ্রুত সার্ভারে আপলোড হবে। স্টোরেজ বাঁচবে।" data-en="Images are automatically compressed for fast loading and storage efficiency.">ছবি স্বয়ংক্রিয়ভাবে ছোট (Compress) হয়ে দ্রুত সার্ভারে আপলোড হবে। স্টোরেজ বাঁচবে।</p>
+                    
+                    <div class="flex flex-col gap-4">
+                        <input type="file" id="imageInput" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
+                        
+                        <input type="text" id="imageCaption" class="w-full p-3 border rounded focus:border-pink-500 outline-none" data-placeholder-bn="ছবির সুন্দর ক্যাপশন দিন..." data-placeholder-en="Write a beautiful caption..." placeholder="ছবির সুন্দর ক্যাপশন দিন...">
+                        
+                        <button id="uploadBtn" onclick="compressAndUploadImage()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded shadow-md transition w-full">
+                            <i class="fa-solid fa-cloud-arrow-up mr-2"></i> <span class="lang-text" data-bn="নিরাপদে আপলোড করুন" data-en="Upload Securely">নিরাপদে আপলোড করুন</span>
+                        </button>
+                        
+                        <div id="uploadStatus" class="mt-2 text-center font-bold text-pink-600 hidden">
+                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> <span class="lang-text" data-bn="অনুগ্রহ করে অপেক্ষা করুন, সার্ভারের কাজ চলছে..." data-en="Please wait, server processing...">অনুগ্রহ করে অপেক্ষা করুন, সার্ভারের কাজ চলছে...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-4 border-b-2 border-gray-200 pb-2">
+                    <h3 class="text-xl font-bold text-gray-700 lang-text" data-bn="আপলোড করা ছবির আর্কাইভ" data-en="Uploaded Image Archive">আপলোড করা ছবির আর্কাইভ</h3>
+                    <span class="text-sm bg-gray-200 text-gray-600 px-3 py-1 rounded-full"><span id="galleryCount">0</span> <span class="lang-text" data-bn="টি ছবি" data-en="Photos">টি ছবি</span></span>
+                </div>
+                
+                <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- JS Data -->
+                </div>
+            </div>
+
+            <!-- Settings (Change Password) Tab -->
+            <div id="tab-settings-password" class="tab-content hidden-section">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 border-l-4 border-green-500 pl-3 lang-text" data-bn="সিকিউরিটি সেটিংস" data-en="Security Settings">সিকিউরিটি সেটিংস</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md max-w-xl border-t-4 border-green-600">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4 lang-text" data-bn="অ্যাডমিন পাসওয়ার্ড পরিবর্তন করুন" data-en="Change Admin Password">অ্যাডমিন পাসওয়ার্ড পরিবর্তন করুন</h3>
+                    <p class="text-sm text-red-500 mb-6 font-semibold lang-text" data-bn="সতর্কতা: পাসওয়ার্ড পরিবর্তন করার পর আপনাকে আবার নতুন করে লগইন করতে হবে।" data-en="Warning: You will be logged out after changing the password.">সতর্কতা: পাসওয়ার্ড পরিবর্তন করার পর আপনাকে আবার নতুন করে লগইন করতে হবে।</p>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2 text-sm lang-text" data-bn="নতুন পাসওয়ার্ড দিন" data-en="Enter New Password">নতুন পাসওয়ার্ড দিন</label>
+                        <input type="password" id="newPassword" class="w-full p-3 border rounded focus:border-green-500 outline-none">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-bold mb-2 text-sm lang-text" data-bn="নতুন পাসওয়ার্ডটি আবার লিখুন" data-en="Confirm New Password">নতুন পাসওয়ার্ডটি আবার লিখুন</label>
+                        <input type="password" id="confirmNewPassword" class="w-full p-3 border rounded focus:border-green-500 outline-none">
+                    </div>
+
+                    <button onclick="changeAdminPassword()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded shadow transition w-full lang-text" data-bn="পাসওয়ার্ড আপডেট করুন" data-en="Update Password">পাসওয়ার্ড আপডেট করুন</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 1. Firebase v10 Config (Do NOT change this unless keys change)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCg5ttOQHcdqupwlD9lDam6IFfh6P1mdos",
+            authDomain: "swadeshjagaran.firebaseapp.com",
+            projectId: "swadeshjagaran",
+            storageBucket: "swadeshjagaran.firebasestorage.app",
+            messagingSenderId: "955311438612",
+            appId: "1:955311438612:web:089ee627987ee0b5562001",
+            measurementId: "G-WC17FQTESH"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // 2. ImgBB API Key
+        const IMGBB_API_KEY = "1ac8ffb755062be25a1eb4b957f12e09";
+
+        // 3. Language Translation System (Bilingual Logic)
+        let currentLang = 'bn';
+        function changeLanguage(lang) {
+            currentLang = lang;
+            
+            // Text Content Translation
+            const elements = document.querySelectorAll('.lang-text');
+            elements.forEach(el => {
+                if (el.dataset[lang]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+                        // Skip inputs, only innerText
+                    } else {
+                        el.innerText = el.dataset[lang];
+                    }
+                }
+            });
+
+            // Placeholder Translation
+            const inputs = document.querySelectorAll('input[data-placeholder-bn]');
+            inputs.forEach(input => {
+                input.placeholder = input.getAttribute(`data-placeholder-${lang}`);
+            });
+        }
+        
+        // Helper function for JS alerts translation
+        function t(bnText, enText) { return currentLang === 'bn' ? bnText : enText; }
+
+        // 4. Security: Anti-Hacking & Anti-Screenshot
+        let suspiciousActions = 0;
+        
+        document.addEventListener('contextmenu', event => {
+            event.preventDefault();
+            logSuspiciousActivity();
+        }); 
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'PrintScreen' || e.key === 'F12' || (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'u')) || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+                logSuspiciousActivity();
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: t('সতর্কীকরণ!', 'Warning!'), 
+                    text: t('ডেটা চুরি বা স্ক্রিনশট নেওয়া কঠোরভাবে নিষিদ্ধ। আপনার আইপি ট্র্যাক করা হচ্ছে।', 'Data theft or screenshots are strictly prohibited. Your IP is being tracked.') 
+                });
+            }
+        });
+
+        async function logSuspiciousActivity() {
+            suspiciousActions++;
+            if(suspiciousActions > 2) {
+                try {
+                    // Fetch IP and log to Firebase
+                    const res = await fetch('https://api.ipify.org?format=json');
+                    const data = await res.json();
+                    db.collection('visitor_logs').doc(data.ip).set({
+                        lastVisit: firebase.firestore.FieldValue.serverTimestamp(),
+                        status: 'blocked',
+                        reason: 'Suspicious Activity Detected (DevTools/RightClick)',
+                        userAgent: navigator.userAgent
+                    }, { merge: true });
+                } catch(e) {}
+            }
+        }
+
+        // Initial IP Check for Ban
+        async function checkIPBan() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                const doc = await db.collection('visitor_logs').doc(data.ip).get();
+                if(doc.exists && doc.data().status === 'blocked') {
+                    document.body.innerHTML = `<div style="text-align:center; padding:50px; color:red; font-size:24px; font-weight:bold;">${t('আপনার আইপি ব্লক করা হয়েছে।', 'Your IP has been BLOCKED.')}</div>`;
+                } else {
+                    // Log normal visit
+                    db.collection('visitor_logs').doc(data.ip).set({
+                        lastVisit: firebase.firestore.FieldValue.serverTimestamp(),
+                        status: doc.exists ? doc.data().status : 'active'
+                    }, { merge: true });
+                }
+            } catch(e) {}
+        }
+        checkIPBan();
+
+        // 5. Advanced Login System (Secret Code -> Email Conversion)
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('dashboardSection').classList.remove('hidden-section');
+                
+                // Load all dashboard modules
+                loadFinanceData();
+                loadCMSLayout();
+                loadThemeSettings();
+                loadIPData();
+                loadGalleryData();
+                switchTab('tab-welcome'); 
+            } else {
+                document.getElementById('loginSection').style.display = 'flex';
+                document.getElementById('dashboardSection').classList.add('hidden-section');
+            }
+        });
+
+        function loginAdmin() {
+            const code = document.getElementById('adminCode').value.trim();
+            const pass = document.getElementById('adminPassword').value;
+            
+            if (!code || !pass) {
+                return Swal.fire(t('ভুল', 'Error'), t('দয়া করে কোড এবং পাসওয়ার্ড দুটিই দিন।', 'Please enter both code and password.'), 'error');
+            }
+
+            // MAGIC LOGIC: Convert code to email format automatically
+            const generatedEmail = code.toLowerCase() + "@swadeshjagaran.com";
+
+            Swal.fire({ title: t('লগইন হচ্ছে...', 'Logging in...'), allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+
+            auth.signInWithEmailAndPassword(generatedEmail, pass)
+                .then(() => { 
+                    Swal.fire({ icon: 'success', title: t('সফল!', 'Success!'), text: t('অ্যাডমিন প্যানেলে স্বাগতম!', 'Welcome to Admin Panel!'), timer: 1500, showConfirmButton: false }); 
+                })
+                .catch((error) => { 
+                    console.log(error);
+                    // Check if user doesn't exist, maybe it's first time registration?
+                    // As requested, standard login failure for security. Registration of new admin should be done via Firebase console or a separate secure script.
+                    Swal.fire(t('লগইন ব্যর্থ', 'Login Failed'), t('আপনার দেওয়া কোড বা পাসওয়ার্ড সঠিক নয়।', 'Invalid Code or Password.'), 'error'); 
+                });
+        }
+
+        function logoutAdmin() {
+            auth.signOut();
+        }
+
+        // 6. Change Password Logic
+        function changeAdminPassword() {
+            const newPass = document.getElementById('newPassword').value;
+            const confPass = document.getElementById('confirmNewPassword').value;
+
+            if(!newPass || !confPass) return Swal.fire('Error', t('পাসওয়ার্ড ফাঁকা রাখা যাবে না', 'Passwords cannot be empty'), 'error');
+            if(newPass.length < 6) return Swal.fire('Error', t('পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে', 'Password must be at least 6 characters'), 'error');
+            if(newPass !== confPass) return Swal.fire('Error', t('পাসওয়ার্ড দুটি মিলছে না', 'Passwords do not match'), 'error');
+
+            const user = auth.currentUser;
+            if(user) {
+                user.updatePassword(newPass).then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: t('সফল', 'Success'),
+                        text: t('পাসওয়ার্ড পরিবর্তন হয়েছে। নিরাপত্তার স্বার্থে পুনরায় লগইন করুন।', 'Password changed. Please login again for security.'),
+                    }).then(() => {
+                        logoutAdmin();
+                        document.getElementById('newPassword').value = '';
+                        document.getElementById('confirmNewPassword').value = '';
+                    });
+                }).catch((error) => {
+                    Swal.fire('Error', error.message, 'error');
+                });
+            }
+        }
+
+        // 7. Navigation & Toggle Logic
+        function switchTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.add('hidden-section'));
+            document.getElementById(tabId).classList.remove('hidden-section');
+        }
+
+        function toggleMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            if(menu.classList.contains('hidden-section')) {
+                menu.classList.remove('hidden-section');
+            } else {
+                menu.classList.add('hidden-section');
+            }
+        }
+
+        // 8. Finance Logic
+        function addFinanceEntry() {
+            const date = document.getElementById('finDate').value;
+            const details = document.getElementById('finDetails').value;
+            const type = document.getElementById('finType').value;
+            const amount = parseFloat(document.getElementById('finAmount').value);
+
+            if (!date || !details || isNaN(amount) || amount <= 0) {
+                return Swal.fire(t('সতর্কতা', 'Warning'), t('সব তথ্য সঠিকভাবে পূরণ করুন।', 'Fill all fields correctly.'), 'warning');
+            }
+
+            db.collection('finance').add({
+                date: date,
+                details: details,
+                type: type,
+                amount: amount,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                Swal.fire({ icon: 'success', title: 'OK', timer: 1000, showConfirmButton: false });
+                document.getElementById('finDetails').value = '';
+                document.getElementById('finAmount').value = '';
+            });
+        }
+
+        function loadFinanceData() {
+            db.collection('finance').orderBy('date', 'asc').onSnapshot(snapshot => {
+                const tbody = document.getElementById('financeTableBody');
+                tbody.innerHTML = '';
+                let runningBalance = 0;
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    let inAmt = 0;
+                    let outAmt = 0;
+
+                    if (data.type === 'income') {
+                        inAmt = data.amount;
+                        runningBalance += inAmt;
+                    } else {
+                        outAmt = data.amount;
+                        runningBalance -= outAmt;
+                    }
+
+                    const row = `
+                        <tr>
+                            <td class="text-center font-bold">${data.date}</td>
+                            <td>${data.details}</td>
+                            <td class="tally-amount text-green-700">${inAmt > 0 ? inAmt.toFixed(2) : '-'}</td>
+                            <td class="tally-amount text-red-600">${outAmt > 0 ? outAmt.toFixed(2) : '-'}</td>
+                            <td class="tally-amount font-bold ${runningBalance >= 0 ? 'text-blue-700' : 'text-red-700'}">${runningBalance.toFixed(2)}</td>
+                            <td class="text-center">
+                                <button onclick="deleteFinance('${doc.id}')" class="text-red-500 hover:text-red-800 bg-red-50 p-2 rounded-full"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+                document.getElementById('currentBalance').innerText = runningBalance.toFixed(2);
+            });
+        }
+
+        function deleteFinance(id) {
+            Swal.fire({
+                title: t('নিশ্চিত?', 'Are you sure?'),
+                text: t('এই হিসাবটি ডিলিট হয়ে যাবে!', 'This record will be deleted!'),
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: t('হ্যাঁ, মুছুন', 'Yes, delete'),
+                cancelButtonText: t('না', 'No')
+            }).then((result) => {
+                if (result.isConfirmed) { db.collection('finance').doc(id).delete(); }
+            });
+        }
+
+        // 9. CMS Control Logic (Toggle Sections)
+        function loadCMSLayout() {
+            db.collection('settings').doc('layout').onSnapshot(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('secHeader').checked = data.header !== false; // Default true
+                    document.getElementById('secBody').checked = data.body !== false;
+                    document.getElementById('secFooter').checked = data.footer !== false;
+                    document.getElementById('secGallery').checked = data.gallery !== false;
+                    document.getElementById('secRegistration').checked = data.registration === true; // Default false
+                }
+            });
+        }
+
+        function saveCMSLayout() {
+            db.collection('settings').doc('layout').set({
+                header: document.getElementById('secHeader').checked,
+                body: document.getElementById('secBody').checked,
+                footer: document.getElementById('secFooter').checked,
+                gallery: document.getElementById('secGallery').checked,
+                registration: document.getElementById('secRegistration').checked
+            }, { merge: true });
+        }
+
+        // 10. CMS Theme Control Logic
+        function loadThemeSettings() {
+            db.collection('settings').doc('theme').onSnapshot(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    if(data.color) document.getElementById('themeColor').value = data.color;
+                    if(data.bgUrl) document.getElementById('themeBgUrl').value = data.bgUrl;
+                    applyThemeToAdmin(data.bgUrl);
+                }
+            });
+        }
+
+        function saveThemeSettings() {
+            const color = document.getElementById('themeColor').value;
+            const bgUrl = document.getElementById('themeBgUrl').value.trim();
+
+            db.collection('settings').doc('theme').set({
+                color: color,
+                bgUrl: bgUrl
+            }, { merge: true }).then(() => {
+                Swal.fire({ icon: 'success', title: 'Saved', timer: 1000, showConfirmButton: false });
+                applyThemeToAdmin(bgUrl);
+            });
+        }
+
+        function applyThemeToAdmin(bgUrl) {
+            const bgLayer = document.getElementById('dynamicBg');
+            if(bgUrl) {
+                bgLayer.style.backgroundImage = `url('${bgUrl}')`;
+            } else {
+                bgLayer.style.backgroundImage = "none";
+            }
+        }
+
+        // 11. Security (IP Block Logic)
+        function loadIPData() {
+            db.collection('visitor_logs').orderBy('lastVisit', 'desc').limit(30).onSnapshot(snapshot => {
+                const tbody = document.getElementById('ipTableBody');
+                tbody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const isBlocked = data.status === 'blocked';
+                    const time = data.lastVisit ? data.lastVisit.toDate().toLocaleString('en-GB') : 'N/A';
+                    
+                    const row = `
+                        <tr class="${isBlocked ? 'bg-red-50' : 'bg-gray-50'} border-b hover:bg-gray-100 transition">
+                            <td class="p-4 font-mono font-bold text-gray-700">${doc.id} <br><span class="text-xs font-normal text-gray-500">${data.reason || 'Normal Visit'}</span></td>
+                            <td class="p-4 text-sm text-gray-600">${time}</td>
+                            <td class="p-4 font-bold ${isBlocked ? 'text-red-600' : 'text-green-600'}">${isBlocked ? t('ব্লকড (Blocked)', 'Blocked') : t('সক্রিয় (Active)', 'Active')}</td>
+                            <td class="p-4 text-center">
+                                ${isBlocked 
+                                    ? `<button onclick="toggleIPBlock('${doc.id}', 'active')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-sm font-bold shadow">UNBLOCK</button>` 
+                                    : `<button onclick="toggleIPBlock('${doc.id}', 'blocked')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm font-bold shadow">BLOCK</button>`
+                                }
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            });
+        }
+
+        function toggleIPBlock(ip, newStatus) {
+            db.collection('visitor_logs').doc(ip).set({ status: newStatus }, { merge: true });
+        }
+
+        // 12. Gallery Logic (ImgBB + Auto Compression)
+        async function compressAndUploadImage() {
+            const fileInput = document.getElementById('imageInput');
+            const caption = document.getElementById('imageCaption').value;
+            const statusDiv = document.getElementById('uploadStatus');
+            const btn = document.getElementById('uploadBtn');
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                return Swal.fire(t('সতর্কতা', 'Warning'), t('দয়া করে একটি ছবি নির্বাচন করুন', 'Please select an image'), 'warning');
+            }
+
+            const imageFile = fileInput.files[0];
+            statusDiv.classList.remove('hidden');
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            try {
+                // High compression for fast loading
+                const options = { maxSizeMB: 0.15, maxWidthOrHeight: 1000, useWebWorker: true };
+                const compressedFile = await imageCompression(imageFile, options);
+                
+                const reader = new FileReader();
+                reader.readAsDataURL(compressedFile);
+                reader.onloadend = async function() {
+                    const base64data = reader.result.split(',')[1];
+                    const formData = new FormData();
+                    formData.append('key', IMGBB_API_KEY);
+                    formData.append('image', base64data);
+
+                    const response = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        const imgUrl = result.data.url;
+                        await db.collection('gallery').add({
+                            url: imgUrl,
+                            caption: caption || '',
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+
+                        Swal.fire({ icon: 'success', title: 'Uploaded!', timer: 1500, showConfirmButton: false });
+                        fileInput.value = '';
+                        document.getElementById('imageCaption').value = '';
+                    } else { throw new Error("ImgBB Upload Failed"); }
+                }
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            } finally {
+                statusDiv.classList.add('hidden');
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+            }
+        }
+
+        function loadGalleryData() {
+            db.collection('gallery').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+                const grid = document.getElementById('galleryGrid');
+                grid.innerHTML = '';
+                let count = 0;
+                
+                snapshot.forEach(doc => {
+                    count++;
+                    const data = doc.data();
+                    const card = `
+                        <div class="bg-white p-3 rounded-lg shadow-md border hover:shadow-lg transition relative group">
+                            <div class="h-48 overflow-hidden rounded mb-3 bg-gray-100 flex items-center justify-center">
+                                <img src="${data.url}" class="w-full h-full object-cover rounded transform group-hover:scale-105 transition duration-500">
+                            </div>
+                            <p class="text-sm text-gray-700 text-center font-semibold truncate px-1">${data.caption || 'No Caption'}</p>
+                            <button onclick="deleteGalleryImage('${doc.id}')" class="absolute top-4 right-4 bg-red-600 text-white rounded-full w-9 h-9 flex items-center justify-center hover:bg-red-800 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fa-solid fa-trash text-sm"></i>
+                            </button>
+                        </div>
+                    `;
+                    grid.innerHTML += card;
+                });
+                document.getElementById('galleryCount').innerText = count;
+            });
+        }
+
+        function deleteGalleryImage(id) {
+            Swal.fire({
+                title: t('ছবিটি মুছতে চান?', 'Delete this photo?'),
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: t('হ্যাঁ, মুছুন', 'Yes, delete')
+            }).then((result) => {
+                if (result.isConfirmed) { db.collection('gallery').doc(id).delete(); }
+            });
+        }
+
+        // Set default language on load
+        changeLanguage('bn');
+    </script>
+</body>
+</html>
