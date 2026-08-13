@@ -1,686 +1,356 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swadesh Jagaran | Cultural & Traditional Movement</title>
+    <title>স্বদেশ জাগরণ সমিতি ও বিশ্ব হিন্দু পরিষদ</title>
+    
+    <!-- Tailwind CSS for Modern Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Tiro Bangla for beautiful Bengali typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+
     <style>
-        :root {
-            --saffron: #FF9933;
-            --white: #FFFFFF;
-            --green: #138808;
-            --navy-blue: #000080;
-            --bg-light: #f8f9fa;
-            --text-dark: #333333;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        /* Custom Font Family */
         body {
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            padding-top: 90px;
-            user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
+            font-family: 'Tiro Bangla', serif;
+            background-color: #f8fafc;
+            overflow-x: hidden;
         }
 
-        input, textarea, select {
-            user-select: text;
-            -webkit-user-select: text;
-            -ms-user-select: text;
-        }
-
-        header {
+        /* Indian Flag Waving Sky Background Animation */
+        .flag-sky-bg {
+            background: linear-gradient(120deg, #FF9933 0%, #ffffff 50%, #138808 100%);
+            background-size: 300% 300%;
+            animation: waveFlag 15s ease-in-out infinite;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 85px;
-            background-color: var(--white);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 30px;
-            z-index: 1000;
-            box-shadow: var(--shadow);
-            border-bottom: 4px solid transparent;
-            border-image: linear-gradient(to right, var(--saffron), var(--white), var(--green)) 1;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        @keyframes waveFlag {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        .logo-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--saffron) 33%, var(--white) 33%, var(--white) 66%, var(--green) 66%);
-            border: 2px solid var(--navy-blue);
+        /* Glassmorphism Effect for readable content over moving background */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
         }
 
-        .logo-text h1 {
-            font-size: 20px;
-            color: var(--saffron);
-            margin: 0;
-        }
-
-        .logo-text p {
-            font-size: 11px;
-            color: var(--green);
-            margin: 0;
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 10px;
-            align-items: center;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: var(--text-dark);
-            font-weight: 600;
-            font-size: 14px;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        nav ul li a:hover, nav ul li a.active {
-            color: var(--navy-blue);
-            background-color: rgba(0, 0, 128, 0.05);
-        }
-
-        .btn-donate {
-            background-color: var(--green) !important;
-            color: var(--white) !important;
-            border-radius: 20px !important;
-            padding: 8px 16px !important;
-        }
-
-        .btn-join {
-            background-color: var(--saffron) !important;
-            color: var(--white) !important;
-            border-radius: 20px !important;
-            padding: 8px 16px !important;
-        }
-
-        .lang-switch {
-            background: var(--navy-blue);
-            color: var(--white);
-            border: none;
-            padding: 8px 14px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-left: 5px;
-        }
-
-        .page-section {
+        /* Section Transition Animations */
+        .section-content {
             display: none;
-            padding: 30px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            min-height: calc(100vh - 170px);
+            animation: fadeIn 0.6s ease-in-out forwards;
         }
 
-        .page-section.active-section {
+        .section-content.active {
             display: block;
         }
 
-        .section-title {
-            text-align: center;
-            color: var(--navy-blue);
-            margin-bottom: 25px;
-            font-size: 26px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .event-banner {
-            background: linear-gradient(135deg, rgba(255,153,51,0.12), rgba(19,136,8,0.12));
-            border: 2px solid var(--saffron);
-            border-radius: 12px;
-            padding: 25px;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-        }
-        
-        .event-banner h3 {
-            color: var(--navy-blue);
-            font-size: 22px;
-            margin-bottom: 12px;
-        }
-
-        .accounts-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .current-balance-badge {
-            background-color: var(--navy-blue);
-            color: var(--white);
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 16px;
+        /* Active Nav Link Styling */
+        .nav-link.active {
+            color: #FF9933;
+            border-bottom: 2px solid #138808;
             font-weight: bold;
         }
 
-        .summary-cards {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
+        /* Image Hover Effects */
+        .hover-zoom {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
-        .card {
-            flex: 1;
-            min-width: 250px;
-            background: var(--white);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            border-top: 4px solid;
-            text-align: center;
-        }
-
-        .card:nth-child(1) { border-top-color: var(--saffron); }
-        .card:nth-child(2) { border-top-color: var(--navy-blue); }
-        .card:nth-child(3) { border-top-color: var(--green); }
-
-        .card h3 {
-            font-size: 13px;
-            color: gray;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .card p {
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .accounts-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--white);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .tab-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .tab-btn {
-            padding: 8px 16px;
-            border: none;
-            background-color: #e0e0e0;
-            color: var(--text-dark);
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .tab-btn.active {
-            background-color: var(--navy-blue);
-            color: var(--white);
-        }
-
-        .date-filter {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .date-filter input[type="date"] {
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .date-filter button {
-            padding: 7px 14px;
-            background-color: var(--green);
-            color: var(--white);
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .table-container {
-            background: var(--white);
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            overflow-x: auto;
-            display: none;
-        }
-
-        .table-container.active-table {
-            display: block;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border: 1px solid #e0e0e0;
-            font-size: 14px;
-        }
-
-        th {
-            background-color: var(--navy-blue);
-            color: var(--white);
-            font-weight: 600;
-        }
-
-        .form-container {
-            background: var(--white);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            max-width: 600px;
-            margin: 0 auto;
-            border-top: 5px solid var(--saffron);
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-            text-align: left;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: var(--navy-blue);
-            font-size: 14px;
-        }
-        
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .submit-btn {
-            background-color: var(--navy-blue);
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            font-size: 15px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-        }
-
-        .progress-box {
-            display: none;
-            margin-top: 18px;
-            text-align: center;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            overflow: hidden;
-            height: 18px;
-            margin-bottom: 8px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background-color: var(--green);
-            transition: width 0.4s ease;
-        }
-
-        footer {
-            background-color: var(--navy-blue);
-            color: var(--white);
-            text-align: center;
-            padding: 25px 20px;
-            margin-top: 40px;
-            border-top: 4px solid var(--saffron);
-        }
-
-        .footer-address {
-            font-size: 15px;
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-
-        .copyright-warning {
-            font-size: 12px;
-            color: #ddd;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            padding-top: 12px;
-            margin-top: 12px;
+        .hover-zoom:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
     </style>
 </head>
-<body>
+<body class="antialiased text-gray-800">
 
-    <header>
-        <div class="logo-container">
-            <div class="logo-icon"></div>
-            <div class="logo-text">
-                <h1 id="site-title">Swadesh Jagaran</h1>
-                <p id="site-subtitle">Cultural & Traditional Movement</p>
+    <!-- Animated Background -->
+    <div class="flag-sky-bg"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="glass-panel fixed w-full z-50 top-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo and Title -->
+                <div class="flex items-center gap-4 cursor-pointer" onclick="switchTab('home')">
+                    <img src="1000032909.jpg" alt="Logo" class="h-14 w-14 rounded-full border-2 border-orange-500 shadow-md">
+                    <div class="flex flex-col">
+                        <span class="font-bold text-xl text-orange-600 leading-tight">স্বদেশ জাগরণ সমিতি</span>
+                        <span class="font-semibold text-sm text-green-700 leading-tight">ও বিশ্ব হিন্দু পরিষদ</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8">
+                    <button onclick="switchTab('home')" class="nav-link active text-gray-700 hover:text-orange-500 px-3 py-2 text-lg transition-colors">
+                        <i class="fas fa-home mr-1"></i> হোম
+                    </button>
+                    <button onclick="switchTab('august15')" class="nav-link text-gray-700 hover:text-orange-500 px-3 py-2 text-lg transition-colors">
+                        <i class="fas fa-flag mr-1"></i> ১৫ই আগস্ট বিশেষ
+                    </button>
+                    <button onclick="switchTab('programs')" class="nav-link text-gray-700 hover:text-orange-500 px-3 py-2 text-lg transition-colors">
+                        <i class="fas fa-calendar-alt mr-1"></i> অন্যান্য কর্মসূচি
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-700 hover:text-orange-500 focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
             </div>
         </div>
-        <nav>
-            <ul>
-                <li><a onclick="navigateSPA('home')" id="nav-home" class="active" data-en="Home" data-bn="হোম">Home</a></li>
-                <li><a onclick="navigateSPA('about')" id="nav-about" data-en="About Us" data-bn="আমাদের সম্পর্কে">About Us</a></li>
-                <li><a onclick="navigateSPA('gallery')" id="nav-gallery" data-en="Gallery" data-bn="গ্যালারি">Gallery</a></li>
-                <li><a onclick="navigateSPA('accounts')" id="nav-accounts" data-en="Transparency" data-bn="হিসাব-নিকাশ">Transparency</a></li>
-                <li><a onclick="navigateSPA('donate')" id="nav-donate" class="btn-donate" data-en="Donate" data-bn="দান করুন">Donate</a></li>
-                <li><a onclick="navigateSPA('join')" id="nav-join" class="btn-join" data-en="Join Us" data-bn="যুক্ত হোন">Join Us</a></li>
-                <li><button class="lang-switch" onclick="toggleLanguage()" id="lang-btn">বাংলা</button></li>
-            </ul>
-        </nav>
-    </header>
-
-    <!-- HOME SECTION -->
-    <section id="home" class="page-section active-section">
-        <div class="event-banner">
-            <h3 data-en="🇮🇳 Celebrating 79 Years of Indian Independence 🇮🇳" data-bn="🇮🇳 ভারতের ৭৯ তম স্বাধীনতা দিবস উদযাপন 🇮🇳">🇮🇳 Celebrating 79 Years of Indian Independence 🇮🇳</h3>
-            <p style="font-size: 17px; margin-bottom: 10px;" data-en="Join our special 'Swadesh Jagaran' Art Competition on this 15th August. Admin will manage updates." data-bn="আগামী ১৫ই আগস্ট উপলক্ষে আমাদের 'স্বদেশ জাগরণ'-এর আয়োজনে এক বিশেষ অঙ্কন প্রতিযোগিতায় অংশগ্রহণ করুন। (অ্যাডমিন প্যানেل থেকে এটি পরবর্তীতে পরিবর্তন করা যাবে)">Join our special "Swadesh Jagaran" Art Competition on this 15th August.</p>
-            <p style="color: var(--green); font-weight: bold;" data-en="Let's color the spirit of freedom together!" data-bn="আসুন একজোট হয়ে স্বাধীনতার রঙে রঙিন হই!">Let's color the spirit of freedom together!</p>
-        </div>
-
-        <h2 class="section-title" data-en="Welcome to Swadesh Jagaran" data-bn="স্বদেশ জাগরণে আপনাকে স্বাগতম">Welcome to Swadesh Jagaran</h2>
-        <div style="text-align: center; color: gray;">
-            <p data-en="This placeholder text will be replaced automatically once data is added from the Admin panel." data-bn="অ্যাডমিন প্যানেল থেকে ডেটা যুক্ত হওয়ার পর এই লেখাটি স্বয়ংক্রিয়ভাবে পরিবর্তিত হয়ে যাবে।">This placeholder text will be replaced automatically once data is added from the Admin panel.</p>
-        </div>
-    </section>
-
-    <!-- ABOUT SECTION -->
-    <section id="about" class="page-section">
-        <h2 class="section-title" data-en="About Us" data-bn="আমাদের সম্পর্কে">About Us</h2>
-        <div style="text-align: center; color: gray;">
-            <p data-en="Content managed by Admin will appear here dynamically in future." data-bn="ভবিষ্যতে অ্যাডমিন প্যানেল থেকে নিয়ন্ত্রित সমস্ত তথ্য এখানে ডাইনামিকালি প্রদর্শিত হবে।">Content managed by Admin will appear here dynamically in future.</p>
-        </div>
-    </section>
-
-    <!-- GALLERY SECTION -->
-    <section id="gallery" class="page-section">
-        <h2 class="section-title" data-en="Our Gallery" data-bn="আমাদের গ্যালারি">Our Gallery</h2>
-        <div style="text-align: center; color: gray;">
-            <p data-en="No gallery images uploaded yet. Admin controls this section." data-bn="এখনো কোনো গ্যালারি ছবি আপলোড করা হয়নি। অ্যাডমিন প্যানেল থেকে এটি নিয়ন্ত্রিত হবে।">No gallery images uploaded yet. Admin controls this section.</p>
-        </div>
-    </section>
-
-    <!-- ACCOUNTS SECTION -->
-    <section id="accounts" class="page-section">
-        <div class="accounts-header">
-            <h2 style="color: var(--navy-blue);" data-en="Financial Transparency" data-bn="স্বচ্ছ হিসাব-নিকাশ">Financial Transparency</h2>
-            <div class="current-balance-badge" id="display-balance" data-en="Balance: 0.00 ৳" data-bn="ব্যালেন্স: ০.০০ ৳">Balance: 0.00 ৳</div>
-        </div>
-
-        <div class="summary-cards">
-            <div class="card">
-                <h3 data-en="Current Month Expense" data-bn="চলতি মাসের খরচ">Current Month Expense</h3>
-                <p>0.00 ৳</p>
-            </div>
-            <div class="card">
-                <h3 data-en="Total Yearly Expense" data-bn="মোট বাৎসরিক খরচ">Total Yearly Expense</h3>
-                <p>0.00 ৳</p>
-            </div>
-            <div class="card">
-                <h3 data-en="Project Expense" data-bn="প্রজেক্ট খরচ">Project Expense</h3>
-                <p>0.00 ৳</p>
+        
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden glass-panel border-t border-gray-200">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <button onclick="switchTab('home'); toggleMobileMenu()" class="block w-full text-left text-gray-700 hover:text-orange-500 hover:bg-orange-50 px-3 py-2 rounded-md text-base font-medium">হোম</button>
+                <button onclick="switchTab('august15'); toggleMobileMenu()" class="block w-full text-left text-gray-700 hover:text-orange-500 hover:bg-orange-50 px-3 py-2 rounded-md text-base font-medium">১৫ই আগস্ট বিশেষ</button>
+                <button onclick="switchTab('programs'); toggleMobileMenu()" class="block w-full text-left text-gray-700 hover:text-orange-500 hover:bg-orange-50 px-3 py-2 rounded-md text-base font-medium">অন্যান্য কর্মসূচি</button>
             </div>
         </div>
+    </nav>
 
-        <div class="accounts-controls">
-            <div class="tab-buttons">
-                <button class="tab-btn active" onclick="switchAccountTab('expense-table')" data-en="Transactions" data-bn="লেনদেন">Transactions</button>
-                <button class="tab-btn" onclick="switchAccountTab('donor-table')" data-en="Our Donors" data-bn="দাতাগণ">Our Donors</button>
-            </div>
-            <div class="date-filter">
-                <input type="date">
-                <span style="font-weight: bold;" data-en="to" data-bn="থেকে">to</span>
-                <input type="date">
-                <button data-en="Search" data-bn="খুঁজুন">Search</button>
-            </div>
-        </div>
+    <!-- Main Content Area -->
+    <main class="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen">
 
-        <div class="table-container active-table" id="expense-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th data-en="Date" data-bn="তারিখ">Date</th>
-                        <th data-en="Description" data-bn="বিবরণ">Description</th>
-                        <th data-en="Income (৳)" data-bn="আয় (৳)">Income (৳)</th>
-                        <th data-en="Expense (৳)" data-bn="ব্যয় (৳)">Expense (৳)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="4" style="text-align: center; color: gray;" data-en="No transaction data found. (Admin Controlled)" data-bn="কোনো লেনদেনের ডেটা পাওয়া যায়নি। (অ্যাডমিন প্যানেল নিয়ন্ত্রিত)">No transaction data found. (Admin Controlled)</td></tr>
-                </tbody>
-            </table>
-        </div>
+        <!-- ================= HOME SECTION ================= -->
+        <section id="home" class="section-content active">
+            <div class="glass-panel rounded-3xl p-8 md:p-12 text-center shadow-2xl relative overflow-hidden">
+                <!-- Decorative background elements -->
+                <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-orange-400 opacity-10 blur-3xl"></div>
+                <div class="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 rounded-full bg-green-500 opacity-10 blur-3xl"></div>
+                
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-6 text-gray-800">
+                    স্বাগত জানাই <span class="text-orange-600">স্বদেশ জাগরণ</span> <span class="text-green-700">সমিতিতে</span>
+                </h1>
+                <p class="text-xl text-gray-700 mb-10 max-w-3xl mx-auto leading-relaxed">
+                    জঙ্গলপুর (আড়গড়ী), হাওড়ার একটি অরাজনৈতিক ও সামাজিক প্রতিষ্ঠান। জাতীয় ঐক্য, সংস্কৃতি রক্ষা এবং শিশুদের মধ্যে দেশপ্রেম জাগরণের লক্ষ্যে আমরা সর্বদা বদ্ধপরিকর।
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+                    <div class="bg-white/60 p-6 rounded-2xl shadow-lg border border-white hover:bg-white/80 transition cursor-pointer" onclick="switchTab('august15')">
+                        <i class="fas fa-paint-brush text-4xl text-orange-500 mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-2 text-gray-800">বসে আঁকা প্রতিযোগিতা</h3>
+                        <p class="text-gray-600">শিশু-কিশোরদের সুপ্ত প্রতিভা বিকাশে আমাদের বিশেষ আয়োজন।</p>
+                    </div>
+                    <div class="bg-white/60 p-6 rounded-2xl shadow-lg border border-white hover:bg-white/80 transition">
+                        <i class="fas fa-hands-holding-circle text-4xl text-green-600 mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-2 text-gray-800">আমাদের সংকল্প</h3>
+                        <p class="text-gray-600">সৎ চিন্তা, সৎ চরিত্র ও সৎ কর্মের মাধ্যমে সমাজ গঠন।</p>
+                    </div>
+                    <div class="bg-white/60 p-6 rounded-2xl shadow-lg border border-white hover:bg-white/80 transition cursor-pointer" onclick="switchTab('programs')">
+                        <i class="fas fa-om text-4xl text-orange-500 mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-2 text-gray-800">শ্রদ্ধাঞ্জলি</h3>
+                        <p class="text-gray-600">শান্তিপূর্ণ জমায়েত ও মোমবাতি প্রজ্জ্বলন কর্মসূচী।</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <div class="table-container" id="donor-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th data-en="Date" data-bn="তারিখ">Date</th>
-                        <th data-en="Donor Name" data-bn="দাতার নাম">Donor Name</th>
-                        <th data-en="Purpose" data-bn="উদ্দেশ্য">Purpose</th>
-                        <th data-en="Amount (৳)" data-bn="পরিমাণ (৳)">Amount (৳)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="4" style="text-align: center; color: gray;" data-en="No donor data found. (Admin Controlled)" data-bn="কোনো দাতার ডেটা পাওয়া যায়নি। (অ্যাডমিন প্যানেল নিয়ন্ত্রিত)">No donor data found. (Admin Controlled)</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+        <!-- ================= 15TH AUGUST EVENT SECTION (DYNAMIC/ADMIN CONTROLLABLE) ================= -->
+        <section id="august15" class="section-content">
+            <div id="admin-event-container" class="glass-panel rounded-3xl p-6 md:p-10 shadow-2xl">
+                
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl md:text-5xl font-bold text-gray-800 mb-4 border-b-4 border-orange-500 inline-block pb-2">
+                        ৭৯তম স্বাধীনতা দিবস উদযাপন - ২০২৬
+                    </h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto mt-4">
+                        (এই বার্তাগুলি এডমিন প্যানেল থেকে পরবর্তীতে পরিবর্তন বা মুছে ফেলা যাবে)
+                    </p>
+                </div>
 
-    <!-- DONATE SECTION -->
-    <section id="donate" class="page-section">
-        <h2 class="section-title" data-en="Donate for a Cause" data-bn="দান করুন">Donate for a Cause</h2>
-        <div class="form-container">
-            <div class="form-group">
-                <label data-en="Full Name *" data-bn="সম্পূর্ণ নাম *">Full Name *</label>
-                <input type="text" id="donate-name" placeholder="Enter your name">
-            </div>
-            <div class="form-group">
-                <label data-en="Full Address *" data-bn="সম্পূর্ণ ঠিকানা *">Full Address *</label>
-                <textarea id="donate-address" rows="2" placeholder="Enter your full address"></textarea>
-            </div>
-            <div class="form-group">
-                <label data-en="WhatsApp Number *" data-bn="হোয়াটসঅ্যাপ নম্বর *">WhatsApp Number *</label>
-                <input type="text" id="donate-wa" placeholder="Enter WhatsApp Number">
-            </div>
-            <div class="form-group">
-                <label data-en="Email Address (Optional)" data-bn="ইমেইল ঠিকানা (ঐচ্ছিক)">Email Address (Optional)</label>
-                <input type="email" id="donate-email" placeholder="Enter Email">
-            </div>
-            <div class="form-group">
-                <label data-en="Donation Amount () *" data-bn="দানের পরিমাণ () *">Donation Amount () *</label>
-                <input type="number" id="donate-amount" placeholder="Enter Amount">
-            </div>
-            <button class="submit-btn" style="background-color: var(--green);" onclick="processForm('donate')">
-                <span data-en="Proceed to Donate" data-bn="দান করতে এগিয়ে যান">Proceed to Donate</span>
-            </button>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                    <!-- Left Side: Dynamic Text/Resolution -->
+                    <div class="space-y-6">
+                        <div class="bg-orange-50/80 border-l-4 border-orange-500 p-6 rounded-r-xl shadow-md">
+                            <h3 class="text-2xl font-bold text-orange-700 mb-3"><i class="fas fa-bullhorn mr-2"></i> বিশেষ বার্তা</h3>
+                            <p class="text-gray-700 text-lg leading-relaxed">
+                                আগামী ১৫ই আগস্ট ২০২৬, আমাদের মাতৃভূমির স্বাধীনতার ৭৯ বছর পূর্তি উপলক্ষে 'স্বদেশ জাগরণ সমিতি' ও 'বিশ্ব হিন্দু পরিষদ'-এর যৌথ উদ্যোগে এক বিশেষ শিশু ও কিশোর-কিশোরীদের বসে আঁকা প্রতিযোগিতার আয়োজন করা হয়েছে।
+                            </p>
+                        </div>
 
-            <div class="progress-box" id="donate-progress-box">
-                <div class="progress-bar"><div class="progress-fill" id="donate-progress-fill"></div></div>
-                <p id="donate-progress-text" style="font-weight: bold; color: var(--green);">0%</p>
-            </div>
-        </div>
-    </section>
+                        <div class="bg-green-50/80 border-l-4 border-green-600 p-6 rounded-r-xl shadow-md">
+                            <h3 class="text-2xl font-bold text-green-800 mb-3"><i class="fas fa-hand-sparkles mr-2"></i> আমাদের সংকল্প</h3>
+                            <ul class="list-none space-y-3 text-lg text-gray-700">
+                                <li><i class="fas fa-check-circle text-green-600 mr-2"></i> জাতীয় ঐক্য ও সংস্কৃতি রক্ষা</li>
+                                <li><i class="fas fa-check-circle text-green-600 mr-2"></i> শিশুদের মধ্যে দেশপ্রেম জাগরণ</li>
+                                <li><i class="fas fa-check-circle text-green-600 mr-2"></i> সৎ চিন্তা, সৎ চরিত্র, সৎ কর্ম</li>
+                                <li><i class="fas fa-check-circle text-green-600 mr-2"></i> দেশকে জানো, সংস্কৃতিকে মানো, ধর্মকে ধারণ করো</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-white/80 p-6 rounded-xl shadow-md border border-gray-200">
+                            <h4 class="font-bold text-xl mb-4 text-gray-800">অনুষ্ঠানের সূচি:</h4>
+                            <div class="flex items-center mb-2 text-gray-700">
+                                <i class="fas fa-calendar-day text-orange-500 text-xl w-8"></i>
+                                <span>১৫ই আগস্ট, ২০২৬ (শনিবার)</span>
+                            </div>
+                            <div class="flex items-center mb-2 text-gray-700">
+                                <i class="fas fa-clock text-orange-500 text-xl w-8"></i>
+                                <span>সকাল ৮:০০ ঘটিকা থেকে দুপুর ২:০০টা</span>
+                            </div>
+                            <div class="flex items-center text-gray-700">
+                                <i class="fas fa-map-marker-alt text-orange-500 text-xl w-8"></i>
+                                <span>জঙ্গলপুর সারদা আশ্রম সংলগ্ন প্রাঙ্গণ, হাওড়া - ৭১১৩০২</span>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- JOIN SECTION -->
-    <section id="join" class="page-section">
-        <h2 class="section-title" data-en="Join Swadesh Jagaran" data-bn="স্বদেশ জাগরণে যুক্ত হোন">Join Swadesh Jagaran</h2>
-        <div class="form-container" style="border-top-color: var(--green);">
-            <div class="form-group">
-                <label data-en="Full Name *" data-bn="সম্পূর্ণ নাম *">Full Name *</label>
-                <input type="text" id="join-name" placeholder="Enter your name">
+                    <!-- Right Side: Banners & Invitations -->
+                    <div class="space-y-8">
+                        <!-- Main Banner Image -->
+                        <div class="relative group rounded-2xl overflow-hidden shadow-2xl border-4 border-white hover-zoom">
+                            <img src="1000032979.png" alt="Independence Day Celebration Banner" class="w-full h-auto object-cover">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <span class="text-white font-bold text-xl bg-orange-600/90 px-4 py-2 rounded-full">মূল ব্যানার</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Invitation Card Image -->
+                        <div class="relative group rounded-2xl overflow-hidden shadow-2xl border-4 border-white hover-zoom">
+                            <img src="1000032975.png" alt="Guest Invitation Card" class="w-full h-auto object-cover">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <span class="text-white font-bold text-xl bg-green-600/90 px-4 py-2 rounded-full">আমন্ত্রণ পত্র</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label data-en="Full Address *" data-bn="সম্পূর্ণ ঠিকানা *">Full Address *</label>
-                <textarea id="join-address" rows="2" placeholder="Enter your full address"></textarea>
-            </div>
-            <div class="form-group">
-                <label data-en="WhatsApp Number *" data-bn="হোয়াটসঅ্যাপ নম্বর *">WhatsApp Number *</label>
-                <input type="text" id="join-wa" placeholder="Enter WhatsApp Number">
-            </div>
-            <div class="form-group">
-                <label data-en="Email Address (Optional)" data-bn="ইমেইল ঠিকানা (ঐচ্ছিক)">Email Address (Optional)</label>
-                <input type="email" id="join-email" placeholder="Enter Email">
-            </div>
-            <button class="submit-btn" onclick="processForm('join')">
-                <span data-en="Apply for Membership" data-bn="সদস্যপদের জন্য আবেদন করুন">Apply for Membership</span>
-            </button>
+        </section>
 
-            <div class="progress-box" id="join-progress-box">
-                <div class="progress-bar"><div class="progress-fill" id="join-progress-fill"></div></div>
-                <p id="join-progress-text" style="font-weight: bold; color: var(--green);">0%</p>
-            </div>
-        </div>
-    </section>
+        <!-- ================= OTHER PROGRAMS / TRIBUTE SECTION ================= -->
+        <section id="programs" class="section-content">
+            <div class="glass-panel rounded-3xl p-6 md:p-10 shadow-2xl">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl md:text-5xl font-bold text-gray-800 mb-4 border-b-4 border-orange-500 inline-block pb-2">
+                        অন্যান্য কর্মসূচি ও শ্রদ্ধাঞ্জলি
+                    </h2>
+                </div>
 
-    <footer>
-        <div class="footer-address">
-            <h3 style="color: var(--saffron); margin-bottom: 8px;" data-en="Official Address" data-bn="অফিসিয়াল ঠিকানা">Official Address</h3>
-            <p data-en="Swadesh Jagaran<br>Howrah Jangalpur 711302<br>West Bengal, Howrah" data-bn="স্বদেশ জাগরণ<br>হাওড়া জঙ্গলপুর ৭১১৩০২<br>ওয়েস্ট বেঙ্গল, হাওড়া">Swadesh Jagaran<br>Howrah Jangalpur 711302<br>West Bengal, Howrah</p>
-        </div>
-        <div class="copyright-warning">
-            <p data-en="&copy; 2026 Swadesh Jagaran. All Rights Reserved. Copying content or source code from this website is strictly prohibited." data-bn="&copy; ২০২৬ স্বদেশ জাগরণ। সর্বস্বত্ব সংরক্ষিত। এই ওয়েবসাইট থেকে কোনো তথ্য বা সোর্স কোড কপি করা সম্পূর্ণ নিষিদ্ধ।">&copy; 2026 Swadesh Jagaran. All Rights Reserved. Copying content or source code from this website is strictly prohibited.</p>
+                <div class="max-w-4xl mx-auto bg-white/70 rounded-2xl overflow-hidden shadow-xl border border-white">
+                    <div class="md:flex">
+                        <div class="md:shrink-0 md:w-1/2 p-2">
+                            <img src="1000032944.jpg" alt="Candle March and Tribute" class="w-full h-full object-cover rounded-xl shadow-md hover-zoom">
+                        </div>
+                        <div class="p-8 md:w-1/2 flex flex-col justify-center">
+                            <div class="uppercase tracking-wide text-sm text-orange-600 font-bold mb-1">সাম্প্রতিক কর্মসূচি</div>
+                            <h3 class="block mt-1 text-2xl leading-tight font-extrabold text-gray-900 mb-4">শান্তিপূর্ণ জমায়েত ও মোমবাতি প্রজ্জ্বলন</h3>
+                            <p class="mt-2 text-gray-700 text-lg leading-relaxed mb-6">
+                                সমাজ ও ন্যায়ের স্বার্থে আমাদের আয়োজিত শান্তিপূর্ণ জমায়েত এবং শ্রদ্ধাঞ্জলি জ্ঞাপন অনুষ্ঠান। সমাজে শান্তি ও সংহতি বজায় রাখতে আমাদের এই প্রয়াস।
+                            </p>
+                            
+                            <div class="bg-gray-100/80 rounded-lg p-4 space-y-2 border-l-4 border-gray-400">
+                                <div class="flex items-center text-gray-700">
+                                    <i class="fas fa-map-pin text-gray-500 w-6"></i>
+                                    <span>ডুমুরজলা স্টেডিয়াম রিং রোড</span>
+                                </div>
+                                <div class="flex items-center text-gray-700">
+                                    <i class="fas fa-calendar text-gray-500 w-6"></i>
+                                    <span>৯ই আগস্ট, ২০২৬, রবিবার</span>
+                                </div>
+                                <div class="flex items-center text-gray-700">
+                                    <i class="fas fa-clock text-gray-500 w-6"></i>
+                                    <span>সন্ধ্যা ৬-৯ ঘটিকা</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-panel border-t border-white/40 mt-auto">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="md:flex md:items-center md:justify-between text-center md:text-left">
+                <div class="flex justify-center md:justify-start items-center space-x-3 mb-4 md:mb-0">
+                    <img src="1000032909.jpg" alt="VHP Logo" class="h-10 w-10 rounded-full border border-gray-300">
+                    <div>
+                        <p class="text-gray-800 font-bold">স্বদেশ জাগরণ সমিতি ও বিশ্ব হিন্দু পরিষদ</p>
+                        <p class="text-sm text-gray-600">জঙ্গলপুর (আড়গোড়), হাওড়া - ৭১১৩০২</p>
+                    </div>
+                </div>
+                <div class="text-gray-600 font-medium">
+                    &copy; ২০২৬ সর্বস্বত্ব সংরক্ষিত। <span class="text-orange-600">জয় হিন্দ!</span> <span class="text-green-700">বন্দে মাতরম!</span>
+                </div>
+            </div>
         </div>
     </footer>
 
+    <!-- JavaScript for Single Page App functionality -->
     <script>
-        // Anti-Copy Protection
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            alert(currentLang === 'bn' ? "কপিরাইট সতর্কতা: এই ওয়েবসাইট থেকে কোনো তথ্য কপি করা নিষেধ!" : "Copyright Warning: Copying content is strictly prohibited!");
-        });
+        // Function to switch between sections cleanly
+        function switchTab(tabId) {
+            // Get all sections and nav links
+            const sections = document.querySelectorAll('.section-content');
+            const navLinks = document.querySelectorAll('.nav-link');
 
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'p' || e.key === 'a')) {
-                e.preventDefault();
-                alert(currentLang === 'bn' ? "সতর্কতা: কপিরাইট আইনের কারণে এই অপশনটি বন্ধ রাখা হয়েছে।" : "Action Disabled: Copyright Protected.");
-            }
-        });
-
-        // Language Engine
-        let currentLang = 'en';
-        function toggleLanguage() {
-            currentLang = currentLang === 'en' ? 'bn' : 'en';
-            document.getElementById('lang-btn').innerText = currentLang === 'en' ? 'বাংলা' : 'English';
-            
-            document.querySelectorAll('[data-en]').forEach(el => {
-                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                    // Placeholder translation if needed
-                } else {
-                    el.innerHTML = el.getAttribute(`data-${currentLang}`);
-                }
+            // Hide all sections
+            sections.forEach(section => {
+                section.classList.remove('active');
             });
-        }
 
-        // SPA Navigation
-        function navigateSPA(targetSectionId) {
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active-section');
-            });
-            document.querySelectorAll('nav ul li a').forEach(link => {
+            // Remove active class from all nav links
+            navLinks.forEach(link => {
                 link.classList.remove('active');
             });
-            document.getElementById(targetSectionId).classList.add('active-section');
-            document.querySelectorAll(`a[onclick="navigateSPA('${targetSectionId}')"]`).forEach(link => {
-                link.classList.add('active');
-            });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
 
-        function switchAccountTab(targetTableId) {
-            document.getElementById('expense-table').classList.remove('active-table');
-            document.getElementById('donor-table').classList.remove('active-table');
-            document.getElementById(targetTableId).classList.add('active-table');
-        }
-
-        // Form Process & WhatsApp Redirect
-        function processForm(type) {
-            const name = document.getElementById(`${type}-name`).value;
-            const address = document.getElementById(`${type}-address`).value;
-            const wa = document.getElementById(`${type}-wa`).value;
-            
-            if(!name || !address || !wa) {
-                alert(currentLang === 'bn' ? "দয়া করে সমস্ত আবশ্যক ঘরগুলো (*) পূরণ করুন!" : "Please fill all required fields (*)!");
-                return;
+            // Show the selected section
+            const targetSection = document.getElementById(tabId);
+            if(targetSection) {
+                targetSection.classList.add('active');
             }
 
-            const progressBox = document.getElementById(`${type}-progress-box`);
-            const progressFill = document.getElementById(`${type}-progress-fill`);
-            const progressText = document.getElementById(`${type}-progress-text`);
-            
-            progressBox.style.display = 'block';
-            let percentage = 0;
-
-            const interval = setInterval(() => {
-                percentage += 25;
-                progressFill.style.width = percentage + '%';
-                progressText.innerText = percentage + '% ' + (currentLang === 'bn' ? 'প্রসেস হচ্ছে...' : 'Processing...');
-                
-                if (percentage >= 100) {
-                    clearInterval(interval);
-                    progressText.innerText = currentLang === 'bn' ? '১০০% সফল! হোয়াটসঅ্যাপে নিয়ে যাওয়া হচ্ছে...' : '100% Successful! Redirecting...';
-                    
-                    setTimeout(() => {
-                        let msg = `*New ${type === 'donate' ? 'Donation' : 'Membership'} Request*\n\n`;
-                        msg += `*Name:* ${name}\n`;
-                        msg += `*Address:* ${address}\n`;
-                        msg += `*WhatsApp:* ${wa}\n`;
-                        
-                        if(type === 'donate') {
-                            const amount = document.getElementById(`donate-amount`).value;
-                            msg += `*Amount:* ${amount} ৳\n`;
-                        }
-                        
-                        const adminWhatsAppNumber = "919000000000"; 
-                        window.location.href = `https://wa.me/${adminWhatsAppNumber}?text=${encodeURIComponent(msg)}`;
-                    }, 1000);
+            // Highlight the active nav link based on the function call
+            // We use standard string matching since multiple elements can trigger this
+            navLinks.forEach(link => {
+                if(link.getAttribute('onclick').includes(tabId)) {
+                    link.classList.add('active');
                 }
-            }, 300);
+            });
+
+            // Scroll smoothly to top when switching tabs
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Mobile Menu Toggle Logic
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        function toggleMobileMenu() {
+            menu.classList.add('hidden');
         }
     </script>
 </body>
