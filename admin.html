@@ -3,814 +3,855 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>স্বদেশ জাগরণ - অ্যাডমিন প্যানেল</title>
-    <!-- FontAwesome for Icons -->
+    <title>স্বদেশ জাগরণ - অ্যাডমিন কন্ট্রোল প্যানেল</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Browser Image Compression -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
+
+    <!-- Firebase v10 Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+
     <style>
-        /* ================= Core Variables & Resets ================= */
-        :root {
-            --primary-dark: #111827;
-            --sidebar-bg: #1f2937;
-            --sidebar-hover: #374151;
-            --text-light: #f3f4f6;
-            --text-muted: #9ca3af;
-            --accent-orange: #ff9933; /* Indian Saffron */
-            --accent-green: #138808;  /* Indian Green */
-            --accent-blue: #000080;   /* Ashoka Chakra Blue */
-            --bg-color: #ffffff;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --transition: all 0.3s ease;
+        /* Security & Screenshot Prevention */
+        @media print { html, body { display: none !important; } }
+        body { -webkit-user-select: none; -ms-user-select: none; user-select: none; transition: background 0.5s ease; background-color: #f8fafc; }
+        img { pointer-events: none; -webkit-user-drag: none; user-select: none; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        /* Tables */
+        .admin-table th { background-color: #1e293b; color: #ffffff; padding: 12px; text-align: left; font-size: 0.9rem; }
+        .admin-table td { border-bottom: 1px solid #e2e8f0; padding: 12px; color: #334155; font-size: 0.9rem; }
+        .admin-table tr:hover { background-color: #f1f5f9; }
+        
+        .hidden-section { display: none !important; }
+        
+        /* Dynamic Background & Indian Theme Animations */
+        #dynamicBg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-size: cover; background-position: center; opacity: 0.05;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            display: flex;
-            height: 100vh;
-            background-color: var(--bg-color);
-            overflow: hidden;
-            /* Subtle Indian Flag Gradient Background for whole page */
-            background: linear-gradient(135deg, rgba(255,153,51,0.05) 0%, rgba(255,255,255,1) 50%, rgba(19,136,8,0.05) 100%);
-        }
-
-        /* ================= Sidebar Styles ================= */
-        .sidebar {
-            width: 280px;
-            background-color: var(--sidebar-bg);
-            color: var(--text-light);
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 15px rgba(0,0,0,0.2);
-            z-index: 10;
-        }
-
-        .sidebar-header {
-            padding: 25px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            background: linear-gradient(to right, #000, #1a1a1a);
-        }
-
-        .sidebar-header h2 {
-            color: var(--accent-orange);
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .sidebar-header p {
-            color: var(--accent-green);
-            font-size: 13px;
-            margin-top: 5px;
-            letter-spacing: 2px;
-        }
-
-        .nav-menu {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px 0;
-        }
-
-        .nav-item {
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .nav-link {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 25px;
-            color: var(--text-light);
-            text-decoration: none;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 16px;
-        }
-
-        .nav-link:hover {
-            background-color: var(--sidebar-hover);
-            padding-left: 30px; /* Modern slide-in effect */
-            color: var(--accent-orange);
-        }
-
-        .nav-link i.icon-main {
-            width: 25px;
-            color: var(--accent-orange);
-        }
-
-        .nav-link i.icon-arrow {
-            font-size: 12px;
-            transition: var(--transition);
-        }
-
-        .nav-item.active .nav-link {
-            background-color: var(--sidebar-hover);
-            border-left: 4px solid var(--accent-orange);
-        }
-
-        .nav-item.active i.icon-arrow {
-            transform: rotate(180deg);
-        }
-
-        .submenu {
-            max-height: 0;
-            overflow: hidden;
-            background-color: var(--primary-dark);
-            transition: max-height 0.4s ease;
-        }
-
-        .submenu a {
-            display: block;
-            padding: 12px 25px 12px 50px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            transition: var(--transition);
-        }
-
-        .submenu a:hover {
-            color: #fff;
-            background-color: rgba(255,255,255,0.05);
-            padding-left: 55px;
-        }
-
-        .logout-btn {
-            padding: 20px;
-            text-align: center;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .logout-btn button {
-            width: 100%;
-            padding: 12px;
-            background-color: transparent;
-            border: 2px solid #ef4444;
-            color: #ef4444;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .logout-btn button:hover {
-            background-color: #ef4444;
-            color: #fff;
-            transform: scale(1.05);
-            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.4);
-        }
-
-        /* ================= Main Content & Topbar ================= */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background-color: rgba(255,255,255,0.9);
-            box-shadow: var(--shadow-sm);
-            border-bottom: 2px solid var(--accent-orange);
-            backdrop-filter: blur(10px);
-        }
-
-        /* Centered Balance */
-        .balance-section {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            background: linear-gradient(to right, rgba(255,153,51,0.1), rgba(19,136,8,0.1));
-            padding: 8px 25px;
-            border-radius: 50px;
-            border: 1px solid rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .balance-title {
-            font-size: 12px;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 2px;
-        }
-
-        .balance-amount {
-            font-size: 22px;
-            font-weight: bold;
-            color: var(--accent-blue);
-        }
-
-        .language-toggle {
-            display: flex;
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid #ccc;
-        }
-
-        .language-toggle button {
-            padding: 8px 15px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            transition: var(--transition);
-        }
-
-        .btn-bn {
-            background-color: var(--accent-green);
-            color: white;
-        }
-
-        .btn-en {
-            background-color: #f3f4f6;
-            color: #333;
-        }
-
-        .btn-en:hover { background-color: #e5e7eb; }
-
-        /* ================= Sections & Modals ================= */
-        .content-area {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        .section-container {
-            display: none; /* Hidden by default */
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: var(--shadow-md);
-            border-top: 4px solid var(--accent-orange);
-            animation: fadeIn 0.4s ease-out forwards;
-            position: relative;
-        }
-
-        .section-container.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        
+        .premium-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+        .tab-content { animation: slideUpFade 0.4s ease-out forwards; position: relative; }
+        
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .close-section-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 24px;
-            color: #ef4444;
-            cursor: pointer;
-            transition: var(--transition);
-            background: none;
-            border: none;
-            outline: none;
-        }
-
-        .close-section-btn:hover {
-            transform: scale(1.2) rotate(90deg);
-        }
-
-        .section-title {
-            font-size: 20px;
-            color: var(--primary-dark);
-            margin-bottom: 20px;
-            border-bottom: 2px solid #f3f4f6;
-            padding-bottom: 10px;
-        }
-
-        /* ================= Welcome Screen (Indian Theme) ================= */
-        #welcome-section {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            text-align: center;
-            /* Animated Indian Flag Background */
-            background: linear-gradient(45deg, #ff9933, #ffffff, #138808);
-            background-size: 200% 200%;
-            animation: gradientMove 5s ease infinite;
-            border-radius: 12px;
-            box-shadow: inset 0 0 50px rgba(255,255,255,0.8);
-            position: relative;
-        }
-
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .welcome-box {
-            background: rgba(255, 255, 255, 0.85);
-            padding: 40px 60px;
-            border-radius: 15px;
-            box-shadow: var(--shadow-md);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.5);
-        }
-
-        .welcome-box h1 {
-            color: var(--accent-blue);
-            font-size: 40px;
-            margin-bottom: 10px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .welcome-box p {
-            color: #444;
-            font-size: 18px;
-        }
-
-        /* ================= Forms & Tables ================= */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: bold;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 15px;
-            transition: var(--transition);
-        }
-
-        .form-control:focus {
-            border-color: var(--accent-orange);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.2);
-        }
-
-        .btn-submit {
-            background-color: var(--accent-green);
-            color: white;
-            padding: 10px 25px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: var(--transition);
-        }
-
-        .btn-submit:hover {
-            background-color: #0f6c06;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        /* Data Tables */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .data-table th, .data-table td {
-            border: 1px solid #e5e7eb;
-            padding: 12px 15px;
-            text-align: left;
-        }
-
-        .data-table th {
-            background-color: #f9fafb;
-            color: #374151;
-            font-weight: bold;
-        }
-
-        .data-table tbody tr:hover {
-            background-color: #f3f4f6;
-        }
-
-        .action-btn {
-            padding: 6px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 5px;
-            color: white;
-            font-size: 12px;
-            transition: var(--transition);
-        }
-
-        .btn-approve { background-color: var(--accent-green); }
-        .btn-edit { background-color: #3b82f6; }
-        .btn-hide { background-color: #f59e0b; }
-        .btn-delete { background-color: #ef4444; }
-        .btn-whatsapp { background-color: #25D366; }
-
-        .action-btn:hover { opacity: 0.8; transform: translateY(-2px); }
-
-        .badge {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .badge-pending { background-color: #fef3c7; color: #d97706; }
-        .badge-approved { background-color: #d1fae5; color: #059669; }
-
-        /* OTP Section Hidden by default */
-        #otp-section {
-            display: none;
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #f0fdf4;
-            border: 1px dashed var(--accent-green);
-            border-radius: 8px;
-        }
-
+        /* Indian Flag Gradient borders */
+        .border-tricolor { border-image: linear-gradient(to right, #FF9933, #FFFFFF, #138808) 1; }
+        .bg-tricolor { background: linear-gradient(135deg, rgba(255,153,51,0.1), rgba(255,255,255,0.8), rgba(19,136,8,0.1)); }
     </style>
 </head>
-<body>
+<body id="mainBody" class="font-sans text-gray-800 antialiased overflow-hidden">
 
-    <!-- Sidebar Navigation -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h2>স্বদেশ জাগরণ</h2>
-            <p>কন্ট্রোল রুম</p>
-        </div>
-        
-        <div class="nav-menu">
-            <!-- Dashboard -->
-            <div class="nav-item">
-                <a href="#" class="nav-link" onclick="showSection('welcome-section')">
-                    <div><i class="fas fa-home icon-main"></i> ড্যাশবোর্ড</div>
-                </a>
-            </div>
+    <div id="dynamicBg"></div>
 
-            <!-- Finance -->
-            <div class="nav-item has-submenu">
-                <div class="nav-link" onclick="toggleSubmenu(this)">
-                    <div><i class="fas fa-file-invoice-dollar icon-main"></i> হিসাবনিকাশ (Finance)</div>
-                    <i class="fas fa-chevron-down icon-arrow"></i>
+    <!-- Login Section -->
+    <div id="loginSection" class="h-screen w-screen flex items-center justify-center bg-gradient-to-br from-orange-100 via-white to-green-100 absolute top-0 left-0 z-50">
+        <div class="bg-white p-10 rounded-2xl premium-shadow w-full max-w-md text-center border-t-8 border-orange-500 border-b-8 border-green-600 relative overflow-hidden">
+            <i class="fa-solid fa-dharmachakra absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-9xl text-blue-50 opacity-40 z-0"></i>
+            
+            <img id="loginLogo" src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Logo" class="w-20 h-20 mx-auto relative z-10 mb-4 object-contain">
+            <h2 class="text-3xl font-bold mb-2 text-gray-800 relative z-10 lang-text" data-bn="স্বদেশ জাগরণ" data-en="Swadesh Jagaran">স্বদেশ জাগরণ</h2>
+            <h3 class="text-lg font-semibold mb-8 text-blue-700 relative z-10 lang-text" data-bn="সুরক্ষিত কন্ট্রোল প্যানেল" data-en="Secure Control Panel">সুরক্ষিত কন্ট্রোল প্যানেল</h3>
+            
+            <div class="relative z-10">
+                <div class="mb-4 text-left">
+                    <label class="block text-sm font-bold text-gray-700 mb-1 lang-text" data-bn="অ্যাডমিন কোড" data-en="Admin Code">অ্যাডমিন কোড</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user-shield absolute left-3 top-3.5 text-gray-400"></i>
+                        <input type="text" id="adminCode" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-orange-500 font-bold transition bg-gray-50" data-placeholder-bn="আপনার কোড দিন" data-placeholder-en="Enter your code" placeholder="আপনার কোড দিন">
+                    </div>
                 </div>
-                <div class="submenu">
-                    <a href="#" onclick="showSection('finance-add-section')">আয়/ব্যয় যুক্ত করুন</a>
-                    <a href="#">আর্থিক বিবরণী দেখুন</a>
+                
+                <div class="mb-6 text-left">
+                    <label class="block text-sm font-bold text-gray-700 mb-1 lang-text" data-bn="পাসওয়ার্ড" data-en="Password">পাসওয়ার্ড</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-3 top-3.5 text-gray-400"></i>
+                        <input type="password" id="adminPassword" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-green-600 font-bold transition bg-gray-50" data-placeholder-bn="পাসওয়ার্ড দিন" data-placeholder-en="Enter password" placeholder="পাসওয়ার্ড দিন">
+                    </div>
                 </div>
-            </div>
-
-            <!-- Donation Management -->
-            <div class="nav-item has-submenu">
-                <div class="nav-link" onclick="toggleSubmenu(this)">
-                    <div><i class="fas fa-hand-holding-heart icon-main"></i> ডোনেশন ম্যানেজমেন্ট</div>
-                    <i class="fas fa-chevron-down icon-arrow"></i>
-                </div>
-                <div class="submenu">
-                    <a href="#" onclick="showSection('donation-list-section')">অনলাইন রিকোয়েস্ট (লিস্ট)</a>
-                </div>
-            </div>
-
-            <!-- Membership -->
-            <div class="nav-item has-submenu">
-                <div class="nav-link" onclick="toggleSubmenu(this)">
-                    <div><i class="fas fa-users icon-main"></i> মেম্বারশিপ (CMS)</div>
-                    <i class="fas fa-chevron-down icon-arrow"></i>
-                </div>
-                <div class="submenu">
-                    <a href="#" onclick="showSection('membership-manual-section')">নতুন মেম্বার যুক্ত করুন (ম্যানুয়াল)</a>
-                    <a href="#" onclick="showSection('membership-list-section')">পেন্ডিং ও অ্যাপ্রুভ লিস্ট</a>
-                </div>
-            </div>
-
-            <!-- Settings -->
-            <div class="nav-item has-submenu">
-                <div class="nav-link" onclick="toggleSubmenu(this)">
-                    <div><i class="fas fa-cog icon-main"></i> অ্যাডমিন সেটিংস</div>
-                    <i class="fas fa-chevron-down icon-arrow"></i>
-                </div>
-                <div class="submenu">
-                    <a href="#">প্রোফাইল আপডেট</a>
-                    <a href="#">পাসওয়ার্ড পরিবর্তন</a>
-                </div>
+                
+                <button onclick="loginAdmin()" class="w-full bg-gradient-to-r from-orange-500 to-green-600 text-white p-3.5 rounded-lg text-lg font-bold hover:shadow-lg transform hover:-translate-y-0.5 transition duration-300 lang-text" data-bn="লগইন করুন" data-en="Login Now">লগইন করুন</button>
             </div>
         </div>
-
-        <div class="logout-btn">
-            <button onclick="alert('সিস্টেম থেকে লগআউট করা হচ্ছে...')">
-                <i class="fas fa-sign-out-alt"></i> লগ আউট
-            </button>
+        <!-- Global Language Toggle for Login -->
+        <div class="absolute top-4 right-4 bg-white p-1 rounded-lg shadow border flex gap-1 z-50">
+            <button onclick="changeLanguage('bn')" id="langBtnBnLog" class="px-3 py-1 bg-green-600 text-white rounded text-sm font-bold transition">বাংলা</button>
+            <button onclick="changeLanguage('en')" id="langBtnEnLog" class="px-3 py-1 bg-transparent text-gray-600 rounded text-sm font-bold hover:bg-gray-100 transition">ENG</button>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
+    <!-- Main Dashboard -->
+    <div id="dashboardSection" class="hidden-section flex h-screen w-screen bg-gray-100">
         
-        <!-- Top Bar -->
-        <div class="topbar">
-            <div class="language-toggle">
-                <button class="btn-bn">বাংলা</button>
-                <button class="btn-en">ENG</button>
+        <!-- Sidebar Navigation -->
+        <div class="w-72 bg-slate-900 text-gray-300 flex flex-col shadow-2xl relative z-20">
+            <div class="p-6 bg-slate-950 text-center border-b border-slate-800 flex flex-col items-center justify-center">
+                <img id="sidebarAdminLogo" src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" class="w-16 h-16 mb-2 rounded-full border-2 border-orange-500 p-1 bg-white object-contain">
+                <h2 class="font-bold text-xl tracking-wide text-white lang-text" data-bn="স্বদেশ জাগরণ" data-en="Swadesh Jagaran">স্বদেশ জাগরণ</h2>
+                <p class="text-xs text-green-400 mt-1 font-semibold lang-text" data-bn="অ্যাডমিন ড্যাশবোর্ড" data-en="Admin Dashboard">অ্যাডমিন ড্যাশবোর্ড</p>
             </div>
             
-            <!-- Centered Balance Area -->
-            <div class="balance-section">
-                <span class="balance-title">বর্তমান ব্যালেন্স</span>
-                <span class="balance-amount">৳ ০.০০</span>
+            <nav class="flex-1 overflow-y-auto py-4 custom-scrollbar">
+                <!-- Finance -->
+                <div class="mb-1">
+                    <button onclick="toggleMenu('menu-finance')" class="w-full flex justify-between items-center px-6 py-3.5 hover:bg-slate-800 transition border-l-4 border-transparent hover:border-orange-500 group">
+                        <span class="font-semibold text-sm flex items-center group-hover:text-white"><i class="fa-solid fa-wallet w-6 text-orange-400"></i><span class="lang-text" data-bn="হিসাবনিকাশ (Finance)" data-en="Accounts & Finance">হিসাবনিকাশ (Finance)</span></span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-500 group-hover:text-white transition"></i>
+                    </button>
+                    <div id="menu-finance" class="hidden-section bg-slate-950 px-6 py-2">
+                        <button onclick="switchTab('tab-finance')" class="w-full text-left py-2 hover:text-orange-400 transition lang-text text-sm flex items-center before:content-['-'] before:mr-2" data-bn="আয়-ব্যয় ম্যানেজমেন্ট" data-en="Income/Expense Mgt.">আয়-ব্যয় ম্যানেজমেন্ট</button>
+                    </div>
+                </div>
+
+                <!-- CMS -->
+                <div class="mb-1">
+                    <button onclick="toggleMenu('menu-cms')" class="w-full flex justify-between items-center px-6 py-3.5 hover:bg-slate-800 transition border-l-4 border-transparent hover:border-blue-500 group">
+                        <span class="font-semibold text-sm flex items-center group-hover:text-white"><i class="fa-solid fa-laptop-code w-6 text-blue-400"></i><span class="lang-text" data-bn="ওয়েবসাইট কন্ট্রোল (CMS)" data-en="Website Control (CMS)">ওয়েবসাইট কন্ট্রোল (CMS)</span></span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-500 group-hover:text-white transition"></i>
+                    </button>
+                    <div id="menu-cms" class="hidden-section bg-slate-950 px-6 py-2">
+                        <button onclick="switchTab('tab-cms-layout')" class="w-full text-left py-2 hover:text-blue-400 transition lang-text text-sm flex items-center before:content-['-'] before:mr-2" data-bn="সেকশন অন/অফ" data-en="Toggle Sections">সেকশন অন/অফ</button>
+                        <button onclick="switchTab('tab-cms-content')" class="w-full text-left py-2 hover:text-blue-400 transition lang-text text-sm flex items-center before:content-['-'] before:mr-2" data-bn="পেজ কন্টেন্ট এডিট" data-en="Edit Page Content">পেজ কন্টেন্ট এডিট</button>
+                        <button onclick="switchTab('tab-cms-theme')" class="w-full text-left py-2 hover:text-blue-400 transition lang-text text-sm flex items-center before:content-['-'] before:mr-2" data-bn="লোগো ও থিম সেটিং" data-en="Logos & Theme">লোগো ও থিম সেটিং</button>
+                    </div>
+                </div>
+
+                <!-- Donation -->
+                <div class="mb-1">
+                    <button onclick="toggleMenu('menu-donation')" class="w-full flex justify-between items-center px-6 py-3.5 hover:bg-slate-800 transition border-l-4 border-transparent hover:border-yellow-400 group">
+                        <span class="font-semibold text-sm flex items-center group-hover:text-white"><i class="fa-solid fa-hand-holding-dollar w-6 text-yellow-400"></i><span class="lang-text" data-bn="ডোনেশন পরিচালনা" data-en="Donation Management">ডোনেশন পরিচালনা</span></span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-500 group-hover:text-white transition"></i>
+                    </button>
+                    <div id="menu-donation" class="hidden-section bg-slate-950 px-6 py-2">
+                        <button onclick="switchTab('tab-donation')" class="w-full text-left py-2 hover:text-yellow-400 transition lang-text text-sm flex items-center before:content-['-'] before:mr-2" data-bn="ডোনেশন রিকোয়েস্ট" data-en="Donation Requests">ডোনেশন রিকোয়েস্ট</button>
+                    </div>
+                </div>
+
+                <!-- Membership -->
+                <div class="mb-1">
+                    <button onclick="toggleMenu('menu-membership')" class="w-full flex justify-between items-center px-6 py-3.5 hover:bg-slate-800 transition border-l-4 border-transparent hover:border-purple-500 group">
+                        <span class="font-semibold text-sm flex items-center group-hover:text-white"><i class="fa-solid fa-users w-6 text-purple-400"></i><span class="lang-text" data-bn="মেম্বারশিপ (OTP)" data-en="Membership (OTP)">মেম্বারশিপ (OTP)</span></span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-500 group-hover:text-white transition"></i>
+                    </button>
+                    <div id="menu-membership" class="hidden-section bg-slate-950 px-6 py-2">
+                        <button onclick="switchTab('tab-membership')" class="w-full text-left py-2 hover:text-purple-400 transition lang-text text-sm flex items-center before:content-['-'] before:mr-2" data-bn="নতুন সদস্য যোগ করুন" data-en="Add New Member">নতুন সদস্য যোগ করুন</button>
+                    </div>
+                </div>
+
+                <!-- Gallery -->
+                <div class="mb-1">
+                    <button onclick="toggleMenu('menu-gallery')" class="w-full flex justify-between items-center px-6 py-3.5 hover:bg-slate-800 transition border-l-4 border-transparent hover:border-pink-500 group">
+                        <span class="font-semibold text-sm flex items-center group-hover:text-white"><i class="fa-solid fa-images w-6 text-pink-400"></i><span class="lang-text" data-bn="ডিজিটাল গ্যালারি" data-en="Digital Gallery">ডিজিটাল গ্যালারি</span></span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-500 group-hover:text-white transition"></i>
+                    </button>
+                    <div id="menu-gallery" class="hidden-section bg-slate-950 px-6 py-2">
+                        <button onclick="switchTab('tab-gallery')" class="w-full text-left py-2 hover:text-pink-400 transition lang-text text-sm flex items-center before:content-['-'] before:mr-2" data-bn="ছবি আপলোড ও ডিলিট" data-en="Upload & Delete">ছবি আপলোড ও ডিলিট</button>
+                    </div>
+                </div>
+
+                <!-- Security -->
+                <div class="mb-1">
+                    <button onclick="toggleMenu('menu-security')" class="w-full flex justify-between items-center px-6 py-3.5 hover:bg-slate-800 transition border-l-4 border-transparent hover:border-red-500 group">
+                        <span class="font-semibold text-sm flex items-center group-hover:text-white"><i class="fa-solid fa-shield-halved w-6 text-red-400"></i><span class="lang-text" data-bn="নিরাপত্তা ও ফায়ারওয়াল" data-en="Security & Firewall">নিরাপত্তা ও ফায়ারওয়াল</span></span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-500 group-hover:text-white transition"></i>
+                    </button>
+                    <div id="menu-security" class="hidden-section bg-slate-950 px-6 py-2">
+                        <button onclick="switchTab('tab-security')" class="w-full text-left py-2 hover:text-red-400 transition lang-text text-sm flex items-center before:content-['-'] before:mr-2" data-bn="IP ব্লক ও ট্র্যাকিং" data-en="IP Block & Tracking">IP ব্লক ও ট্র্যাকিং</button>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="mb-1">
+                    <button onclick="toggleMenu('menu-settings')" class="w-full flex justify-between items-center px-6 py-3.5 hover:bg-slate-800 transition border-l-4 border-transparent hover:border-green-500 group">
+                        <span class="font-semibold text-sm flex items-center group-hover:text-white"><i class="fa-solid fa-gear w-6 text-green-400"></i><span class="lang-text" data-bn="অ্যাডমিন সেটিংস" data-en="Admin Settings">অ্যাডমিন সেটিংস</span></span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-500 group-hover:text-white transition"></i>
+                    </button>
+                    <div id="menu-settings" class="hidden-section bg-slate-950 px-6 py-2">
+                        <button onclick="switchTab('tab-settings-password')" class="w-full text-left py-2 hover:text-green-400 transition lang-text text-sm flex items-center before:content-['-'] before:mr-2" data-bn="পাসওয়ার্ড পরিবর্তন" data-en="Change Password">পাসওয়ার্ড পরিবর্তন</button>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="p-4 bg-slate-950 border-t border-slate-800">
+                <button onclick="logoutAdmin()" class="w-full bg-slate-800 hover:bg-red-600 text-white py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center group">
+                    <i class="fa-solid fa-power-off mr-2 group-hover:animate-pulse"></i> <span class="lang-text" data-bn="লগআউট করুন" data-en="Logout">লগআউট করুন</span>
+                </button>
             </div>
-            
-            <div style="width: 100px;"></div> <!-- Spacer for flex balance -->
         </div>
 
-        <!-- Dynamic Content Area -->
-        <div class="content-area">
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden">
             
-            <!-- 1. Welcome Section (Dashboard) -->
-            <div id="welcome-section" class="section-container active" style="display: flex;">
-                <div class="welcome-box">
-                    <h1>স্বাগতম, অ্যাডমিন</h1>
-                    <p>বাঁদিকের মেন্যু থেকে আপনার কাজ নির্বাচন করুন <i class="fas fa-mouse-pointer"></i></p>
+            <!-- Top Bar -->
+            <header class="bg-white h-16 border-b border-gray-200 shadow-sm flex items-center justify-between px-6 z-10 shrink-0 relative">
+                <!-- Clock -->
+                <div class="flex items-center text-gray-600">
+                    <i class="fa-regular fa-clock mr-2 text-blue-600"></i>
+                    <span id="realTimeClock" class="font-bold text-sm">--:--:--</span>
                 </div>
-            </div>
 
-            <!-- 2. Finance Add Section (From image reference) -->
-            <div id="finance-add-section" class="section-container">
-                <button class="close-section-btn" onclick="showSection('welcome-section')">&times;</button>
-                <h2 class="section-title"><i class="fas fa-plus-circle"></i> নতুন এন্ট্রি যুক্ত করুন</h2>
-                <div style="display: flex; gap: 20px; align-items: flex-end;">
-                    <div class="form-group" style="flex: 1;">
-                        <label>ধরন</label>
-                        <select class="form-control">
-                            <option>আয় (Income)</option>
-                            <option>ব্যয় (Expense)</option>
-                        </select>
+                <!-- Dynamic Balance (Centered) -->
+                <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center bg-green-50 border border-green-200 px-6 py-1.5 rounded-full shadow-inner">
+                    <div class="mr-3 text-right hidden md:block">
+                        <span class="text-xs text-gray-500 font-bold block leading-none lang-text" data-bn="মোট তহবিল" data-en="Total Fund">মোট তহবিল</span>
                     </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>টাকার পরিমাণ</label>
-                        <input type="number" class="form-control" placeholder="0.00">
-                    </div>
-                    <div class="form-group">
-                        <button class="btn-submit">এন্ট্রি যুক্ত করুন</button>
+                    <div class="text-xl font-bold text-green-700 font-mono">
+                        <span class="text-sm mr-1">₹</span><span id="topBarBalance">0.00</span>
                     </div>
                 </div>
-            </div>
 
-            <!-- 3. Donation List Section -->
-            <div id="donation-list-section" class="section-container">
-                <button class="close-section-btn" onclick="showSection('welcome-section')">&times;</button>
-                <h2 class="section-title"><i class="fas fa-list-alt"></i> ডোনেশন রিকোয়েস্ট লিস্ট</h2>
-                <p style="color: #666; margin-bottom: 15px;">ওয়েব পেজ থেকে আসা ডোনেশন রিকোয়েস্টগুলো এখানে দেখাবে। অ্যাপ্রুভ করলে ইউজারের হোয়াটসঅ্যাপে কিউআর কোড পাঠানো যাবে।</p>
-                
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>ছবি</th>
-                            <th>দাতার নাম</th>
-                            <th>পরিমাণ (৳)</th>
-                            <th>তারিখ</th>
-                            <th>WhatsApp নং</th>
-                            <th>স্ট্যাটাস</th>
-                            <th>অ্যাকশন (অ্যাডমিন কন্ট্রোল)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="donation-tbody">
-                        <!-- Data will be populated by JS -->
-                    </tbody>
-                </table>
-            </div>
+                <!-- Language Toggle -->
+                <div class="flex items-center gap-1 bg-gray-100 p-1 rounded-lg border border-gray-200">
+                    <button onclick="changeLanguage('bn')" id="langBtnBn" class="px-3 py-1 bg-white shadow-sm text-blue-700 rounded text-xs font-bold transition">বাংলা</button>
+                    <button onclick="changeLanguage('en')" id="langBtnEn" class="px-3 py-1 bg-transparent text-gray-500 hover:text-gray-700 rounded text-xs font-bold transition">ENG</button>
+                </div>
+            </header>
 
-            <!-- 4. Membership Manual Section (With OTP Logic) -->
-            <div id="membership-manual-section" class="section-container">
-                <button class="close-section-btn" onclick="showSection('welcome-section')">&times;</button>
-                <h2 class="section-title"><i class="fas fa-user-plus"></i> নতুন মেম্বারশিপ আবেদন (ম্যানুয়াল)</h2>
+            <!-- Scrollable Page Content -->
+            <div class="flex-1 overflow-y-auto p-6 relative bg-tricolor">
                 
-                <div style="max-width: 600px;">
-                    <div class="form-group">
-                        <label>আবেদনকারীর নাম *</label>
-                        <input type="text" id="mem-name" class="form-control" placeholder="নাম লিখুন">
+                <!-- 1. Welcome Screen -->
+                <div id="tab-welcome" class="tab-content flex flex-col items-center justify-center h-full text-center">
+                    <div class="bg-white/80 backdrop-blur p-10 rounded-2xl premium-shadow border border-white max-w-lg">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" class="w-24 h-24 mx-auto mb-4 object-contain animate-bounce">
+                        <h2 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-600 to-green-600 mb-2 lang-text" data-bn="স্বাগতম, অ্যাডমিন" data-en="Welcome, Admin">স্বাগতম, অ্যাডমিন</h2>
+                        <p class="text-gray-600 font-medium lang-text" data-bn="বাম দিকের মেনু থেকে আপনার কাজ নির্বাচন করুন।" data-en="Select your task from the left menu.">বাম দিকের মেনু থেকে আপনার কাজ নির্বাচন করুন।</p>
                     </div>
-                    <div class="form-group">
-                        <label>WhatsApp / মোবাইল নম্বর (OTP-এর জন্য বাধ্যতামূলক) *</label>
-                        <input type="text" id="mem-phone" class="form-control" placeholder="১০ ডিজিট মোবাইল নম্বর">
-                    </div>
-                    <div class="form-group">
-                        <label>ইমেইল অ্যাড্রেস (ঐচ্ছিক)</label>
-                        <input type="email" id="mem-email" class="form-control" placeholder="example@gmail.com">
-                    </div>
+                </div>
+
+                <!-- 2. Finance Tab -->
+                <div id="tab-finance" class="tab-content hidden-section bg-white rounded-xl shadow-lg border border-gray-200 p-6 min-h-full">
+                    <button onclick="switchTab('tab-welcome')" class="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-orange-500 pl-3 lang-text" data-bn="আয়-ব্যয় ম্যানেজমেন্ট" data-en="Income & Expense Management">আয়-ব্যয় ম্যানেজমেন্ট</h2>
                     
-                    <button class="btn-submit" onclick="generateOTP()"><i class="fas fa-paper-plane"></i> OTP পাঠান ও সাবমিট করুন</button>
+                    <!-- Entry Form -->
+                    <div class="bg-gray-50 p-5 rounded-lg border border-gray-200 mb-6 grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                        <div class="col-span-1">
+                            <label class="block text-gray-700 font-bold mb-1 text-xs lang-text" data-bn="তারিখ" data-en="Date">তারিখ</label>
+                            <input type="date" id="finDate" class="w-full p-2 border border-gray-300 rounded focus:border-orange-500 outline-none text-sm">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-gray-700 font-bold mb-1 text-xs lang-text" data-bn="বিবরণ" data-en="Details">বিবরণ</label>
+                            <input type="text" id="finDetails" class="w-full p-2 border border-gray-300 rounded focus:border-orange-500 outline-none text-sm" placeholder="...">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="block text-gray-700 font-bold mb-1 text-xs lang-text" data-bn="ধরন" data-en="Type">ধরন</label>
+                            <select id="finType" class="w-full p-2 border border-gray-300 rounded bg-white outline-none text-sm">
+                                <option value="income" class="lang-text" data-bn="আয় (Income)" data-en="Income">আয় (Income)</option>
+                                <option value="expense" class="lang-text" data-bn="ব্যয় (Expense)" data-en="Expense">ব্যয় (Expense)</option>
+                            </select>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="block text-gray-700 font-bold mb-1 text-xs lang-text" data-bn="টাকার পরিমাণ" data-en="Amount">টাকার পরিমাণ</label>
+                            <input type="number" id="finAmount" placeholder="0.00" class="w-full p-2 border border-gray-300 rounded focus:border-orange-500 outline-none text-sm">
+                        </div>
+                        <div class="col-span-1 md:col-span-5 flex justify-end mt-2">
+                            <button onclick="addFinanceEntry()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow transition text-sm lang-text" data-bn="এন্ট্রি যুক্ত করুন" data-en="Add Entry">এন্ট্রি যুক্ত করুন</button>
+                        </div>
+                    </div>
+
+                    <!-- Ledger Table -->
+                    <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                        <table class="w-full admin-table">
+                            <thead>
+                                <tr>
+                                    <th class="lang-text" data-bn="তারিখ" data-en="Date">তারিখ</th>
+                                    <th class="lang-text" data-bn="বিবরণ" data-en="Details">বিবরণ</th>
+                                    <th class="text-right lang-text" data-bn="আয় (Income)" data-en="Income">আয় (Income)</th>
+                                    <th class="text-right lang-text" data-bn="ব্যয় (Expense)" data-en="Expense">ব্যয় (Expense)</th>
+                                    <th class="text-right lang-text" data-bn="উদ্বৃত্ত (Balance)" data-en="Balance">উদ্বৃত্ত (Balance)</th>
+                                    <th class="text-center lang-text" data-bn="পদক্ষেপ" data-en="Action">পদক্ষেপ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="financeTableBody">
+                                <!-- JS Data -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. CMS Layout Control Tab -->
+                <div id="tab-cms-layout" class="tab-content hidden-section bg-white rounded-xl shadow-lg border border-gray-200 p-6 min-h-full">
+                    <button onclick="switchTab('tab-welcome')" class="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2 border-l-4 border-blue-500 pl-3 lang-text" data-bn="ওয়েবসাইট সেকশন অন/অফ" data-en="Toggle Website Sections">ওয়েবসাইট সেকশন অন/অফ</h2>
+                    <p class="text-gray-500 mb-6 text-sm lang-text" data-bn="সুইচ অন/অফ করে মেইন ওয়েবসাইটের বিভিন্ন অংশ নিয়ন্ত্রণ করুন।" data-en="Control sections of the main website by toggling switches.">সুইচ অন/অফ করে মেইন ওয়েবসাইটের বিভিন্ন অংশ নিয়ন্ত্রণ করুন।</p>
                     
-                    <!-- Hidden OTP Verification Section -->
-                    <div id="otp-section">
-                        <h4 style="color: var(--accent-green); margin-bottom: 10px;"><i class="fas fa-check-circle"></i> ওটিপি সফলভাবে পাঠানো হয়েছে!</h4>
-                        <p style="font-size: 13px; color: #555; margin-bottom: 10px;">আবেদনকারীর মোবাইলে প্রাপ্ত ৬-ডিজিটের কোডটি নিচে বসান:</p>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" id="otp-input" class="form-control" placeholder="OTP লিখুন (যেমন: 123456)" style="width: 200px;">
-                            <button class="btn-submit" style="background-color: var(--accent-blue);" onclick="verifyOTP()">ভেরিফাই করুন</button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
+                        <!-- Toggle Logic -->
+                        <div class="flex justify-between items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-blue-300 transition">
+                            <span class="font-bold text-gray-700 text-sm lang-text" data-bn="হেডার (লোগো ও মেনু)" data-en="Header (Logo & Menu)">হেডার (লোগো ও মেনু)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="secHeader" class="sr-only peer" onchange="saveCMSLayout()">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-blue-300 transition">
+                            <span class="font-bold text-gray-700 text-sm lang-text" data-bn="বডি (মূল লেখা)" data-en="Body Content">বডি (মূল লেখা)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="secBody" class="sr-only peer" onchange="saveCMSLayout()">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-blue-300 transition">
+                            <span class="font-bold text-gray-700 text-sm lang-text" data-bn="ফুটার (যোগাযোগের তথ্য)" data-en="Footer (Contact Info)">ফুটার (যোগাযোগের তথ্য)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="secFooter" class="sr-only peer" onchange="saveCMSLayout()">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-blue-300 transition">
+                            <span class="font-bold text-gray-700 text-sm lang-text" data-bn="গ্যালারি সেকশন" data-en="Gallery Section">গ্যালারি সেকশন</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="secGallery" class="sr-only peer" onchange="saveCMSLayout()">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- 5. Membership List Section -->
-            <div id="membership-list-section" class="section-container">
-                <button class="close-section-btn" onclick="showSection('welcome-section')">&times;</button>
-                <h2 class="section-title"><i class="fas fa-users-cog"></i> মেম্বারশিপ লিস্ট ও অ্যাপ্রুভাল</h2>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>রেজিস্ট্রেশন আইডি</th>
-                            <th>নাম</th>
-                            <th>মোবাইল নম্বর</th>
-                            <th>মাধ্যম</th>
-                            <th>স্ট্যাটাস</th>
-                            <th>অ্যাকশন</th>
-                        </tr>
-                    </thead>
-                    <tbody id="membership-tbody">
-                        <tr>
-                            <td>#MEM-8842</td>
-                            <td>অমিত ঘোষ</td>
-                            <td>9876543210</td>
-                            <td>ওয়েবসাইট (অনলাইন)</td>
-                            <td><span class="badge badge-pending">Pending</span></td>
-                            <td>
-                                <button class="action-btn btn-approve" onclick="alert('অ্যাপ্রুভ করা হয়েছে!')"><i class="fas fa-check"></i> Approve</button>
-                                <button class="action-btn btn-delete"><i class="fas fa-trash"></i> Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <!-- 4. CMS Content Edit (WordPress Like) -->
+                <div id="tab-cms-content" class="tab-content hidden-section bg-white rounded-xl shadow-lg border border-gray-200 p-6 min-h-full">
+                    <button onclick="switchTab('tab-welcome')" class="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-blue-500 pl-3 lang-text" data-bn="পেজ কন্টেন্ট এডিট" data-en="Edit Page Content">পেজ কন্টেন্ট এডিট</h2>
+                    
+                    <div class="max-w-3xl space-y-5">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2 lang-text" data-bn="ওয়েবসাইটের মূল শিরোনাম (Header Title)" data-en="Website Header Title">ওয়েবসাইটের মূল শিরোনাম (Header Title)</label>
+                            <input type="text" id="cmsHeaderTitle" class="w-full p-3 border border-gray-300 rounded focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2 lang-text" data-bn="বডি টেক্সট / বিবরণ (Body Text)" data-en="Body Text / Description">বডি টেক্সট / বিবরণ (Body Text)</label>
+                            <textarea id="cmsBodyText" rows="4" class="w-full p-3 border border-gray-300 rounded focus:border-blue-500 outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2 lang-text" data-bn="ফুটার টেক্সট (Footer Info)" data-en="Footer Text">ফুটার টেক্সট (Footer Info)</label>
+                            <input type="text" id="cmsFooterText" class="w-full p-3 border border-gray-300 rounded focus:border-blue-500 outline-none">
+                        </div>
+                        <button onclick="saveCMSContent()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded shadow transition lang-text" data-bn="কন্টেন্ট সেভ করুন" data-en="Save Content">কন্টেন্ট সেভ করুন</button>
+                    </div>
+                </div>
 
+                <!-- 5. Dual Logo & Theme Management -->
+                <div id="tab-cms-theme" class="tab-content hidden-section bg-white rounded-xl shadow-lg border border-gray-200 p-6 min-h-full">
+                    <button onclick="switchTab('tab-welcome')" class="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-blue-500 pl-3 lang-text" data-bn="লোগো ও থিম ম্যানেজমেন্ট" data-en="Logo & Theme Management">লোগো ও থিম ম্যানেজমেন্ট</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
+                        <!-- Logos -->
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <h3 class="font-bold text-gray-700 mb-4 border-b pb-2 lang-text" data-bn="লোগো সেটিংস" data-en="Logo Settings">লোগো সেটিংস</h3>
+                            <div class="mb-4">
+                                <label class="block text-xs font-bold text-gray-600 mb-1 lang-text" data-bn="অ্যাডমিন প্যানেল লোগো (URL)" data-en="Admin Panel Logo (URL)">অ্যাডমিন প্যানেল লোগো (URL)</label>
+                                <input type="text" id="adminLogoUrl" class="w-full p-2.5 border border-gray-300 rounded focus:border-blue-500 outline-none text-sm">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-xs font-bold text-gray-600 mb-1 lang-text" data-bn="মেইন ওয়েবসাইট লোগো (URL)" data-en="Main Website Logo (URL)">মেইন ওয়েবসাইট লোগো (URL)</label>
+                                <input type="text" id="webLogoUrl" class="w-full p-2.5 border border-gray-300 rounded focus:border-blue-500 outline-none text-sm">
+                            </div>
+                        </div>
+
+                        <!-- Theme -->
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <h3 class="font-bold text-gray-700 mb-4 border-b pb-2 lang-text" data-bn="থিম ও রঙ" data-en="Theme & Colors">থিম ও রঙ</h3>
+                            <div class="mb-4">
+                                <label class="block text-xs font-bold text-gray-600 mb-2 lang-text" data-bn="মেইন পেজের প্রাইমারি রঙ" data-en="Main Page Primary Color">মেইন পেজের প্রাইমারি রঙ</label>
+                                <div class="flex items-center gap-3">
+                                    <input type="color" id="themeColor" class="w-12 h-10 border cursor-pointer">
+                                    <span class="text-xs text-gray-500">Pick color</span>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-xs font-bold text-gray-600 mb-1 lang-text" data-bn="ব্যাকগ্রাউন্ড ইমেজ (URL)" data-en="Background Image URL">ব্যাকগ্রাউন্ড ইমেজ (URL)</label>
+                                <input type="text" id="themeBgUrl" class="w-full p-2.5 border border-gray-300 rounded focus:border-blue-500 outline-none text-sm">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <button onclick="saveThemeAndLogos()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded shadow transition lang-text" data-bn="পরিবর্তনগুলি সেভ করুন" data-en="Save All Changes">পরিবর্তনগুলি সেভ করুন</button>
+                    </div>
+                </div>
+
+                <!-- 6. Donation Management Tab -->
+                <div id="tab-donation" class="tab-content hidden-section bg-white rounded-xl shadow-lg border border-gray-200 p-6 min-h-full">
+                    <button onclick="switchTab('tab-welcome')" class="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-yellow-400 pl-3 lang-text" data-bn="ডোনেশন রিকোয়েস্ট ম্যানেজমেন্ট" data-en="Donation Request Management">ডোনেশন রিকোয়েস্ট ম্যানেজমেন্ট</h2>
+                    
+                    <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                        <table class="w-full admin-table">
+                            <thead>
+                                <tr>
+                                    <th class="lang-text" data-bn="দাতার নাম" data-en="Donor Name">দাতার নাম</th>
+                                    <th class="lang-text" data-bn="ফোন নম্বর" data-en="Phone">ফোন নম্বর</th>
+                                    <th class="lang-text" data-bn="পরিমাণ (₹)" data-en="Amount (₹)">পরিমাণ (₹)</th>
+                                    <th class="lang-text" data-bn="স্ট্যাটাস" data-en="Status">স্ট্যাটাস</th>
+                                    <th class="text-center lang-text" data-bn="হোয়াটসঅ্যাপ QR/লিঙ্ক" data-en="WhatsApp Link">হোয়াটসঅ্যাপ QR/লিঙ্ক</th>
+                                </tr>
+                            </thead>
+                            <tbody id="donationTableBody">
+                                <!-- JS Data (Demo Content for now as requested for logic) -->
+                                <tr>
+                                    <td class="font-bold">Rahul Das</td>
+                                    <td>9876543210</td>
+                                    <td class="font-mono text-green-600 font-bold">500.00</td>
+                                    <td><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-bold">Pending</span></td>
+                                    <td class="text-center">
+                                        <button onclick="sendWhatsApp('9876543210', '500')" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg text-sm shadow transition"><i class="fa-brands fa-whatsapp mr-1"></i> Send QR</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 7. Membership OTP System -->
+                <div id="tab-membership" class="tab-content hidden-section bg-white rounded-xl shadow-lg border border-gray-200 p-6 min-h-full">
+                    <button onclick="switchTab('tab-welcome')" class="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-purple-500 pl-3 lang-text" data-bn="নতুন সদস্য ভেরিফিকেশন (OTP)" data-en="New Member Verification (OTP)">নতুন সদস্য ভেরিফিকেশন (OTP)</h2>
+                    
+                    <div class="max-w-md bg-purple-50 border border-purple-100 p-6 rounded-xl shadow-sm">
+                        <div id="otpStep1">
+                            <label class="block text-sm font-bold text-gray-700 mb-2 lang-text" data-bn="সদস্যের মোবাইল নম্বর" data-en="Member Mobile Number">সদস্যের মোবাইল নম্বর</label>
+                            <input type="text" id="memberPhone" class="w-full p-3 border border-purple-300 rounded focus:border-purple-500 outline-none mb-4" placeholder="+91 ">
+                            <button onclick="sendOTP()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded shadow transition lang-text" data-bn="OTP পাঠান" data-en="Send OTP">OTP পাঠান</button>
+                        </div>
+                        
+                        <div id="otpStep2" class="hidden-section mt-4 pt-4 border-t border-purple-200">
+                            <p class="text-xs text-green-600 font-bold mb-3 lang-text" data-bn="OTP সফলভাবে পাঠানো হয়েছে!" data-en="OTP Sent Successfully!">OTP সফলভাবে পাঠানো হয়েছে!</p>
+                            <label class="block text-sm font-bold text-gray-700 mb-2 lang-text" data-bn="OTP প্রবেশ করুন" data-en="Enter OTP">OTP প্রবেশ করুন</label>
+                            <input type="text" id="memberOTP" class="w-full p-3 border border-purple-300 rounded focus:border-purple-500 outline-none mb-4 text-center font-mono tracking-widest text-lg" placeholder="••••">
+                            <label class="block text-sm font-bold text-gray-700 mb-2 lang-text" data-bn="সদস্যের নাম" data-en="Member Name">সদস্যের নাম</label>
+                            <input type="text" id="newMemberName" class="w-full p-3 border border-purple-300 rounded focus:border-purple-500 outline-none mb-4" placeholder="Name">
+                            <button onclick="verifyOTPAndAddMember()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded shadow transition lang-text" data-bn="ভেরিফাই ও যুক্ত করুন" data-en="Verify & Add">ভেরিফাই ও যুক্ত করুন</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Gallery Tab -->
+                <div id="tab-gallery" class="tab-content hidden-section bg-white rounded-xl shadow-lg border border-gray-200 p-6 min-h-full">
+                    <button onclick="switchTab('tab-welcome')" class="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-pink-500 pl-3 lang-text" data-bn="ডিজিটাল গ্যালারি" data-en="Digital Gallery">ডিজিটাল গ্যালারি</h2>
+                    
+                    <div class="bg-pink-50 p-6 rounded-lg border border-pink-100 mb-8 max-w-2xl">
+                        <p class="text-xs text-gray-500 mb-4 font-bold lang-text" data-bn="* ছবি স্বয়ংক্রিয়ভাবে কম্প্রেস হয়ে সেভ হবে।" data-en="* Images are auto-compressed before saving.">* ছবি স্বয়ংক্রিয়ভাবে কম্প্রেস হয়ে সেভ হবে।</p>
+                        <div class="flex flex-col gap-4">
+                            <input type="file" id="imageInput" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:font-bold file:bg-pink-200 file:text-pink-800 hover:file:bg-pink-300 cursor-pointer">
+                            <input type="text" id="imageCaption" class="w-full p-2.5 border border-pink-200 rounded focus:border-pink-500 outline-none text-sm" placeholder="ছবির ক্যাপশন দিন...">
+                            <button id="uploadBtn" onclick="compressAndUploadImage()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2.5 px-6 rounded shadow transition w-32 text-sm lang-text" data-bn="আপলোড" data-en="Upload">আপলোড</button>
+                            <div id="uploadStatus" class="mt-2 text-sm font-bold text-pink-600 hidden"><i class="fa-solid fa-spinner fa-spin mr-2"></i> প্রোসেসিং...</div>
+                        </div>
+                    </div>
+                    
+                    <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        <!-- JS Data -->
+                    </div>
+                </div>
+
+                <!-- 9. Security & IP Block Tab -->
+                <div id="tab-security" class="tab-content hidden-section bg-white rounded-xl shadow-lg border border-gray-200 p-6 min-h-full">
+                    <button onclick="switchTab('tab-welcome')" class="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-red-500 pl-3 lang-text" data-bn="নিরাপত্তা ও ফায়ারওয়াল" data-en="Security & Firewall">নিরাপত্তা ও ফায়ারওয়াল</h2>
+                        <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold animate-pulse"><i class="fa-solid fa-shield-virus mr-1"></i> সিস্টেম অ্যাকটিভ</span>
+                    </div>
+                    
+                    <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                        <table class="w-full admin-table">
+                            <thead>
+                                <tr>
+                                    <th class="lang-text" data-bn="IP অ্যাড্রেস" data-en="IP Address">IP অ্যাড্রেস</th>
+                                    <th class="lang-text" data-bn="শেষ প্রবেশ" data-en="Last Visit">শেষ প্রবেশ</th>
+                                    <th class="lang-text" data-bn="বর্তমান স্ট্যাটাস" data-en="Status">বর্তমান স্ট্যাটাস</th>
+                                    <th class="text-center lang-text" data-bn="অ্যাকশন" data-en="Action">অ্যাকশন</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ipTableBody">
+                                <!-- JS Data -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 10. Settings Tab -->
+                <div id="tab-settings-password" class="tab-content hidden-section bg-white rounded-xl shadow-lg border border-gray-200 p-6 min-h-full">
+                    <button onclick="switchTab('tab-welcome')" class="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-green-500 pl-3 lang-text" data-bn="পাসওয়ার্ড পরিবর্তন" data-en="Change Password">পাসওয়ার্ড পরিবর্তন</h2>
+                    
+                    <div class="max-w-md bg-gray-50 p-6 rounded-lg border border-gray-200">
+                        <p class="text-xs text-red-500 mb-4 font-bold lang-text" data-bn="* পাসওয়ার্ড বদলালে লগআউট হয়ে যাবে।" data-en="* You will be logged out after change.">* পাসওয়ার্ড বদলালে লগআউট হয়ে যাবে।</p>
+                        <input type="password" id="newPassword" class="w-full p-2.5 border border-gray-300 rounded mb-4 text-sm" placeholder="নতুন পাসওয়ার্ড">
+                        <input type="password" id="confirmNewPassword" class="w-full p-2.5 border border-gray-300 rounded mb-4 text-sm" placeholder="পাসওয়ার্ড নিশ্চিত করুন">
+                        <button onclick="changeAdminPassword()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded shadow transition text-sm lang-text" data-bn="আপডেট করুন" data-en="Update Password">আপডেট করুন</button>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 
-    <!-- JavaScript Logic -->
     <script>
-        // ================= 1. Sidebar Toggle Logic =================
-        function toggleSubmenu(element) {
-            let parentItem = element.parentElement;
-            let submenu = parentItem.querySelector('.submenu');
+        // 1. Firebase v10 Config (Do not change)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCg5ttOQHcdqupwlD9lDam6IFfh6P1mdos",
+            authDomain: "swadeshjagaran.firebaseapp.com",
+            projectId: "swadeshjagaran",
+            storageBucket: "swadeshjagaran.firebasestorage.app",
+            messagingSenderId: "955311438612",
+            appId: "1:955311438612:web:089ee627987ee0b5562001"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // 2. ImgBB API Key
+        const IMGBB_API_KEY = "1ac8ffb755062be25a1eb4b957f12e09";
+
+        // 3. Bilingual System & Bengali Number Conversion
+        let currentLang = 'bn';
+        const bnNumbers = {'0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯'};
+        
+        function toBnNum(numStr) {
+            if(currentLang !== 'bn') return numStr;
+            return String(numStr).replace(/[0-9]/g, w => bnNumbers[w]);
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
             
-            // Close all other submenus first (Accordion effect)
-            document.querySelectorAll('.nav-item').forEach(item => {
-                if (item !== parentItem) {
-                    item.classList.remove('active');
-                    if (item.querySelector('.submenu')) {
-                        item.querySelector('.submenu').style.maxHeight = null;
-                    }
+            // Toggle Button Highlight
+            document.getElementById('langBtnBn').className = lang === 'bn' ? "px-3 py-1 bg-white shadow-sm text-blue-700 rounded text-xs font-bold transition" : "px-3 py-1 bg-transparent text-gray-500 hover:text-gray-700 rounded text-xs font-bold transition";
+            document.getElementById('langBtnEn').className = lang === 'en' ? "px-3 py-1 bg-white shadow-sm text-blue-700 rounded text-xs font-bold transition" : "px-3 py-1 bg-transparent text-gray-500 hover:text-gray-700 rounded text-xs font-bold transition";
+            
+            document.getElementById('langBtnBnLog').className = lang === 'bn' ? "px-3 py-1 bg-green-600 text-white rounded text-sm font-bold transition" : "px-3 py-1 bg-transparent text-gray-600 rounded text-sm font-bold hover:bg-gray-100 transition";
+            document.getElementById('langBtnEnLog').className = lang === 'en' ? "px-3 py-1 bg-green-600 text-white rounded text-sm font-bold transition" : "px-3 py-1 bg-transparent text-gray-600 rounded text-sm font-bold hover:bg-gray-100 transition";
+
+            const elements = document.querySelectorAll('.lang-text');
+            elements.forEach(el => {
+                if (el.dataset[lang]) {
+                    if (el.tagName !== 'INPUT' && el.tagName !== 'SELECT') { el.innerText = el.dataset[lang]; }
                 }
             });
 
-            // Toggle current submenu
-            parentItem.classList.toggle('active');
-            if (parentItem.classList.contains('active')) {
-                submenu.style.maxHeight = submenu.scrollHeight + "px";
+            const inputs = document.querySelectorAll('input[data-placeholder-bn]');
+            inputs.forEach(input => { input.placeholder = input.getAttribute(`data-placeholder-${lang}`); });
+            
+            updateClock(); // Force clock update for lang switch
+            loadFinanceData(); // Force balance string update
+        }
+        function t(bnText, enText) { return currentLang === 'bn' ? bnText : enText; }
+
+        // 4. Real-time Clock Logic
+        function updateClock() {
+            const now = new Date();
+            let timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            let dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            let finalStr = `${timeStr} | ${dateStr}`;
+            document.getElementById('realTimeClock').innerText = toBnNum(finalStr);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // 5. Security: Anti-Hacking & IP Firewall
+        let suspiciousActions = 0;
+        document.addEventListener('contextmenu', e => { e.preventDefault(); logSuspiciousActivity(); }); 
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'PrintScreen' || e.key === 'F12' || (e.ctrlKey && ['p','s','u'].includes(e.key.toLowerCase())) || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+                logSuspiciousActivity();
+                Swal.fire({ icon: 'error', title: t('সতর্কতা!', 'Warning!'), text: t('ডেটা চুরি বা স্ক্রিনশট নেওয়া নিষেধ।', 'Data theft prohibited.') });
+            }
+        });
+
+        async function logSuspiciousActivity() {
+            suspiciousActions++;
+            if(suspiciousActions > 2) {
+                try {
+                    const res = await fetch('https://api.ipify.org?format=json');
+                    const data = await res.json();
+                    db.collection('visitor_logs').doc(data.ip).set({ lastVisit: firebase.firestore.FieldValue.serverTimestamp(), status: 'blocked', reason: 'Suspicious Activity' }, { merge: true });
+                } catch(e) {}
+            }
+        }
+
+        async function checkIPBan() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                const doc = await db.collection('visitor_logs').doc(data.ip).get();
+                if(doc.exists && doc.data().status === 'blocked') {
+                    document.body.innerHTML = `<div style="text-align:center; padding:100px; color:red; font-size:24px; font-weight:bold;">${t('আপনার IP ব্লক করা হয়েছে।', 'Your IP is BLOCKED.')}</div>`;
+                } else {
+                    db.collection('visitor_logs').doc(data.ip).set({ lastVisit: firebase.firestore.FieldValue.serverTimestamp(), status: doc.exists ? doc.data().status : 'active' }, { merge: true });
+                }
+            } catch(e) {}
+        }
+        checkIPBan();
+
+        // 6. Login & Logout
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('dashboardSection').classList.remove('hidden-section');
+                loadAllData();
+                switchTab('tab-welcome'); 
             } else {
-                submenu.style.maxHeight = null;
+                document.getElementById('loginSection').style.display = 'flex';
+                document.getElementById('dashboardSection').classList.add('hidden-section');
             }
+        });
+
+        function loginAdmin() {
+            const code = document.getElementById('adminCode').value.trim();
+            const pass = document.getElementById('adminPassword').value;
+            if (!code || !pass) return Swal.fire(t('ভুল', 'Error'), t('কোড এবং পাসওয়ার্ড দিন।', 'Enter code and password.'), 'error');
+
+            const generatedEmail = code.toLowerCase() + "@swadeshjagaran.com";
+            Swal.fire({ title: t('লগইন হচ্ছে...', 'Logging in...'), allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+
+            auth.signInWithEmailAndPassword(generatedEmail, pass)
+                .then(() => { Swal.fire({ icon: 'success', title: 'OK', timer: 1000, showConfirmButton: false }); })
+                .catch(() => { Swal.fire(t('লগইন ব্যর্থ', 'Login Failed'), t('ভুল তথ্য।', 'Invalid Code or Password.'), 'error'); });
         }
 
-        // ================= 2. Section Show/Hide (Routing) Logic =================
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.section-container').forEach(section => {
-                section.classList.remove('active');
-                section.style.display = 'none';
+        function logoutAdmin() { auth.signOut(); }
+
+        // 7. UI Navigation
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden-section'));
+            document.getElementById(tabId).classList.remove('hidden-section');
+        }
+        function toggleMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            menu.classList.toggle('hidden-section');
+        }
+
+        function loadAllData() {
+            loadFinanceData(); loadCMSLayout(); loadCMSContent(); loadThemeAndLogos(); loadIPData(); loadGalleryData();
+        }
+
+        // 8. Finance Logic & Dynamic Balance
+        function addFinanceEntry() {
+            const date = document.getElementById('finDate').value;
+            const details = document.getElementById('finDetails').value;
+            const type = document.getElementById('finType').value;
+            const amount = parseFloat(document.getElementById('finAmount').value);
+
+            if (!date || !details || isNaN(amount) || amount <= 0) return Swal.fire('Error', 'Fill all fields', 'warning');
+
+            db.collection('finance').add({ date, details, type, amount, timestamp: firebase.firestore.FieldValue.serverTimestamp() })
+              .then(() => { Swal.fire({ icon: 'success', timer: 1000, showConfirmButton: false }); document.getElementById('finDetails').value = ''; document.getElementById('finAmount').value = ''; });
+        }
+
+        function loadFinanceData() {
+            db.collection('finance').orderBy('date', 'asc').onSnapshot(snapshot => {
+                const tbody = document.getElementById('financeTableBody');
+                tbody.innerHTML = '';
+                let runningBalance = 0;
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    let inAmt = data.type === 'income' ? data.amount : 0;
+                    let outAmt = data.type === 'expense' ? data.amount : 0;
+                    runningBalance += (inAmt - outAmt);
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="font-bold">${toBnNum(data.date)}</td>
+                            <td>${data.details}</td>
+                            <td class="text-right text-green-600 font-mono">${inAmt > 0 ? toBnNum(inAmt.toFixed(2)) : '-'}</td>
+                            <td class="text-right text-red-500 font-mono">${outAmt > 0 ? toBnNum(outAmt.toFixed(2)) : '-'}</td>
+                            <td class="text-right font-bold font-mono ${runningBalance >= 0 ? 'text-blue-600' : 'text-red-600'}">${toBnNum(runningBalance.toFixed(2))}</td>
+                            <td class="text-center"><button onclick="deleteFinance('${doc.id}')" class="text-red-400 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+                        </tr>
+                    `;
+                });
+                document.getElementById('topBarBalance').innerText = toBnNum(runningBalance.toFixed(2));
             });
-            
-            // Show target section
-            let target = document.getElementById(sectionId);
-            if(target) {
-                target.style.display = (sectionId === 'welcome-section') ? 'flex' : 'block';
-                target.classList.add('active');
-            }
         }
+        function deleteFinance(id) { db.collection('finance').doc(id).delete(); }
 
-        // ================= 3. Donation Mock Data & Logic =================
-        const mockDonations = [
-            { id: 1, name: "রাহুল দাস", amount: 5000, date: "12-Aug-2026", phone: "919876543210", status: "Pending", hidden: false },
-            { id: 2, name: "সুমন মন্ডল", amount: 2000, date: "13-Aug-2026", phone: "919000000000", status: "Approved", hidden: false }
-        ];
-
-        function renderDonations() {
-            const tbody = document.getElementById('donation-tbody');
-            tbody.innerHTML = "";
-            
-            mockDonations.forEach(donor => {
-                if(donor.hidden) return; // Skip if hidden by admin
-                
-                let badgeClass = donor.status === 'Approved' ? 'badge-approved' : 'badge-pending';
-                
-                let tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><i class="fas fa-user-circle fa-2x" style="color: #ccc;"></i></td>
-                    <td>${donor.name}</td>
-                    <td>৳ ${donor.amount}</td>
-                    <td>${donor.date}</td>
-                    <td>${donor.phone}</td>
-                    <td><span class="badge ${badgeClass}">${donor.status}</span></td>
-                    <td>
-                        <button class="action-btn btn-approve" onclick="approveDonation(${donor.id})" title="Approve"><i class="fas fa-check"></i></button>
-                        <button class="action-btn btn-whatsapp" onclick="sendWhatsApp('${donor.phone}', '${donor.name}', ${donor.amount})" title="Send QR Code"><i class="fab fa-whatsapp"></i></button>
-                        <button class="action-btn btn-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn btn-hide" onclick="hideDonation(${donor.id})" title="Hide from Web"><i class="fas fa-eye-slash"></i></button>
-                        <button class="action-btn btn-delete" title="Delete"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
+        // 9. CMS Control Logic (Layout & Content)
+        function loadCMSLayout() {
+            db.collection('settings').doc('layout').onSnapshot(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('secHeader').checked = data.header !== false;
+                    document.getElementById('secBody').checked = data.body !== false;
+                    document.getElementById('secFooter').checked = data.footer !== false;
+                    document.getElementById('secGallery').checked = data.gallery !== false;
+                }
             });
         }
-
-        function approveDonation(id) {
-            let donor = mockDonations.find(d => d.id === id);
-            if(donor) {
-                donor.status = "Approved";
-                renderDonations();
-                alert(`${donor.name}-এর ডোনেশন ওয়েব পেজের জন্য অ্যাপ্রুভ করা হয়েছে!`);
-            }
+        function saveCMSLayout() {
+            db.collection('settings').doc('layout').set({
+                header: document.getElementById('secHeader').checked, body: document.getElementById('secBody').checked,
+                footer: document.getElementById('secFooter').checked, gallery: document.getElementById('secGallery').checked
+            }, { merge: true });
         }
 
-        function hideDonation(id) {
-            let donor = mockDonations.find(d => d.id === id);
-            if(donor) {
-                donor.hidden = true;
-                renderDonations();
-                alert(`এই রেকর্ডটি ওয়েবসাইট থেকে হাইড করা হয়েছে।`);
-            }
+        function loadCMSContent() {
+            db.collection('settings').doc('content').onSnapshot(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    if(data.headerTitle) document.getElementById('cmsHeaderTitle').value = data.headerTitle;
+                    if(data.bodyText) document.getElementById('cmsBodyText').value = data.bodyText;
+                    if(data.footerText) document.getElementById('cmsFooterText').value = data.footerText;
+                }
+            });
+        }
+        function saveCMSContent() {
+            db.collection('settings').doc('content').set({
+                headerTitle: document.getElementById('cmsHeaderTitle').value,
+                bodyText: document.getElementById('cmsBodyText').value,
+                footerText: document.getElementById('cmsFooterText').value
+            }, { merge: true }).then(() => Swal.fire({icon: 'success', timer: 1000, showConfirmButton: false}));
         }
 
-        function sendWhatsApp(phone, name, amount) {
-            // Real WhatsApp Web API link generation
-            let message = `নমস্কার ${name}, স্বদেশ জাগরণে আপনার ৳${amount} ডোনেশন রিকোয়েস্ট আমরা পেয়েছি। অনুগ্রহ করে পেমেন্ট সম্পন্ন করতে আমাদের QR Code-টি ব্যবহার করুন। ধন্যবাদ!`;
-            let url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
+        // 10. Dual Logo & Theme
+        function loadThemeAndLogos() {
+            db.collection('settings').doc('theme').onSnapshot(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    if(data.adminLogo) { document.getElementById('adminLogoUrl').value = data.adminLogo; document.getElementById('sidebarAdminLogo').src = data.adminLogo; document.getElementById('loginLogo').src = data.adminLogo; }
+                    if(data.webLogo) document.getElementById('webLogoUrl').value = data.webLogo;
+                    if(data.color) document.getElementById('themeColor').value = data.color;
+                    if(data.bgUrl) { document.getElementById('themeBgUrl').value = data.bgUrl; document.getElementById('dynamicBg').style.backgroundImage = `url('${data.bgUrl}')`; }
+                }
+            });
+        }
+        function saveThemeAndLogos() {
+            db.collection('settings').doc('theme').set({
+                adminLogo: document.getElementById('adminLogoUrl').value.trim(), webLogo: document.getElementById('webLogoUrl').value.trim(),
+                color: document.getElementById('themeColor').value, bgUrl: document.getElementById('themeBgUrl').value.trim()
+            }, { merge: true }).then(() => Swal.fire({icon: 'success', timer: 1000, showConfirmButton: false}));
         }
 
-        // Initialize table
-        renderDonations();
+        // 11. Donation & WhatsApp
+        function sendWhatsApp(phone, amount) {
+            let msg = encodeURIComponent(`নমস্কার, স্বদেশ জাগরণ থেকে বলছি। আপনার ₹${amount} ডোনেশন রিকোয়েস্ট পেয়েছি। অনুগ্রহ করে পেমেন্ট সম্পন্ন করুন।`);
+            window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
+        }
 
-        // ================= 4. Membership OTP Logic =================
-        let generatedOTP = "";
-
-        function generateOTP() {
-            const name = document.getElementById('mem-name').value;
-            const phone = document.getElementById('mem-phone').value;
-
-            if(name === "" || phone === "") {
-                alert("অনুগ্রহ করে নাম এবং মোবাইল নম্বর প্রদান করুন!");
-                return;
-            }
-
-            // Simulate OTP Generation
-            generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+        // 12. Membership OTP Simulation
+        let mockOTP = "1234"; // Default for demo
+        function sendOTP() {
+            const phone = document.getElementById('memberPhone').value;
+            if(!phone || phone.length < 10) return Swal.fire('Error', 'সঠিক নম্বর দিন', 'error');
             
-            // Show OTP section
-            document.getElementById('otp-section').style.display = 'block';
+            // Simulating sending OTP
+            mockOTP = Math.floor(1000 + Math.random() * 9000).toString();
+            console.log("Mock OTP:", mockOTP); // Check console for OTP
             
-            // In a real app, an SMS API triggers here. We use alert for demo.
-            alert(`(সিস্টেম ডেমো) ইউজারের নম্বরে OTP পাঠানো হয়েছে: ${generatedOTP}`);
+            document.getElementById('otpStep1').classList.add('opacity-50', 'pointer-events-none');
+            document.getElementById('otpStep2').classList.remove('hidden-section');
+            Swal.fire({icon: 'success', title: 'OTP Sent', text: `Demo OTP is: ${mockOTP} (Check Console)`, timer: 2000});
         }
-
-        function verifyOTP() {
-            const userInput = document.getElementById('otp-input').value;
+        function verifyOTPAndAddMember() {
+            const otp = document.getElementById('memberOTP').value;
+            const name = document.getElementById('newMemberName').value;
             
-            if(userInput === generatedOTP) {
-                let memId = "SWJ-" + Math.floor(1000 + Math.random() * 9000);
-                alert(`OTP ভেরিফিকেশন সফল! নতুন মেম্বারশিপ তৈরি হয়েছে।\nরেজিস্ট্রেশন নম্বর: ${memId}`);
-                
-                // Reset form
-                document.getElementById('mem-name').value = "";
-                document.getElementById('mem-phone').value = "";
-                document.getElementById('mem-email').value = "";
-                document.getElementById('otp-input').value = "";
-                document.getElementById('otp-section').style.display = 'none';
-                
-                // Return to dashboard
-                showSection('welcome-section');
+            if(otp === mockOTP && name) {
+                db.collection('members').add({ name, phone: document.getElementById('memberPhone').value, timestamp: firebase.firestore.FieldValue.serverTimestamp() })
+                .then(() => {
+                    Swal.fire('Success', 'মেম্বার সফলভাবে যুক্ত হয়েছে!', 'success');
+                    document.getElementById('otpStep1').classList.remove('opacity-50', 'pointer-events-none');
+                    document.getElementById('otpStep2').classList.add('hidden-section');
+                    document.getElementById('memberPhone').value = ''; document.getElementById('memberOTP').value = ''; document.getElementById('newMemberName').value = '';
+                });
             } else {
-                alert("ভুল OTP! অনুগ্রহ করে সঠিক কোডটি দিন।");
+                Swal.fire('Error', 'ভুল OTP বা নাম নেই', 'error');
             }
         }
+
+        // 13. Security IP Log
+        function loadIPData() {
+            db.collection('visitor_logs').orderBy('lastVisit', 'desc').limit(20).onSnapshot(snapshot => {
+                const tbody = document.getElementById('ipTableBody');
+                tbody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const isBlocked = data.status === 'blocked';
+                    const time = data.lastVisit ? data.lastVisit.toDate().toLocaleString('en-GB') : 'N/A';
+                    
+                    tbody.innerHTML += `
+                        <tr class="${isBlocked ? 'bg-red-50' : ''}">
+                            <td class="font-mono text-xs">${doc.id}</td>
+                            <td class="text-xs text-gray-500">${time}</td>
+                            <td class="font-bold text-xs ${isBlocked ? 'text-red-600' : 'text-green-600'}">${isBlocked ? 'Blocked' : 'Active'}</td>
+                            <td class="text-center">
+                                <button onclick="db.collection('visitor_logs').doc('${doc.id}').set({status: '${isBlocked ? 'active' : 'blocked'}'}, {merge:true})" class="text-xs px-2 py-1 rounded text-white ${isBlocked ? 'bg-green-500' : 'bg-red-500'}">${isBlocked ? 'Unblock' : 'Block'}</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+        }
+
+        // 14. Gallery
+        async function compressAndUploadImage() {
+            const fileInput = document.getElementById('imageInput'); const caption = document.getElementById('imageCaption').value;
+            const statusDiv = document.getElementById('uploadStatus'); const btn = document.getElementById('uploadBtn');
+            if (!fileInput.files || fileInput.files.length === 0) return Swal.fire('Warning', 'ছবি সিলেক্ট করুন', 'warning');
+
+            statusDiv.classList.remove('hidden'); btn.disabled = true; btn.classList.add('opacity-50');
+            try {
+                const compressedFile = await imageCompression(fileInput.files[0], { maxSizeMB: 0.15, maxWidthOrHeight: 1000, useWebWorker: true });
+                const reader = new FileReader(); reader.readAsDataURL(compressedFile);
+                reader.onloadend = async function() {
+                    const formData = new FormData(); formData.append('key', IMGBB_API_KEY); formData.append('image', reader.result.split(',')[1]);
+                    const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
+                    const result = await res.json();
+                    if (result.success) {
+                        await db.collection('gallery').add({ url: result.data.url, caption: caption, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+                        fileInput.value = ''; document.getElementById('imageCaption').value = '';
+                    }
+                }
+            } catch (e) { console.error(e); } finally { statusDiv.classList.add('hidden'); btn.disabled = false; btn.classList.remove('opacity-50'); }
+        }
+
+        function loadGalleryData() {
+            db.collection('gallery').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+                const grid = document.getElementById('galleryGrid'); grid.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    grid.innerHTML += `
+                        <div class="bg-white p-2 rounded border relative group shadow-sm">
+                            <img src="${data.url}" class="w-full h-32 object-cover rounded">
+                            <p class="text-xs text-center mt-1 truncate">${data.caption || ''}</p>
+                            <button onclick="db.collection('gallery').doc('${doc.id}').delete()" class="absolute top-3 right-3 bg-red-500 text-white w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-xs"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        // 15. Settings Password
+        function changeAdminPassword() {
+            const n = document.getElementById('newPassword').value; const c = document.getElementById('confirmNewPassword').value;
+            if(n.length < 6 || n !== c) return Swal.fire('Error', 'পাসওয়ার্ড ঠিক নেই', 'error');
+            if(auth.currentUser) auth.currentUser.updatePassword(n).then(() => { Swal.fire('OK', 'Change success', 'success').then(logoutAdmin); });
+        }
+
+        changeLanguage('bn'); // Init language
     </script>
 </body>
 </html>
